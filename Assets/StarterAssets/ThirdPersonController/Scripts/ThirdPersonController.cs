@@ -121,7 +121,13 @@ namespace StarterAssets
 #endif
             }
         }
-
+        public void SetThirdPersonControllerTarget(object target)
+        {
+            CinemachineCameraTarget = (GameObject)target;
+            var anim = ((GameObject)target).GetComponent<Animator>();
+            _animator.avatar = anim.avatar;
+            anim.enabled = false;
+        }
 
         private void Awake()
         {
@@ -213,6 +219,7 @@ namespace StarterAssets
 
         private void Move()
         {
+            if (!_controller.enabled) return;
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
