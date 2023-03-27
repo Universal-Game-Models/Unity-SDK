@@ -24,6 +24,8 @@ public class UGADownloader : MonoBehaviour
     [SerializeField]
     protected UnityEvent onFailure = new UnityEvent();
 
+    private GLTFast.GltfAsset asset;
+
     protected virtual void Start()
     {
         if (loadOnStart && !string.IsNullOrEmpty(url))
@@ -31,6 +33,11 @@ public class UGADownloader : MonoBehaviour
             LoadAsset();
         }
     }
+    protected virtual void OnDestroy()
+    {
+
+    }
+
     public async void LoadAsset()
     {
         // Remove any leading or trailing spaces
@@ -40,18 +47,21 @@ public class UGADownloader : MonoBehaviour
         obj.transform.SetParent(this.transform);
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
-        var asset = obj.AddComponent<GLTFast.GltfAsset>();
+        if (asset == null)
+        {
+            asset = obj.AddComponent<GLTFast.GltfAsset>();
+        }
         asset.InstantiationSettings = new GLTFast.InstantiationSettings() { Mask = GLTFast.ComponentType.Animation | GLTFast.ComponentType.Mesh };
         // Load the asset
         var didLoad = await asset.Load(url, new UgaDownloadProvider());
         if (didLoad)
         {
-            AddColliders(asset);
+            if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
             onSuccess?.Invoke(asset.gameObject);
         }
         else
         {
-            if(asset.gameObject != null) Destroy(asset.gameObject);
+            if(asset != null ? asset.gameObject : null != null) Destroy(asset.gameObject);
             onFailure?.Invoke();
         }
     }
@@ -102,7 +112,6 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
     }
     public class Download : IDownload
     {
-        private bool disposedValue;
         private string url;
         private byte[] data;
         private string errorMessage;
@@ -172,6 +181,8 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
                 if (disposing)
                 {
                     // Dispose managed resources
+                    url = null;
+                    errorMessage = null;
                     data = null;
                 }
 
@@ -192,41 +203,41 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
         return req;
     }
     public class AwaitableTextureDownload : AwaitableDownload, ITextureDownload
-{
-
-    /// <summary>
-    /// Parameter-less constructor, required for inheritance.
-    /// </summary>
-    protected AwaitableTextureDownload() { }
-
-    /// <summary>
-    /// Default constructor.
-    /// </summary>
-    /// <param name="url">Texture URI to request</param>
-    /// <param name="nonReadable">If true, resulting texture is not CPU readable (uses less memory)</param>
-    public AwaitableTextureDownload(Uri url, bool nonReadable)
     {
-        Init(url, nonReadable);
-    }
 
-    /// <summary>
-    /// Generates the UnityWebRequest used for sending the request.
-    /// </summary>
-    /// <param name="url">Texture URI to request</param>
-    /// <param name="nonReadable">If true, resulting texture is not CPU readable (uses less memory)</param>
-    /// <returns>UnityWebRequest used for sending the request</returns>
-    protected static UnityWebRequest CreateRequest(Uri url, bool nonReadable)
-    {
-        return UnityWebRequestTexture.GetTexture(url, nonReadable);
-    }
+        /// <summary>
+        /// Parameter-less constructor, required for inheritance.
+        /// </summary>
+        protected AwaitableTextureDownload() { }
 
-    void Init(Uri url, bool nonReadable)
-    {
-        m_Request = CreateRequest(url, nonReadable);
-        m_AsyncOperation = m_Request.SendWebRequest();
-    }
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="url">Texture URI to request</param>
+        /// <param name="nonReadable">If true, resulting texture is not CPU readable (uses less memory)</param>
+        public AwaitableTextureDownload(Uri url, bool nonReadable)
+        {
+            Init(url, nonReadable);
+        }
 
-    /// <inheritdoc />
-    public Texture2D Texture => (m_Request?.downloadHandler as DownloadHandlerTexture)?.texture;
-}
+        /// <summary>
+        /// Generates the UnityWebRequest used for sending the request.
+        /// </summary>
+        /// <param name="url">Texture URI to request</param>
+        /// <param name="nonReadable">If true, resulting texture is not CPU readable (uses less memory)</param>
+        /// <returns>UnityWebRequest used for sending the request</returns>
+        protected static UnityWebRequest CreateRequest(Uri url, bool nonReadable)
+        {
+            return UnityWebRequestTexture.GetTexture(url, nonReadable);
+        }
+
+        void Init(Uri url, bool nonReadable)
+        {
+            m_Request = CreateRequest(url, nonReadable);
+            m_AsyncOperation = m_Request.SendWebRequest();
+        }
+
+        /// <inheritdoc />
+        public Texture2D Texture => (m_Request?.downloadHandler as DownloadHandlerTexture)?.texture;
+    }
 }

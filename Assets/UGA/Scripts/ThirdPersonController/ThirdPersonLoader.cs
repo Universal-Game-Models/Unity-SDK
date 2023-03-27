@@ -28,8 +28,9 @@ public class ThirdPersonLoader : UGADownloader
             SetupAvatar(previewCharacter);
         }
     }
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         onSuccess.RemoveListener(OnLoadCompleted);
         onFailure.RemoveListener(OnLoadFailed);
     }

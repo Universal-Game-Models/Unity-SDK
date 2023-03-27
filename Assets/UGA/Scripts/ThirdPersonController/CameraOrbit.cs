@@ -24,6 +24,8 @@ public class CameraOrbit : MonoBehaviour
     private void Start()
     {
         rotation = transform.transform.eulerAngles;
+        yaw = rotation.y;
+        pitch = rotation.x;
     }
 
     private void LateUpdate()
