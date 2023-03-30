@@ -7,7 +7,7 @@ public static class UGAAssetManager
     public static Dictionary<string, AssetBundle> assetBundles = new Dictionary<string, AssetBundle>();
 
     //The base URI used for downloading
-    public const string UGA_URI = "https://assets.unitygameasset.com/assetbundles";
+    public const string UGA_URI = "https://assets.unitygameasset.com/model?fileName=";
 
     private static UgaConfig ugaConfig = null;
 

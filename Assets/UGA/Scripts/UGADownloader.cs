@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 public class UGADownloader : MonoBehaviour
 {
     [SerializeField]
-    protected string url;
+    protected string assetName;
     [SerializeField]
     protected bool loadOnStart = true;
 
@@ -28,7 +28,7 @@ public class UGADownloader : MonoBehaviour
 
     protected virtual void Start()
     {
-        if (loadOnStart && !string.IsNullOrEmpty(url))
+        if (loadOnStart && !string.IsNullOrEmpty(assetName))
         {
             LoadAsset();
         }
@@ -41,8 +41,8 @@ public class UGADownloader : MonoBehaviour
     public async void LoadAsset()
     {
         // Remove any leading or trailing spaces
-        url = url.Trim();
-
+        assetName = assetName.Trim().Replace(" ", "").ToLower();
+        var url = UGAAssetManager.UGA_URI + assetName + ".glb";
         var obj = new GameObject("LoadedAsset");
         obj.transform.SetParent(this.transform);
         obj.transform.localPosition = Vector3.zero;

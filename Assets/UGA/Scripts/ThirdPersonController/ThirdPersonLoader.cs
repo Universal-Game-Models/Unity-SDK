@@ -37,7 +37,7 @@ public class ThirdPersonLoader : UGADownloader
 
     private void OnLoadFailed()
     {
-        Debug.LogError("Failed to load asset from: " + url);
+        Debug.LogError("Failed to load asset from: " + assetName);
     }
 
     private void OnLoadCompleted(GameObject targetAvatar)
