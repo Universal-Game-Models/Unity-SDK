@@ -1,5 +1,8 @@
 using GLTFast.Loading;
+using NaughtyAttributes;
 using System;
+using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -88,28 +91,80 @@ public class UGADownloader : MonoBehaviour
             }
         }
     }
+    [Button]
+    public void ClearCache()
+    {
+        UGAAssetManager.ClearCache();
+    }
 }
 
 class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
 {
     public async Task<IDownload> Request(Uri url)
     {
-        using (var httpClient = new HttpClient())
+        if(!Directory.Exists(Path.Combine(Application.persistentDataPath, "UGA")))
         {
-            httpClient.DefaultRequestHeaders.Add("x-api-key", UGAAssetManager.GetConfig().apiKey);
-            var response = await httpClient.GetAsync(url);
+            Directory.CreateDirectory(Path.Combine(Application.persistentDataPath, "UGA"));
+        }
+        string cachePath = Path.Combine(Application.persistentDataPath, "UGA", url.ToString().GetHashCode().ToString());
+        byte[] bytes;
 
-            if (response.IsSuccessStatusCode)
+        if (File.Exists(cachePath))
+        {
+            bytes = File.ReadAllBytes(cachePath);
+            using (var httpClient = new HttpClient())
             {
-                var bytes = await response.Content.ReadAsByteArrayAsync();
-                return new Download(url.ToString(), bytes);
-            }
-            else
-            {
-                return new Download(url.ToString(), null, $"HTTP error {response.StatusCode}");
+                httpClient.DefaultRequestHeaders.Add("x-api-key", UGAAssetManager.GetConfig().apiKey);
+                httpClient.DefaultRequestHeaders.IfModifiedSince = File.GetLastWriteTimeUtc(cachePath);
+
+                var response = await httpClient.GetAsync(url);
+
+                if (response.StatusCode == HttpStatusCode.NotModified)
+                {
+                    return new Download(url.ToString(), bytes);
+                }
+                else if (response.IsSuccessStatusCode)
+                {
+                    bytes = await response.Content.ReadAsByteArrayAsync();
+
+                    using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
+                    {
+                        await fileStream.WriteAsync(bytes);
+                    }
+                }
+                else
+                {
+                    return new Download(url.ToString(), null, $"HTTP error {response.StatusCode}");
+                }
             }
         }
+        else
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("x-api-key", UGAAssetManager.GetConfig().apiKey);
+
+                var response = await httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    bytes = await response.Content.ReadAsByteArrayAsync();
+
+                    using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
+                    {
+                        await fileStream.WriteAsync(bytes);
+                    }
+                }
+                else
+                {
+                    return new Download(url.ToString(), null, $"HTTP error {response.StatusCode}");
+                }
+            }
+        }
+
+        return new Download(url.ToString(), bytes);
     }
+
     public class Download : IDownload
     {
         private string url;

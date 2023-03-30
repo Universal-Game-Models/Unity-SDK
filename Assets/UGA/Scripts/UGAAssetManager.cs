@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public static class UGAAssetManager
@@ -43,5 +44,21 @@ public static class UGAAssetManager
             ugaConfig = Resources.Load<UgaConfig>("UGA-Config");
         }
         return ugaConfig;
+    }
+
+    public static void ClearCache()
+    {
+        string cacheDirectory = Path.Combine(Application.persistentDataPath, "UGA");
+
+        if (Directory.Exists(cacheDirectory))
+        {
+            DirectoryInfo directory = new DirectoryInfo(cacheDirectory);
+
+            foreach (FileInfo file in directory.GetFiles())
+            {
+                file.Delete();
+            }
+        }
+        Debug.Log("Cleared UGA cache folder");
     }
 }
