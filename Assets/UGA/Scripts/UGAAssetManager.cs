@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -60,5 +61,23 @@ public static class UGAAssetManager
             }
         }
         Debug.Log("Cleared UGA cache folder");
+    }
+    public static void ClearCacheByAccessDate(DateTime cutoffDate)
+    {
+        string cacheDirectory = Path.Combine(Application.persistentDataPath, "UGA");
+
+        if (Directory.Exists(cacheDirectory))
+        {
+            DirectoryInfo directory = new DirectoryInfo(cacheDirectory);
+
+            foreach (FileInfo file in directory.GetFiles())
+            {
+                if (file.LastAccessTime < cutoffDate)
+                {
+                    file.Delete();
+                }
+            }
+        }
+        Debug.Log($"Cleared UGA cache folder of files last accessed before {cutoffDate}");
     }
 }

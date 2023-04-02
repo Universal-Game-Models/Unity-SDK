@@ -4,7 +4,7 @@ using UnityEngine;
 public class HumanoidToolLoader : UGADownloader
 {
     public HumanBodyBones humanoidBone;
-
+    private Animator anim;
     private void Awake()
     {
         onSuccess.AddListener(OnLoadCompleted);
@@ -68,22 +68,40 @@ public class HumanoidToolLoader : UGADownloader
         {
             toolGO.transform.localRotation = Quaternion.Euler(0, 0, -90);
             toolGO.transform.localPosition = new Vector3(0, 0.05f, 0.04f);
+            if (anim) {
+                anim.SetInteger("LeftItem", 0);
+            }
         }
         if (humanoidBone == HumanBodyBones.RightHand)
         {
             toolGO.transform.localRotation = Quaternion.Euler(0, 0, 90);
             toolGO.transform.localPosition = new Vector3(0, 0.05f, 0.04f);
+            if (anim)
+            {
+                anim.SetInteger("RightItem", 0);
+            }
         }
     }
     private Transform GetHumanoidBone(HumanBodyBones bone)
     {
+        //Check my parent for Animator
+        if (transform.parent.TryGetComponent(out anim))
+        {
+            var parentBone = anim.GetBoneTransform(bone);
+            if (parentBone != null)
+            {
+                return (parentBone);
+            }
+
+        }
         var siblingCount = transform.parent.childCount;
+        //Check my siblings for an Animator
         for (int i = 0; i < siblingCount; i++)
         {
             //Don't check yourself for the animator
             if(i != transform.GetSiblingIndex())
             {
-                if(transform.parent.GetChild(i).TryGetComponent(out Animator anim))
+                if(transform.parent.GetChild(i).TryGetComponent(out anim))
                 {
                     var parentBone = anim.GetBoneTransform(bone);
                     if (parentBone != null)
@@ -100,6 +118,11 @@ public class HumanoidToolLoader : UGADownloader
 
     protected override void OnDestroy()
     {
+        if (anim)
+        {
+            anim.SetInteger("LeftItem", -1);
+            anim.SetInteger("RightItem", -1);
+        }
         base.OnDestroy();
         onSuccess.RemoveListener(OnLoadCompleted);
         onFailure.RemoveListener(OnLoadFailed);

@@ -2,15 +2,12 @@ using UnityEngine;
 
 public class ThirdPersonLoader : UGADownloader
 {
-    private readonly Vector3 avatarPositionOffset = new Vector3(0, -0.08f, 0);
-
     private GameObject avatar;
     [SerializeField]
     [Tooltip("Animator to use on loaded avatar")]
     private RuntimeAnimatorController animatorController;
     [SerializeField]
-    private Avatar runtimeAvatar;
-
+    private Vector3 avatarPositionOffset = new Vector3(0, 0, 0);
     [SerializeField]
     [Tooltip("Preview avatar to display until avatar loads. Will be destroyed after new avatar is loaded")]
     private GameObject previewCharacter;
@@ -66,7 +63,7 @@ public class ThirdPersonLoader : UGADownloader
         var controller = GetComponent<ThirdPersonController>();
         if (controller != null)
         {
-            controller.Setup(avatar, animatorController, runtimeAvatar);
+            controller.Setup(avatar, animatorController);
         }
     }
 }
