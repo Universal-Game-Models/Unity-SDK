@@ -3,6 +3,10 @@ using UnityEngine;
 public class ThirdPersonLoader : UGADownloader
 {
     private GameObject avatar;
+
+    [SerializeField]
+    [Tooltip("Preview avatar to display until avatar loads. Will be destroyed after new avatar is loaded")]
+    private GameObject previewCharacter;
     [SerializeField]
     [Tooltip("Animator Controller to use on loaded character")]
     private RuntimeAnimatorController animatorController;
@@ -10,16 +14,22 @@ public class ThirdPersonLoader : UGADownloader
     [Tooltip("Animator Avatar to use on loaded character")]
     private Avatar animatorAvatar;
     [SerializeField]
-    private Vector3 avatarPositionOffset = new Vector3(0, -0.04f, 0);
+    [Tooltip("Animator use apply root motion")]
+    private bool applyRootMotion;
     [SerializeField]
-    [Tooltip("Preview avatar to display until avatar loads. Will be destroyed after new avatar is loaded")]
-    private GameObject previewCharacter;
+    [Tooltip("Animator update mode")]
+    private AnimatorUpdateMode updateMode;
+    [SerializeField]
+    [Tooltip("Animator culling mode")]
+    private AnimatorCullingMode cullingMode;
+
+    private Animator animator;
 
     private void Awake()
     {
-        onSuccess.AddListener(OnLoadCompleted);
-        onFailure.AddListener(OnLoadFailed);
+        animator = GetComponent<Animator>();
     }
+
     protected override void Start()
     {
         base.Start();
@@ -31,17 +41,17 @@ public class ThirdPersonLoader : UGADownloader
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        onSuccess.RemoveListener(OnLoadCompleted);
-        onFailure.RemoveListener(OnLoadFailed);
     }
 
-    private void OnLoadFailed()
+    protected override void OnFailure()
     {
+        base.OnFailure();
         Debug.LogError("Failed to load asset from: " + assetName);
     }
 
-    private void OnLoadCompleted(GameObject targetAvatar)
+    protected override void OnSuccess(GameObject targetAvatar)
     {
+        base.OnSuccess(targetAvatar);
         if (previewCharacter != null)
         {
             Destroy(previewCharacter);
@@ -58,15 +68,35 @@ public class ThirdPersonLoader : UGADownloader
         }
 
         avatar = targetAvatar;
-        // Re-parent and reset transforms
-        avatar.transform.parent = transform;
-        avatar.transform.localPosition = avatarPositionOffset;
-        avatar.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        SetupAnimator();
 
         var controller = GetComponent<ThirdPersonController>();
         if (controller != null)
         {
-            controller.Setup(avatar, animatorController, animatorAvatar);
+            controller.Setup(avatar);
         }
+    }
+
+    private void SetupAnimator()
+    {
+        //Remove old animator as it doesn't point to the character
+        if (animator != null)
+        {
+            //Get the existing settings
+            animatorController = animator.runtimeAnimatorController;
+            animatorAvatar = animator.avatar;
+            applyRootMotion = animator.applyRootMotion;
+            updateMode = animator.updateMode;
+            cullingMode = animator.cullingMode;
+            DestroyImmediate(animator);
+        }
+        //Add new animator that points to the new character
+        animator = avatar.AddComponent<Animator>();
+        animator.runtimeAnimatorController = animatorController;
+        animator.avatar = animatorAvatar; //AvatarCreator.CreateAvatar(animator);
+        animator.applyRootMotion = applyRootMotion;
+        animator.updateMode = updateMode;
+        animator.cullingMode = cullingMode;
+        animator.enabled = true;
     }
 }

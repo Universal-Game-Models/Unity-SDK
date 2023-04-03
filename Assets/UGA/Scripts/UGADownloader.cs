@@ -29,6 +29,15 @@ public class UGADownloader : MonoBehaviour
 
     private GLTFast.GltfAsset asset;
 
+    protected virtual void OnSuccess(GameObject loadedGO) 
+    {
+        onSuccess.Invoke(loadedGO);
+    }
+    protected virtual void OnFailure()
+    {
+        onFailure.Invoke();
+    }
+
     protected virtual void Start()
     {
         if (loadOnStart && !string.IsNullOrEmpty(assetName))
@@ -57,12 +66,12 @@ public class UGADownloader : MonoBehaviour
         if (didLoad)
         {
             if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
-            onSuccess?.Invoke(asset.gameObject);
+            OnSuccess(asset.gameObject);
         }
         else
         {
             if(asset != null ? asset.gameObject : null != null) Destroy(asset.gameObject);
-            onFailure?.Invoke();
+            OnFailure();
         }
     }
 
