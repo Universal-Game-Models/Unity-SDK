@@ -120,10 +120,10 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
             bytes = File.ReadAllBytes(cachePath);
             using (var httpClient = new HttpClient())
             {
-                httpClient.DefaultRequestHeaders.Add("x-api-key", UGAAssetManager.GetConfig().apiKey);
                 httpClient.DefaultRequestHeaders.IfModifiedSince = File.GetLastWriteTimeUtc(cachePath);
 
-                var response = await httpClient.GetAsync(url);
+                var request = new HttpRequestMessage(HttpMethod.Head, url);
+                var response = await httpClient.SendAsync(request);
 
                 if (response.StatusCode == HttpStatusCode.NotModified)
                 {
@@ -131,7 +131,7 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
                 }
                 else if (response.IsSuccessStatusCode)
                 {
-                    bytes = await response.Content.ReadAsByteArrayAsync();
+                    bytes = await httpClient.GetByteArrayAsync(url);
 
                     using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
                     {
