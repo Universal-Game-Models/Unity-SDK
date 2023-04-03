@@ -2,24 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations;
 
 public static class AvatarCreator
 {
+    // For some reason the avatar created with this tool does not have working hands
+    // The fingers seem to be disconnected from the rig and won't animate even though those bones are found and set
+    // Otherwise this can import RPM characters and create avatars at runtime
     public static Avatar CreateAvatar(Animator anim)
     {
         var bones = new List<HumanBone>();
         var skeleton = new List<SkeletonBone>();
         // Find all the bone transforms in the children of the game object
-        var allTransforms = anim.transform.GetComponentsInChildren<Transform>(true);
+        var allTransforms = anim.transform.GetChild(0).GetComponentsInChildren<Transform>(true);
         foreach (var childTransform in allTransforms)
         {
             var humanBoneName = GetHumanBoneName(childTransform.name);
             //Human bones
             if (humanBoneName != null)
             {
-                Debug.Log("HUMAN BONE: " + humanBoneName);
+                Debug.Log("HUMAN BONE: " + humanBoneName + " Transform: " + childTransform.name);
                 var humanBone = new HumanBone();
                 humanBone.humanName = humanBoneName;
                 humanBone.boneName = childTransform.name;
@@ -30,7 +34,7 @@ public static class AvatarCreator
                 skeletonBone.name = childTransform.name;
                 skeletonBone.position = childTransform.localPosition;
                 skeletonBone.rotation = childTransform.localRotation;
-                skeletonBone.scale = childTransform.localScale;
+                skeletonBone.scale = childTransform.lossyScale;
                 skeleton.Add(skeletonBone);
             }
             //Other Bones
@@ -40,7 +44,7 @@ public static class AvatarCreator
                 sb.name = childTransform.name;
                 sb.position = childTransform.localPosition;
                 sb.rotation = childTransform.localRotation;
-                sb.scale = childTransform.localScale;
+                sb.scale = childTransform.lossyScale;
                 skeleton.Add(sb);
             }
         }
@@ -56,9 +60,18 @@ public static class AvatarCreator
         humanDescription.upperLegTwist = 0.5f;
         humanDescription.lowerLegTwist = 0.5f;
         humanDescription.feetSpacing = 0.0f;
-
-        // Build the avatar and return it
-        return AvatarBuilder.BuildHumanAvatar(anim.gameObject, humanDescription);
+        // Build the avatar and return it if valid and human
+        Avatar a = AvatarBuilder.BuildHumanAvatar(anim.gameObject, humanDescription);
+        if (a.isValid && a.isHuman)
+        {
+            // Save the avatar to a file to debug
+            //string assetPath = "Assets/MyAvatar.asset";
+            //AssetDatabase.CreateAsset(a, assetPath);
+            //AssetDatabase.SaveAssets();
+            //AssetDatabase.Refresh();
+            return a;
+        }
+        return null;
     }
 
     private static string GetHumanBoneName(string value)

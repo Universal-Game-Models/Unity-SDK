@@ -153,7 +153,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: bea63b6083163f247878bb28fe8da8be, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -216,6 +216,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   humanoidBone: 18
+  positionOffset: {x: -0.03, y: 0.08, z: 0.04}
+  rotationOffset: {x: 0, y: 0, z: 90}
 --- !u!4 &252411235
 Transform:
   m_ObjectHideFlags: 0
@@ -351,6 +353,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   humanoidBone: 17
+  positionOffset: {x: 0.03, y: 0.08, z: 0.04}
+  rotationOffset: {x: 0, y: 0, z: -90}
 --- !u!4 &635896134
 Transform:
   m_ObjectHideFlags: 0
@@ -450,7 +454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcd3a2a3a4803724185a95fcbb555d55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetName: Dragon Man
+  assetName: Woman Test
   loadOnStart: 1
   addBoxColliders: 0
   addMeshColliders: 0
@@ -485,7 +489,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   animatorController: {fileID: 9100000, guid: bea63b6083163f247878bb28fe8da8be, type: 2}
-  avatarPositionOffset: {x: 0, y: -0.01, z: 0}
+  animatorAvatar: {fileID: 9000000, guid: 0540ef78e6f1b8343b3fc510e9d6f9e2, type: 2}
+  avatarPositionOffset: {x: 0, y: -0.04, z: 0}
   previewCharacter: {fileID: 0}
 --- !u!114 &1161909499
 MonoBehaviour:

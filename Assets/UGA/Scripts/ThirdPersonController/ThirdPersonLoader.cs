@@ -4,10 +4,13 @@ public class ThirdPersonLoader : UGADownloader
 {
     private GameObject avatar;
     [SerializeField]
-    [Tooltip("Animator to use on loaded avatar")]
+    [Tooltip("Animator Controller to use on loaded character")]
     private RuntimeAnimatorController animatorController;
     [SerializeField]
-    private Vector3 avatarPositionOffset = new Vector3(0, 0, 0);
+    [Tooltip("Animator Avatar to use on loaded character")]
+    private Avatar animatorAvatar;
+    [SerializeField]
+    private Vector3 avatarPositionOffset = new Vector3(0, -0.04f, 0);
     [SerializeField]
     [Tooltip("Preview avatar to display until avatar loads. Will be destroyed after new avatar is loaded")]
     private GameObject previewCharacter;
@@ -63,7 +66,7 @@ public class ThirdPersonLoader : UGADownloader
         var controller = GetComponent<ThirdPersonController>();
         if (controller != null)
         {
-            controller.Setup(avatar, animatorController);
+            controller.Setup(avatar, animatorController, animatorAvatar);
         }
     }
 }

@@ -4,6 +4,11 @@ using UnityEngine;
 public class HumanoidToolLoader : UGADownloader
 {
     public HumanBodyBones humanoidBone;
+    [SerializeField]
+    public Vector3 positionOffset = new Vector3(0.03f, 0.08f, 0.04f);
+    [SerializeField]
+    private Vector3 rotationOffset = new Vector3(0, 0, -90);
+
     private Animator anim;
     private void Awake()
     {
@@ -61,25 +66,16 @@ public class HumanoidToolLoader : UGADownloader
     {
         Transform parent = GetHumanoidBone(humanoidBone);
         toolGO.transform.SetParent(parent);
-        toolGO.transform.localPosition = Vector3.zero;
-        toolGO.transform.localRotation = Quaternion.identity;
+        toolGO.transform.localPosition = positionOffset;
+        toolGO.transform.localRotation = Quaternion.Euler(rotationOffset);
         //Fix for hand rotation and position, comment or customize if not needed
-        if(humanoidBone == HumanBodyBones.LeftHand)
+        if(anim && humanoidBone == HumanBodyBones.LeftHand)
         {
-            toolGO.transform.localRotation = Quaternion.Euler(0, 0, -90);
-            toolGO.transform.localPosition = new Vector3(0, 0.05f, 0.04f);
-            if (anim) {
-                anim.SetInteger("LeftItem", 0);
-            }
+            anim.SetInteger("LeftItem", 0);
         }
-        if (humanoidBone == HumanBodyBones.RightHand)
+        if (anim && humanoidBone == HumanBodyBones.RightHand)
         {
-            toolGO.transform.localRotation = Quaternion.Euler(0, 0, 90);
-            toolGO.transform.localPosition = new Vector3(0, 0.05f, 0.04f);
-            if (anim)
-            {
-                anim.SetInteger("RightItem", 0);
-            }
+            anim.SetInteger("RightItem", 0);
         }
     }
     private Transform GetHumanoidBone(HumanBodyBones bone)

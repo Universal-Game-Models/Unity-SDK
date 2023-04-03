@@ -32,7 +32,7 @@ public class ThirdPersonController : MonoBehaviour
         isInitialized = true;
     }
 
-    public void Setup(GameObject target, RuntimeAnimatorController runtimeAnimatorController)
+    public void Setup(GameObject target, RuntimeAnimatorController runtimeAnimatorController, Avatar runtimeAvatar)
     {
         if (!isInitialized)
         {
@@ -46,8 +46,8 @@ public class ThirdPersonController : MonoBehaviour
             animator = avatar.AddComponent<Animator>();
         }
         animator.runtimeAnimatorController = runtimeAnimatorController;
-        animator.avatar = AvatarCreator.CreateAvatar(animator);
-        animator.applyRootMotion = false;
+        animator.avatar = runtimeAvatar; //AvatarCreator.CreateAvatar(animator);
+        animator.applyRootMotion = true;
         animator.enabled = true;
     }
         
