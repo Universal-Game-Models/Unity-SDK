@@ -47,7 +47,7 @@ public class ThirdPersonController : MonoBehaviour
         }
         animator.runtimeAnimatorController = runtimeAnimatorController;
         animator.avatar = runtimeAvatar; //AvatarCreator.CreateAvatar(animator);
-        animator.applyRootMotion = true;
+        animator.applyRootMotion = false;
         animator.enabled = true;
     }
         
