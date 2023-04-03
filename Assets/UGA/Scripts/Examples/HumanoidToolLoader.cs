@@ -10,11 +10,6 @@ public class HumanoidToolLoader : UGADownloader
     private Vector3 rotationOffset = new Vector3(0, 0, -90);
 
     private Animator anim;
-    private void Awake()
-    {
-        onSuccess.AddListener(OnLoadCompleted);
-        onFailure.AddListener(OnLoadFailed);
-    }
 
     // Start is called before the first frame update
     protected override void Start()
@@ -58,12 +53,13 @@ public class HumanoidToolLoader : UGADownloader
         }
     }
     */
-    private void OnLoadFailed()
+    protected override void OnFailure()
     {
-
+        base.OnFailure();
     }
-    private void OnLoadCompleted(GameObject toolGO)
+    protected override void OnSuccess(GameObject toolGO)
     {
+        base.OnSuccess(toolGO);
         Transform parent = GetHumanoidBone(humanoidBone);
         toolGO.transform.SetParent(parent);
         toolGO.transform.localPosition = positionOffset;
@@ -120,7 +116,5 @@ public class HumanoidToolLoader : UGADownloader
             anim.SetInteger("RightItem", -1);
         }
         base.OnDestroy();
-        onSuccess.RemoveListener(OnLoadCompleted);
-        onFailure.RemoveListener(OnLoadFailed);
     }
 }
