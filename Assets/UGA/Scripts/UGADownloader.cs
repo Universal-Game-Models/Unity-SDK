@@ -46,13 +46,10 @@ public class UGADownloader : MonoBehaviour
         // Remove any leading or trailing spaces
         assetName = assetName.Trim().Replace(" ", "").ToLower();
         var url = UGAAssetManager.UGA_URI + assetName + ".glb";
-        var obj = new GameObject("LoadedAsset");
-        obj.transform.SetParent(this.transform);
-        obj.transform.localPosition = Vector3.zero;
-        obj.transform.localRotation = Quaternion.identity;
+ 
         if (asset == null)
         {
-            asset = obj.AddComponent<GLTFast.GltfAsset>();
+            asset = gameObject.AddComponent<GLTFast.GltfAsset>();
         }
         asset.InstantiationSettings = new GLTFast.InstantiationSettings() { Mask = GLTFast.ComponentType.Animation | GLTFast.ComponentType.Mesh };
         // Load the asset

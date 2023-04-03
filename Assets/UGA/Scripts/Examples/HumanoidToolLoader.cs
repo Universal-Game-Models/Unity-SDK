@@ -4,7 +4,12 @@ using UnityEngine;
 public class HumanoidToolLoader : UGADownloader
 {
     public HumanBodyBones humanoidBone;
+    [SerializeField]
+    public Vector3 positionOffset = new Vector3(0.03f, 0.08f, 0.04f);
+    [SerializeField]
+    private Vector3 rotationOffset = new Vector3(0, 0, -90);
 
+    private Animator anim;
     private void Awake()
     {
         onSuccess.AddListener(OnLoadCompleted);
@@ -61,29 +66,38 @@ public class HumanoidToolLoader : UGADownloader
     {
         Transform parent = GetHumanoidBone(humanoidBone);
         toolGO.transform.SetParent(parent);
-        toolGO.transform.localPosition = Vector3.zero;
-        toolGO.transform.localRotation = Quaternion.identity;
+        toolGO.transform.localPosition = positionOffset;
+        toolGO.transform.localRotation = Quaternion.Euler(rotationOffset);
         //Fix for hand rotation and position, comment or customize if not needed
-        if(humanoidBone == HumanBodyBones.LeftHand)
+        if(anim && humanoidBone == HumanBodyBones.LeftHand)
         {
-            toolGO.transform.localRotation = Quaternion.Euler(0, 0, -90);
-            toolGO.transform.localPosition = new Vector3(0, 0.05f, 0.04f);
+            anim.SetInteger("LeftItem", 0);
         }
-        if (humanoidBone == HumanBodyBones.RightHand)
+        if (anim && humanoidBone == HumanBodyBones.RightHand)
         {
-            toolGO.transform.localRotation = Quaternion.Euler(0, 0, 90);
-            toolGO.transform.localPosition = new Vector3(0, 0.05f, 0.04f);
+            anim.SetInteger("RightItem", 0);
         }
     }
     private Transform GetHumanoidBone(HumanBodyBones bone)
     {
+        //Check my parent for Animator
+        if (transform.parent.TryGetComponent(out anim))
+        {
+            var parentBone = anim.GetBoneTransform(bone);
+            if (parentBone != null)
+            {
+                return (parentBone);
+            }
+
+        }
         var siblingCount = transform.parent.childCount;
+        //Check my siblings for an Animator
         for (int i = 0; i < siblingCount; i++)
         {
             //Don't check yourself for the animator
             if(i != transform.GetSiblingIndex())
             {
-                if(transform.parent.GetChild(i).TryGetComponent(out Animator anim))
+                if(transform.parent.GetChild(i).TryGetComponent(out anim))
                 {
                     var parentBone = anim.GetBoneTransform(bone);
                     if (parentBone != null)
@@ -100,6 +114,11 @@ public class HumanoidToolLoader : UGADownloader
 
     protected override void OnDestroy()
     {
+        if (anim)
+        {
+            anim.SetInteger("LeftItem", -1);
+            anim.SetInteger("RightItem", -1);
+        }
         base.OnDestroy();
         onSuccess.RemoveListener(OnLoadCompleted);
         onFailure.RemoveListener(OnLoadFailed);
