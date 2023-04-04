@@ -131,6 +131,7 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
                 }
                 else if (response.IsSuccessStatusCode)
                 {
+                    httpClient.DefaultRequestHeaders.Add("x-api-key", UGAAssetManager.GetConfig().apiKey);
                     bytes = await httpClient.GetByteArrayAsync(url);
 
                     using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
