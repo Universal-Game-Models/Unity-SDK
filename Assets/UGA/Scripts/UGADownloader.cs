@@ -83,8 +83,20 @@ public class UGADownloader : MonoBehaviour
             foreach (var meshFilter in meshFilters)
             {
                 var boxCol = meshFilter.gameObject.AddComponent<BoxCollider>();
-                boxCol.center = meshFilter.mesh.bounds.center;
-                boxCol.size = meshFilter.mesh.bounds.size;
+                //boxCol.center = meshFilter.mesh.bounds.center;
+                //boxCol.size = meshFilter.mesh.bounds.size;
+            }
+            //Only add box colliders to skinned meshes as they are expected to be animated
+            //Could add an optional bone capsule colliders that could be used for specific use-cases
+            var skinnedMeshes = asset.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+            foreach (var skinnedMesh in skinnedMeshes)
+            {
+                var boxCol = skinnedMesh.gameObject.AddComponent<BoxCollider>();
+                // Convert the bounding box center to local space
+                Vector3 center = skinnedMesh.transform.InverseTransformPoint(skinnedMesh.bounds.center);
+                boxCol.center = center;
+                // Calculate the scale factor needed to match the lossyScale
+                boxCol.size = Vector3.Scale(boxCol.size, skinnedMesh.transform.lossyScale);
             }
         }
         else if (addMeshColliders)
