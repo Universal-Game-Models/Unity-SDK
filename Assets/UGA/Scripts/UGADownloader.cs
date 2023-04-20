@@ -52,8 +52,6 @@ public class UGADownloader : MonoBehaviour
 
     public async void LoadAsset()
     {
-        // Remove any leading or trailing spaces
-        assetName = assetName.Trim().Replace(" ", "").ToLower();
         var url = UGAAssetManager.UGA_URI + assetName + ".glb";
  
         if (asset == null)
