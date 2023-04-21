@@ -16,50 +16,13 @@ public class HumanoidToolLoader : UGADownloader
     {
         base.Start();
     }
-    public void Load(string assetName)
+    protected override void OnModelFailure()
     {
-        this.assetName = assetName;
-        LoadAsset();
+        base.OnModelFailure();
     }
-    /*protected override IEnumerator SpawnAsync()
+    protected override void OnModelSuccess(GameObject toolGO)
     {
-        yield return base.SpawnAsync();
-        yield return GetAssetBundle();
-        if (ab == null)
-        {
-            FailureEvent.Invoke("The asset bundle was null");
-            yield break;
-        }
-        AssetBundleRequest abr = ab.LoadAllAssetsAsync<GameObject>();
-        yield return abr;
-        if (abr.isDone == false)
-        {
-            FailureEvent.Invoke("There asset bundle failed to load");
-        }
-        else
-        {
-            Transform parent = GetHumanoidHand(humanoidBone);
-            instantiatedObject = Instantiate((GameObject)abr.asset, parent);
-            //Fix for right hand rotation and position, comment out if not needed
-            if (humanoidBone == HumanBodyBones.RightHand)
-            {
-                var rot = instantiatedObject.transform.localEulerAngles;
-                instantiatedObject.transform.localRotation = Quaternion.Euler(rot.x, rot.y, -rot.z);
-
-                var pos = instantiatedObject.transform.localPosition;
-                instantiatedObject.transform.localPosition = new Vector3(-pos.x, -pos.y, pos.z);
-            }
-            SuccessEvent.Invoke(instantiatedObject);
-        }
-    }
-    */
-    protected override void OnFailure()
-    {
-        base.OnFailure();
-    }
-    protected override void OnSuccess(GameObject toolGO)
-    {
-        base.OnSuccess(toolGO);
+        base.OnModelSuccess(toolGO);
         Transform parent = GetHumanoidBone(humanoidBone);
         toolGO.transform.SetParent(parent);
         toolGO.transform.localPosition = positionOffset;

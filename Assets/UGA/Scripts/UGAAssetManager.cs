@@ -9,7 +9,8 @@ public static class UGAAssetManager
     public static Dictionary<string, AssetBundle> assetBundles = new Dictionary<string, AssetBundle>();
 
     //The base URI used for downloading
-    public const string UGA_URI = "https://assets.unitygameasset.com/models/";
+    public const string MODEL_URI = "https://assets.unitygameasset.com/models/";
+    public const string METADATA_URI = "https://assets.unitygameasset.com/metadata/";
 
     private static UgaConfig ugaConfig = null;
 
@@ -79,5 +80,17 @@ public static class UGAAssetManager
             }
         }
         Debug.Log($"Cleared UGA cache folder of files last accessed before {cutoffDate}");
+    }
+    public class Metadata
+    {
+        public string name;
+        public string description;
+        public string image;
+        public Attribute[] attributes;
+    }
+    public class Attribute
+    {
+        public string trait_type;
+        public object value;
     }
 }

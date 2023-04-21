@@ -43,15 +43,15 @@ public class ThirdPersonLoader : UGADownloader
         base.OnDestroy();
     }
 
-    protected override void OnFailure()
+    protected override void OnModelFailure()
     {
-        base.OnFailure();
+        base.OnModelFailure();
         Debug.LogError("Failed to load asset from: " + assetName);
     }
 
-    protected override void OnSuccess(GameObject targetAvatar)
+    protected override void OnModelSuccess(GameObject targetAvatar)
     {
-        base.OnSuccess(targetAvatar);
+        base.OnModelSuccess(targetAvatar);
         if (previewCharacter != null)
         {
             Destroy(previewCharacter);

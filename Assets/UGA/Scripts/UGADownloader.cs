@@ -1,6 +1,8 @@
 using GLTFast.Loading;
 using NaughtyAttributes;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -9,33 +11,73 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
+using static UGAAssetManager;
 
 public class UGADownloader : MonoBehaviour
 {
     [SerializeField]
     protected string assetName;
+
+    #region Options
     [SerializeField]
     protected bool loadOnStart = true;
-
     [SerializeField]
     protected bool addBoxColliders = false;
     [SerializeField]
     protected bool addMeshColliders = false;
-
     [SerializeField]
-    protected UnityEvent<GameObject> onSuccess = new UnityEvent<GameObject>();
+    protected bool loadModel = true;
     [SerializeField]
-    protected UnityEvent onFailure = new UnityEvent();
+    protected bool loadMetadata = true;
+    [SerializeField]
+    protected bool loadImage = true;
+    #endregion
 
+    #region Events
+    [SerializeField] [Foldout("Events")]
+    protected UnityEvent<GameObject> onModelSuccess = new UnityEvent<GameObject>();
+    [SerializeField] [Foldout("Events")]
+    protected UnityEvent onModelFailure = new UnityEvent();
+    [SerializeField] [Foldout("Events")]
+    protected UnityEvent<Metadata> onMetadataSuccess = new UnityEvent<Metadata>();
+    [SerializeField] [Foldout("Events")]
+    protected UnityEvent onMetadataFailure = new UnityEvent();
+    [SerializeField] [Foldout("Events")] 
+    protected UnityEvent<Texture2D> onImageSuccess = new UnityEvent<Texture2D>();
+    [SerializeField] [Foldout("Events")] 
+    protected UnityEvent onImageFailure = new UnityEvent();
+    #endregion
+
+    #region Data
     private GLTFast.GltfAsset asset;
+    private Metadata metadata;
+    private Texture2D image;
+    #endregion
 
-    protected virtual void OnSuccess(GameObject loadedGO) 
+    #region Virtual Functions
+    protected virtual void OnModelSuccess(GameObject loadedGO) 
     {
-        onSuccess.Invoke(loadedGO);
+        onModelSuccess.Invoke(loadedGO);
     }
-    protected virtual void OnFailure()
+    protected virtual void OnModelFailure()
     {
-        onFailure.Invoke();
+        onModelFailure.Invoke();
+    }
+    protected virtual void OnMetadataSuccess(Metadata metadata)
+    {
+        onMetadataSuccess.Invoke(metadata);
+    }
+    protected virtual void OnMetadataFailure()
+    {
+        onMetadataFailure.Invoke();
+    }
+    protected virtual void OnImageSuccess(Texture2D image)
+    {
+        onImageSuccess.Invoke(image);
+    }
+    protected virtual void OnImageFailure()
+    {
+        onImageFailure.Invoke();
     }
 
     protected virtual void Start()
@@ -49,11 +91,69 @@ public class UGADownloader : MonoBehaviour
     {
 
     }
+    #endregion
 
-    public async void LoadAsset()
+    #region Public Getters
+    public Metadata Metadata { get => metadata; }
+    public Texture2D Image { get => image; }
+    #endregion
+
+    public void Load(string assetName)
     {
-        var url = UGAAssetManager.UGA_URI + assetName + ".glb";
- 
+        this.assetName = assetName;
+        LoadAsset();
+    }
+    protected async void LoadAsset()
+    {
+        if (loadModel)
+        {
+            //Load the model
+            var modelUrl = UGAAssetManager.MODEL_URI + assetName + ".glb";
+            bool didLoad = await DownloadModelAsync(modelUrl);
+            if (didLoad)
+            {
+                if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
+                OnModelSuccess(asset.gameObject);
+            }
+            else
+            {
+                if (asset != null ? asset.gameObject : null != null) Destroy(asset.gameObject);
+                OnModelFailure();
+            }
+        }
+        if (loadMetadata)
+        {
+            //Load Metadata
+            var metadataUrl = UGAAssetManager.METADATA_URI + assetName + ".json";
+            metadata = await DownloadMetadataAsync(metadataUrl);
+            if (metadata != null)
+            {
+                OnMetadataSuccess(metadata);
+                if (loadImage)
+                {
+                    //Load Image
+                    var imageUrl = metadata.image;
+                    image = await DownloadImageAsync(imageUrl);
+                    if (image != null)
+                    {
+                        OnImageSuccess(image);
+                    }
+                    else
+                    {
+                        OnImageFailure();
+                    }
+                }
+            }
+            else
+            {
+                OnMetadataFailure();
+            }
+        }
+    }
+
+    #region Private Functions
+    private async Task<bool> DownloadModelAsync(string url)
+    {
         if (asset == null)
         {
             asset = gameObject.AddComponent<GLTFast.GltfAsset>();
@@ -61,18 +161,51 @@ public class UGADownloader : MonoBehaviour
         asset.InstantiationSettings = new GLTFast.InstantiationSettings() { Mask = GLTFast.ComponentType.Animation | GLTFast.ComponentType.Mesh };
         // Load the asset
         var didLoad = await asset.Load(url, new UgaDownloadProvider());
-        if (didLoad)
+        return didLoad;
+    }
+    private static async Task<Metadata> DownloadMetadataAsync(string url)
+    {
+        using (var httpClient = new HttpClient())
         {
-            if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
-            OnSuccess(asset.gameObject);
-        }
-        else
-        {
-            if(asset != null ? asset.gameObject : null != null) Destroy(asset.gameObject);
-            OnFailure();
+            var response = await httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    return JsonConvert.DeserializeObject<Metadata>(jsonString);
+                }
+                catch(Exception e)
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                throw new HttpRequestException($"HTTP error {response.StatusCode}");
+            }
         }
     }
+    private async Task<Texture2D> DownloadImageAsync(string url)
+    {
+        using (var httpClient = new HttpClient())
+        {
+            var response = await httpClient.GetAsync(url);
 
+            if (!response.IsSuccessStatusCode)
+            {
+                Debug.LogError($"Failed to download image: {response.StatusCode}");
+                return null;
+            }
+
+            var imageData = await response.Content.ReadAsByteArrayAsync();
+            var texture = new Texture2D(2, 2);
+            texture.LoadImage(imageData);
+
+            return texture;
+        }
+    }
     private void AddColliders(GLTFast.GltfAsset asset)
     {
         if (addBoxColliders)
@@ -107,6 +240,8 @@ public class UGADownloader : MonoBehaviour
             }
         }
     }
+    #endregion
+
     [Button]
     public void ClearCache()
     {
