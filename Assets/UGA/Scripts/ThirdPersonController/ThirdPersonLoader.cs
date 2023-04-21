@@ -51,13 +51,13 @@ public class ThirdPersonLoader : UGADownloader
 
     protected override void OnModelSuccess(GameObject targetAvatar)
     {
-        base.OnModelSuccess(targetAvatar);
         if (previewCharacter != null)
         {
             Destroy(previewCharacter);
             previewCharacter = null;
         }
         SetupAvatar(targetAvatar);
+        base.OnModelSuccess(targetAvatar);
     }
 
     private void SetupAvatar(GameObject targetAvatar)
