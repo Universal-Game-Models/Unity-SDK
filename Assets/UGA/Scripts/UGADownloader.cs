@@ -298,10 +298,7 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
                     var req = new CustomHeaderDownload(url, AddHeaders);
                     await req.WaitAsync();
                     bytes = req.Data;
-                    using (var fileStream = new FileStream(cachePath, FileMode.OpenOrCreate))
-                    {
-                        fileStream.Write(bytes);
-                    }
+                    SaveBytes(cachePath, bytes);
                 }
                 else
                 {
@@ -314,14 +311,21 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
             var req = new CustomHeaderDownload(url, AddHeaders);
             await req.WaitAsync();
             bytes = req.Data;
-            using (var fileStream = new FileStream(cachePath, FileMode.OpenOrCreate))
-            {
-                fileStream.Write(bytes);
-            }
+            SaveBytes(cachePath, bytes);
             return req;
         }
 
         return new Download(url.ToString(), bytes);
+    }
+
+    private void SaveBytes(string path, byte[] bytes)
+    {
+        using (var fileStream = new FileStream(path, FileMode.OpenOrCreate))
+        {
+            fileStream.Write(bytes);
+            PlayerPrefs.SetString("forceSave", string.Empty);
+            PlayerPrefs.Save();
+        }
     }
 
     private void AddHeaders(UnityWebRequest request)
