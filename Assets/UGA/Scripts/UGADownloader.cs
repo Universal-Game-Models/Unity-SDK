@@ -166,11 +166,15 @@ public class UGADownloader : MonoBehaviour
     {
         var request = UnityWebRequest.Get(url);
 
+        var tcs = new TaskCompletionSource<bool>();
         var operation = request.SendWebRequest();
-        while (!operation.isDone)
+
+        operation.completed += (asyncOperation) =>
         {
-            await Task.Delay(100);
-        }
+            tcs.SetResult(true);
+        };
+
+        await tcs.Task;
 
         if (request.result == UnityWebRequest.Result.Success)
         {
@@ -193,12 +197,15 @@ public class UGADownloader : MonoBehaviour
     {
         using (var request = UnityWebRequestTexture.GetTexture(url))
         {
+            var tcs = new TaskCompletionSource<bool>();
             var operation = request.SendWebRequest();
 
-            while (!operation.isDone)
+            operation.completed += (asyncOperation) =>
             {
-                await Task.Delay(100);
-            }
+                tcs.SetResult(true);
+            };
+
+            await tcs.Task;
 
             if (request.result != UnityWebRequest.Result.Success)
             {
@@ -274,10 +281,13 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
 
                 var downloadRequest = webRequest.SendWebRequest();
 
-                while (!downloadRequest.isDone)
+                var downloadTcs = new TaskCompletionSource<bool>();
+                downloadRequest.completed += (asyncOp) =>
                 {
-                    await Task.Delay(100);
-                }
+                    downloadTcs.SetResult(true);
+                };
+
+                await downloadTcs.Task;
 
                 if (webRequest.responseCode == (int)HttpStatusCode.NotModified)
                 {
@@ -285,24 +295,15 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
                 }
                 else if (webRequest.responseCode == (int)HttpStatusCode.OK)
                 {
-                    using (var httpClient = UnityWebRequest.Get(url))
+                    var req = new CustomHeaderDownload(url, AddHeaders);
+                    await req.WaitAsync();
+                    bytes = req.Data;
+#if !UNITY_WEBGL
+                    using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
                     {
-                        httpClient.SetRequestHeader("x-api-key", UGAAssetManager.GetConfig().apiKey);
-
-                        var asyncOperation = httpClient.SendWebRequest();
-
-                        while (!asyncOperation.isDone)
-                        {
-                            await Task.Delay(100);
-                        }
-
-                        bytes = httpClient.downloadHandler.data;
-
-                        using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
-                        {
-                            await fileStream.WriteAsync(bytes);
-                        }
+                        await fileStream.WriteAsync(bytes);
                     }
+#endif
                 }
                 else
                 {
@@ -312,32 +313,24 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
         }
         else
         {
-            using (var httpClient = UnityWebRequest.Get(url))
+            var req = new CustomHeaderDownload(url, AddHeaders);
+            await req.WaitAsync();
+            bytes = req.Data;
+#if !UNITY_WEBGL
+            using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
             {
-                httpClient.SetRequestHeader("x-api-key", UGAAssetManager.GetConfig().apiKey);
-
-                var asyncOperation = httpClient.SendWebRequest();
-
-                while (!asyncOperation.isDone)
-                {
-                    await Task.Delay(100);
-                }
-
-                if (httpClient.result == UnityWebRequest.Result.ConnectionError || httpClient.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    return new Download(url.ToString(), null, $"HTTP error {httpClient.responseCode}");
-                }
-
-                bytes = httpClient.downloadHandler.data;
-
-                using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
-                {
-                    await fileStream.WriteAsync(bytes);
-                }
+                await fileStream.WriteAsync(bytes);
             }
+#endif
+            return req;
         }
 
         return new Download(url.ToString(), bytes);
+    }
+
+    private void AddHeaders(UnityWebRequest request)
+    {
+        request.SetRequestHeader("x-api-key", UGAAssetManager.GetConfig().apiKey);
     }
 
     public class Download : IDownload

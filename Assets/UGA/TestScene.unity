@@ -1381,7 +1381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cursorLockMode: 2
-  hideCursor: 0
+  hideCursor: 1
   applyOnStart: 1
 --- !u!114 &1879625201
 MonoBehaviour:

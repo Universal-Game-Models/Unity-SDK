@@ -19,7 +19,12 @@ public class MouseCursorLock : MonoBehaviour
             Apply();
         }
     }
-
+#if UNITY_WEBGL
+    private void Update()
+    {
+        if(Input.GetMouseButtonDown(0)) Apply();
+    }
+#endif
     public void Apply()
     {
         Cursor.visible = hideCursor;
