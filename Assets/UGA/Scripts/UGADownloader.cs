@@ -298,12 +298,10 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
                     var req = new CustomHeaderDownload(url, AddHeaders);
                     await req.WaitAsync();
                     bytes = req.Data;
-#if !UNITY_WEBGL
-                    using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
+                    using (var fileStream = new FileStream(cachePath, FileMode.OpenOrCreate))
                     {
-                        await fileStream.WriteAsync(bytes);
+                        fileStream.Write(bytes);
                     }
-#endif
                 }
                 else
                 {
@@ -316,12 +314,10 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
             var req = new CustomHeaderDownload(url, AddHeaders);
             await req.WaitAsync();
             bytes = req.Data;
-#if !UNITY_WEBGL
-            using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
+            using (var fileStream = new FileStream(cachePath, FileMode.OpenOrCreate))
             {
-                await fileStream.WriteAsync(bytes);
+                fileStream.Write(bytes);
             }
-#endif
             return req;
         }
 
