@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class ThirdPersonLoader : UGADownloader
+public class AvatarLoader : UGADownloader
 {
-    private GameObject avatar;
-
     [SerializeField]
     [Tooltip("Preview avatar to display until avatar loads. Will be destroyed after new avatar is loaded")]
     private GameObject previewCharacter;
@@ -62,18 +60,12 @@ public class ThirdPersonLoader : UGADownloader
 
     private void SetupAvatar(GameObject targetAvatar)
     {
-        if (avatar != null)
-        {
-            Destroy(avatar);
-        }
-
-        avatar = targetAvatar;
         SetupAnimator();
 
         var controller = GetComponent<ThirdPersonController>();
         if (controller != null)
         {
-            controller.Setup(avatar);
+            controller.Setup(gameObject);
         }
     }
 
@@ -91,7 +83,7 @@ public class ThirdPersonLoader : UGADownloader
             DestroyImmediate(animator);
         }
         //Add new animator that points to the new character
-        animator = avatar.AddComponent<Animator>();
+        animator = gameObject.AddComponent<Animator>();
         animator.runtimeAnimatorController = animatorController;
         animator.avatar = animatorAvatar; //AvatarCreator.CreateAvatar(animator);
         animator.applyRootMotion = applyRootMotion;

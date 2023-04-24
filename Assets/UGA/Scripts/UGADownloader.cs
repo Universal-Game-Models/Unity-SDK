@@ -52,6 +52,7 @@ public class UGADownloader : MonoBehaviour
     private Metadata metadata;
     private Texture2D image;
     private bool isLoading = false;
+    private GameObject instantiated;
     #endregion
 
     #region Virtual Functions
@@ -98,6 +99,7 @@ public class UGADownloader : MonoBehaviour
     public Texture2D Image { get => image; }
     public string AssetName { get => assetName; }
     public bool IsLoading { get => isLoading; }
+    public GameObject InstantiatedGO { get => instantiated; }
     #endregion
 
     public void Load(string assetName)
@@ -120,7 +122,6 @@ public class UGADownloader : MonoBehaviour
             }
             else
             {
-                if (asset != null ? asset.gameObject : null != null) Destroy(asset.gameObject);
                 OnModelFailure();
             }
         }
@@ -163,8 +164,13 @@ public class UGADownloader : MonoBehaviour
             asset = gameObject.AddComponent<GLTFast.GltfAsset>();
         }
         asset.InstantiationSettings = new GLTFast.InstantiationSettings() { Mask = GLTFast.ComponentType.Animation | GLTFast.ComponentType.Mesh };
+        var childCount = transform.childCount;
         // Load the asset
         var didLoad = await asset.Load(url, new UgaDownloadProvider());
+        if (transform.childCount > childCount)
+        {
+            instantiated = transform.GetChild(childCount).gameObject;
+        }
         return didLoad;
     }
     private static async Task<Metadata> DownloadMetadataAsync(string url)
