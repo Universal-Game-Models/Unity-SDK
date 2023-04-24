@@ -44,7 +44,6 @@ public class AvatarLoader : UGADownloader
     protected override void OnModelFailure()
     {
         base.OnModelFailure();
-        Debug.LogError("Failed to load asset from: " + assetName);
     }
 
     protected override void OnModelSuccess(GameObject targetAvatar)
