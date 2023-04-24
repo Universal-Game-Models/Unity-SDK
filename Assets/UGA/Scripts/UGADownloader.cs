@@ -18,17 +18,17 @@ public class UGADownloader : MonoBehaviour
     protected string assetName;
 
     #region Options
-    [SerializeField]
+    [SerializeField] [Foldout("Options")]
     protected bool loadOnStart = true;
-    [SerializeField]
+    [SerializeField][Foldout("Options")]
     protected bool addBoxColliders = false;
-    [SerializeField]
+    [SerializeField][Foldout("Options")]
     protected bool addMeshColliders = false;
-    [SerializeField]
+    [SerializeField][Foldout("Options")]
     protected bool loadModel = true;
-    [SerializeField]
+    [SerializeField][Foldout("Options")]
     protected bool loadMetadata = true;
-    [SerializeField]
+    [SerializeField][Foldout("Options")]
     protected bool loadImage = true;
     #endregion
 
@@ -51,6 +51,7 @@ public class UGADownloader : MonoBehaviour
     private GLTFast.GltfAsset asset;
     private Metadata metadata;
     private Texture2D image;
+    private bool isLoading = false;
     #endregion
 
     #region Virtual Functions
@@ -96,6 +97,7 @@ public class UGADownloader : MonoBehaviour
     public Metadata Metadata { get => metadata; }
     public Texture2D Image { get => image; }
     public string AssetName { get => assetName; }
+    public bool IsLoading { get => isLoading; }
     #endregion
 
     public void Load(string assetName)
@@ -105,6 +107,7 @@ public class UGADownloader : MonoBehaviour
     }
     protected async void LoadAsset()
     {
+        isLoading = true;
         if (loadModel)
         {
             //Load the model
@@ -149,6 +152,7 @@ public class UGADownloader : MonoBehaviour
                 OnMetadataFailure();
             }
         }
+        isLoading = false;
     }
 
     #region Private Functions
