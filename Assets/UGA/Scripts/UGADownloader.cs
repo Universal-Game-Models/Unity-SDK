@@ -95,6 +95,7 @@ public class UGADownloader : MonoBehaviour
     #region Public Getters
     public Metadata Metadata { get => metadata; }
     public Texture2D Image { get => image; }
+    public string AssetName { get => assetName; }
     #endregion
 
     public void Load(string assetName)
