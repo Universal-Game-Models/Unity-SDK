@@ -1,41 +1,84 @@
 using GLTFast.Loading;
 using NaughtyAttributes;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
+using static UGAAssetManager;
 
 public class UGADownloader : MonoBehaviour
 {
     [SerializeField]
     protected string assetName;
-    [SerializeField]
+
+    #region Options
+    [SerializeField] [Foldout("Options")]
     protected bool loadOnStart = true;
-
-    [SerializeField]
+    [SerializeField][Foldout("Options")]
     protected bool addBoxColliders = false;
-    [SerializeField]
+    [SerializeField][Foldout("Options")]
     protected bool addMeshColliders = false;
+    [SerializeField][Foldout("Options")]
+    protected bool loadModel = true;
+    [SerializeField][Foldout("Options")]
+    protected bool loadMetadata = true;
+    [SerializeField][Foldout("Options")]
+    protected bool loadImage = true;
+    #endregion
 
-    [SerializeField]
-    protected UnityEvent<GameObject> onSuccess = new UnityEvent<GameObject>();
-    [SerializeField]
-    protected UnityEvent onFailure = new UnityEvent();
+    #region Events
+    [SerializeField] [Foldout("Events")]
+    protected UnityEvent<GameObject> onModelSuccess = new UnityEvent<GameObject>();
+    [SerializeField] [Foldout("Events")]
+    protected UnityEvent onModelFailure = new UnityEvent();
+    [SerializeField] [Foldout("Events")]
+    protected UnityEvent<Metadata> onMetadataSuccess = new UnityEvent<Metadata>();
+    [SerializeField] [Foldout("Events")]
+    protected UnityEvent onMetadataFailure = new UnityEvent();
+    [SerializeField] [Foldout("Events")] 
+    protected UnityEvent<Texture2D> onImageSuccess = new UnityEvent<Texture2D>();
+    [SerializeField] [Foldout("Events")] 
+    protected UnityEvent onImageFailure = new UnityEvent();
+    #endregion
 
+    #region Data
     private GLTFast.GltfAsset asset;
+    private Metadata metadata;
+    private Texture2D image;
+    private bool isLoading = false;
+    private GameObject instantiated;
+    #endregion
 
-    protected virtual void OnSuccess(GameObject loadedGO) 
+    #region Virtual Functions
+    protected virtual void OnModelSuccess(GameObject loadedGO) 
     {
-        onSuccess.Invoke(loadedGO);
+        onModelSuccess.Invoke(loadedGO);
     }
-    protected virtual void OnFailure()
+    protected virtual void OnModelFailure()
     {
-        onFailure.Invoke();
+        onModelFailure.Invoke();
+    }
+    protected virtual void OnMetadataSuccess(Metadata metadata)
+    {
+        onMetadataSuccess.Invoke(metadata);
+    }
+    protected virtual void OnMetadataFailure()
+    {
+        onMetadataFailure.Invoke();
+    }
+    protected virtual void OnImageSuccess(Texture2D image)
+    {
+        onImageSuccess.Invoke(image);
+    }
+    protected virtual void OnImageFailure()
+    {
+        onImageFailure.Invoke();
     }
 
     protected virtual void Start()
@@ -49,27 +92,139 @@ public class UGADownloader : MonoBehaviour
     {
 
     }
+    #endregion
 
-    public async void LoadAsset()
+    #region Public Getters
+    public Metadata Metadata { get => metadata; }
+    public Texture2D Image { get => image; }
+    public string AssetName { get => assetName; }
+    public bool IsLoading { get => isLoading; }
+    public GameObject InstantiatedGO { get => instantiated; }
+    #endregion
+
+    public void Load(string assetName)
     {
-        var url = UGAAssetManager.UGA_URI + assetName + ".glb";
- 
+        this.assetName = assetName;
+        LoadAsset();
+    }
+    protected async void LoadAsset()
+    {
+        isLoading = true;
+        if (loadModel)
+        {
+            //Load the model
+            var modelUrl = UGAAssetManager.MODEL_URI + assetName + ".glb";
+            bool didLoad = await DownloadModelAsync(modelUrl);
+            if (didLoad)
+            {
+                if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
+                OnModelSuccess(asset.gameObject);
+            }
+            else
+            {
+                OnModelFailure();
+            }
+        }
+        if (loadMetadata)
+        {
+            //Load Metadata
+            var metadataUrl = UGAAssetManager.METADATA_URI + assetName + ".json";
+            metadata = await DownloadMetadataAsync(metadataUrl);
+            if (metadata != null)
+            {
+                OnMetadataSuccess(metadata);
+                if (loadImage)
+                {
+                    //Load Image
+                    var imageUrl = metadata.image;
+                    image = await DownloadImageAsync(imageUrl);
+                    if (image != null)
+                    {
+                        OnImageSuccess(image);
+                    }
+                    else
+                    {
+                        OnImageFailure();
+                    }
+                }
+            }
+            else
+            {
+                OnMetadataFailure();
+            }
+        }
+        isLoading = false;
+    }
+
+    #region Private Functions
+    private async Task<bool> DownloadModelAsync(string url)
+    {
         if (asset == null)
         {
             asset = gameObject.AddComponent<GLTFast.GltfAsset>();
         }
         asset.InstantiationSettings = new GLTFast.InstantiationSettings() { Mask = GLTFast.ComponentType.Animation | GLTFast.ComponentType.Mesh };
+        var childCount = transform.childCount;
         // Load the asset
         var didLoad = await asset.Load(url, new UgaDownloadProvider());
-        if (didLoad)
+        if (transform.childCount > childCount)
         {
-            if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
-            OnSuccess(asset.gameObject);
+            instantiated = transform.GetChild(childCount).gameObject;
+        }
+        return didLoad;
+    }
+    private static async Task<Metadata> DownloadMetadataAsync(string url)
+    {
+        var request = UnityWebRequest.Get(url);
+
+        var tcs = new TaskCompletionSource<bool>();
+        var operation = request.SendWebRequest();
+
+        operation.completed += (asyncOperation) =>
+        {
+            tcs.SetResult(true);
+        };
+
+        await tcs.Task;
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            var jsonString = request.downloadHandler.text;
+            try
+            {
+                return JsonConvert.DeserializeObject<Metadata>(jsonString);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
         else
         {
-            if(asset != null ? asset.gameObject : null != null) Destroy(asset.gameObject);
-            OnFailure();
+            throw new Exception($"HTTP error {request.responseCode}");
+        }
+    }
+    private async Task<Texture2D> DownloadImageAsync(string url)
+    {
+        using (var request = UnityWebRequestTexture.GetTexture(url))
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            var operation = request.SendWebRequest();
+
+            operation.completed += (asyncOperation) =>
+            {
+                tcs.SetResult(true);
+            };
+
+            await tcs.Task;
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Failed to download image: {request.result}");
+                return null;
+            }
+
+            return ((DownloadHandlerTexture)request.downloadHandler).texture;
         }
     }
 
@@ -107,6 +262,8 @@ public class UGADownloader : MonoBehaviour
             }
         }
     }
+    #endregion
+
     [Button]
     public void ClearCache()
     {
@@ -118,7 +275,7 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
 {
     public async Task<IDownload> Request(Uri url)
     {
-        if(!Directory.Exists(Path.Combine(Application.persistentDataPath, "UGA")))
+        if (!Directory.Exists(Path.Combine(Application.persistentDataPath, "UGA")))
         {
             Directory.CreateDirectory(Path.Combine(Application.persistentDataPath, "UGA"));
         }
@@ -128,58 +285,63 @@ class UgaDownloadProvider : GLTFast.Loading.IDownloadProvider
         if (File.Exists(cachePath))
         {
             bytes = File.ReadAllBytes(cachePath);
-            using (var httpClient = new HttpClient())
+
+            using (var webRequest = UnityWebRequest.Head(url))
             {
-                httpClient.DefaultRequestHeaders.IfModifiedSince = File.GetLastWriteTimeUtc(cachePath);
+                webRequest.SetRequestHeader("If-Modified-Since", File.GetLastWriteTimeUtc(cachePath).ToString("r"));
 
-                var request = new HttpRequestMessage(HttpMethod.Head, url);
-                var response = await httpClient.SendAsync(request);
+                var downloadRequest = webRequest.SendWebRequest();
 
-                if (response.StatusCode == HttpStatusCode.NotModified)
+                var downloadTcs = new TaskCompletionSource<bool>();
+                downloadRequest.completed += (asyncOp) =>
+                {
+                    downloadTcs.SetResult(true);
+                };
+
+                await downloadTcs.Task;
+
+                if (webRequest.responseCode == (int)HttpStatusCode.NotModified)
                 {
                     return new Download(url.ToString(), bytes);
                 }
-                else if (response.IsSuccessStatusCode)
+                else if (webRequest.responseCode == (int)HttpStatusCode.OK)
                 {
-                    httpClient.DefaultRequestHeaders.Add("x-api-key", UGAAssetManager.GetConfig().apiKey);
-                    bytes = await httpClient.GetByteArrayAsync(url);
-
-                    using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
-                    {
-                        await fileStream.WriteAsync(bytes);
-                    }
+                    var req = new CustomHeaderDownload(url, AddHeaders);
+                    await req.WaitAsync();
+                    bytes = req.Data;
+                    SaveBytes(cachePath, bytes);
                 }
                 else
                 {
-                    return new Download(url.ToString(), null, $"HTTP error {response.StatusCode}");
+                    return new Download(url.ToString(), null, $"HTTP error {webRequest.responseCode}");
                 }
             }
         }
         else
         {
-            using (var httpClient = new HttpClient())
-            {
-                httpClient.DefaultRequestHeaders.Add("x-api-key", UGAAssetManager.GetConfig().apiKey);
-
-                var response = await httpClient.GetAsync(url);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    bytes = await response.Content.ReadAsByteArrayAsync();
-
-                    using (var fileStream = new FileStream(cachePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
-                    {
-                        await fileStream.WriteAsync(bytes);
-                    }
-                }
-                else
-                {
-                    return new Download(url.ToString(), null, $"HTTP error {response.StatusCode}");
-                }
-            }
+            var req = new CustomHeaderDownload(url, AddHeaders);
+            await req.WaitAsync();
+            bytes = req.Data;
+            SaveBytes(cachePath, bytes);
+            return req;
         }
 
         return new Download(url.ToString(), bytes);
+    }
+
+    private void SaveBytes(string path, byte[] bytes)
+    {
+        using (var fileStream = new FileStream(path, FileMode.OpenOrCreate))
+        {
+            fileStream.Write(bytes);
+            PlayerPrefs.SetString("forceSave", string.Empty);
+            PlayerPrefs.Save();
+        }
+    }
+
+    private void AddHeaders(UnityWebRequest request)
+    {
+        request.SetRequestHeader("x-api-key", UGAAssetManager.GetConfig().apiKey);
     }
 
     public class Download : IDownload
