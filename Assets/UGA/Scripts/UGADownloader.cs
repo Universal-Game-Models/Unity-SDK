@@ -15,7 +15,7 @@ using static UGAAssetManager;
 public class UGADownloader : MonoBehaviour
 {
     [SerializeField]
-    protected string assetName;
+    protected string nftId;
 
     #region Options
     [SerializeField] [Foldout("Options")]
@@ -83,7 +83,7 @@ public class UGADownloader : MonoBehaviour
 
     protected virtual void Start()
     {
-        if (loadOnStart && !string.IsNullOrEmpty(assetName))
+        if (loadOnStart && !string.IsNullOrEmpty(nftId))
         {
             LoadAsset();
         }
@@ -97,14 +97,14 @@ public class UGADownloader : MonoBehaviour
     #region Public Getters
     public Metadata Metadata { get => metadata; }
     public Texture2D Image { get => image; }
-    public string AssetName { get => assetName; }
+    public string AssetName { get => metadata?.name; }
     public bool IsLoading { get => isLoading; }
     public GameObject InstantiatedGO { get => instantiated; }
     #endregion
 
-    public void Load(string assetName)
+    public void Load(string nftId)
     {
-        this.assetName = assetName;
+        this.nftId = nftId;
         LoadAsset();
     }
     protected async void LoadAsset()
@@ -113,7 +113,7 @@ public class UGADownloader : MonoBehaviour
         if (loadModel)
         {
             //Load the model
-            var modelUrl = UGAAssetManager.MODEL_URI + assetName + ".glb";
+            var modelUrl = UGAAssetManager.MODEL_URI + nftId.PadLeft(64, '0') + ".glb";
             bool didLoad = await DownloadModelAsync(modelUrl);
             if (didLoad)
             {
@@ -128,7 +128,7 @@ public class UGADownloader : MonoBehaviour
         if (loadMetadata)
         {
             //Load Metadata
-            var metadataUrl = UGAAssetManager.METADATA_URI + assetName + ".json";
+            var metadataUrl = UGAAssetManager.METADATA_URI + nftId.PadLeft(64, '0') + ".json";
             metadata = await DownloadMetadataAsync(metadataUrl);
             if (metadata != null)
             {
@@ -173,7 +173,7 @@ public class UGADownloader : MonoBehaviour
         }
         return didLoad;
     }
-    private static async Task<Metadata> DownloadMetadataAsync(string url)
+    public static async Task<Metadata> DownloadMetadataAsync(string url)
     {
         var request = UnityWebRequest.Get(url);
 
@@ -204,7 +204,7 @@ public class UGADownloader : MonoBehaviour
             throw new Exception($"HTTP error {request.responseCode}");
         }
     }
-    private async Task<Texture2D> DownloadImageAsync(string url)
+    public async Task<Texture2D> DownloadImageAsync(string url)
     {
         using (var request = UnityWebRequestTexture.GetTexture(url))
         {

@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78fe668ff182304fa213fddc4d98f04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetName: 
+  nftId: 
   loadOnStart: 0
   addBoxColliders: 1
   addMeshColliders: 0
@@ -405,7 +405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d78fe668ff182304fa213fddc4d98f04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetName: 
+  nftId: 
   loadOnStart: 0
   addBoxColliders: 1
   addMeshColliders: 0
@@ -555,7 +555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 420037430dfb29f4385e0180c4904770, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetName: yellowunidragon
+  nftId: 4
   loadOnStart: 1
   addBoxColliders: 1
   addMeshColliders: 0
@@ -680,7 +680,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcd3a2a3a4803724185a95fcbb555d55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetName: Big Ape
+  nftId: 1
   loadOnStart: 1
   addBoxColliders: 0
   addMeshColliders: 0
@@ -691,7 +691,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 635896133}
-        m_TargetAssemblyTypeName: HumanoidToolLoader, Assembly-CSharp
+        m_TargetAssemblyTypeName: UGADownloader, Assembly-CSharp
         m_MethodName: Load
         m_Mode: 5
         m_Arguments:
@@ -699,11 +699,11 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: bottle
+          m_StringArgument: 5
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 252411234}
-        m_TargetAssemblyTypeName: HumanoidToolLoader, Assembly-CSharp
+        m_TargetAssemblyTypeName: UGADownloader, Assembly-CSharp
         m_MethodName: Load
         m_Mode: 5
         m_Arguments:
@@ -711,7 +711,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: bottle
+          m_StringArgument: 5
           m_BoolArgument: 0
         m_CallState: 2
   onModelFailure:
@@ -862,7 +862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 420037430dfb29f4385e0180c4904770, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetName: animatedbox
+  nftId: 3
   loadOnStart: 1
   addBoxColliders: 1
   addMeshColliders: 0
@@ -1308,7 +1308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 420037430dfb29f4385e0180c4904770, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetName: sponza
+  nftId: 2
   loadOnStart: 1
   addBoxColliders: 0
   addMeshColliders: 1
