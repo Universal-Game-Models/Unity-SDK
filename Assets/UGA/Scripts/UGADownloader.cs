@@ -20,31 +20,31 @@ public class UGADownloader : MonoBehaviour
     #region Options
     [SerializeField] [Foldout("Options")]
     protected bool loadOnStart = true;
-    [SerializeField][Foldout("Options")]
-    protected bool addBoxColliders = false;
-    [SerializeField][Foldout("Options")]
-    protected bool addMeshColliders = false;
-    [SerializeField][Foldout("Options")]
-    protected bool loadModel = true;
-    [SerializeField][Foldout("Options")]
-    protected bool loadMetadata = true;
-    [SerializeField][Foldout("Options")]
-    protected bool loadImage = true;
+    [Foldout("Options")]
+    public bool addBoxColliders = false;
+    [Foldout("Options")]
+    public bool addMeshColliders = false;
+    [Foldout("Options")]
+    public bool loadModel = true;
+    [Foldout("Options")]
+    public bool loadMetadata = true;
+    [Foldout("Options")]
+    public bool loadImage = true;
     #endregion
 
     #region Events
     [SerializeField] [Foldout("Events")]
-    protected UnityEvent<GameObject> onModelSuccess = new UnityEvent<GameObject>();
+    public UnityEvent<GameObject> onModelSuccess = new UnityEvent<GameObject>();
     [SerializeField] [Foldout("Events")]
-    protected UnityEvent onModelFailure = new UnityEvent();
+    public UnityEvent onModelFailure = new UnityEvent();
     [SerializeField] [Foldout("Events")]
-    protected UnityEvent<Metadata> onMetadataSuccess = new UnityEvent<Metadata>();
+    public UnityEvent<Metadata> onMetadataSuccess = new UnityEvent<Metadata>();
     [SerializeField] [Foldout("Events")]
-    protected UnityEvent onMetadataFailure = new UnityEvent();
-    [SerializeField] [Foldout("Events")] 
-    protected UnityEvent<Texture2D> onImageSuccess = new UnityEvent<Texture2D>();
-    [SerializeField] [Foldout("Events")] 
-    protected UnityEvent onImageFailure = new UnityEvent();
+    public UnityEvent onMetadataFailure = new UnityEvent();
+    [SerializeField] [Foldout("Events")]
+    public UnityEvent<Texture2D> onImageSuccess = new UnityEvent<Texture2D>();
+    [SerializeField] [Foldout("Events")]
+    public UnityEvent onImageFailure = new UnityEvent();
     #endregion
 
     #region Data
