@@ -17,33 +17,33 @@ public class UGADownloader : MonoBehaviour
     [SerializeField]
     protected string nftId;
 
-    #region Options
+    #region Load Options
     [SerializeField] [Foldout("Options")]
     protected bool loadOnStart = true;
-    [Foldout("Options")]
-    public bool addBoxColliders = false;
-    [Foldout("Options")]
-    public bool addMeshColliders = false;
-    [Foldout("Options")]
-    public bool loadModel = true;
-    [Foldout("Options")]
-    public bool loadMetadata = true;
-    [Foldout("Options")]
-    public bool loadImage = true;
+    [SerializeField][Foldout("Options")]
+    protected bool addBoxColliders = true;
+    [SerializeField][Foldout("Options")]
+    protected bool addMeshColliders = false;
+    [SerializeField][Foldout("Options")]
+    protected bool loadModel = true;
+    [SerializeField][Foldout("Options")]
+    protected bool loadMetadata = true;
+    [SerializeField][Foldout("Options")]
+    protected bool loadImage = true;
     #endregion
 
-    #region Events
-    [SerializeField] [Foldout("Events")]
+    #region Public Events
+    [Foldout("Events")]
     public UnityEvent<GameObject> onModelSuccess = new UnityEvent<GameObject>();
-    [SerializeField] [Foldout("Events")]
+    [Foldout("Events")]
     public UnityEvent onModelFailure = new UnityEvent();
-    [SerializeField] [Foldout("Events")]
+    [Foldout("Events")]
     public UnityEvent<Metadata> onMetadataSuccess = new UnityEvent<Metadata>();
-    [SerializeField] [Foldout("Events")]
+    [Foldout("Events")]
     public UnityEvent onMetadataFailure = new UnityEvent();
-    [SerializeField] [Foldout("Events")]
+    [Foldout("Events")] 
     public UnityEvent<Texture2D> onImageSuccess = new UnityEvent<Texture2D>();
-    [SerializeField] [Foldout("Events")]
+    [Foldout("Events")] 
     public UnityEvent onImageFailure = new UnityEvent();
     #endregion
 
@@ -102,6 +102,14 @@ public class UGADownloader : MonoBehaviour
     public GameObject InstantiatedGO { get => instantiated; }
     #endregion
 
+    public void SetLoadOptions(bool addBoxColliders, bool addMeshColliders, bool loadModel, bool loadMetadata, bool loadImage)
+    {
+        this.addBoxColliders = addBoxColliders;
+        this.addMeshColliders = addMeshColliders;
+        this.loadModel = loadModel;
+        this.loadMetadata = loadMetadata;
+        this.loadImage = loadImage;
+    }
     public void Load(string nftId)
     {
         this.nftId = nftId;
@@ -230,7 +238,16 @@ public class UGADownloader : MonoBehaviour
 
     private void AddColliders(GLTFast.GltfAsset asset)
     {
-        if (addBoxColliders)
+        if (addMeshColliders)
+        {
+            var meshFilters = asset.gameObject.GetComponentsInChildren<MeshFilter>();
+            foreach (var meshFilter in meshFilters)
+            {
+                var meshCol = meshFilter.gameObject.AddComponent<MeshCollider>();
+                meshCol.sharedMesh = meshFilter.mesh;
+            }
+        }
+        else if (addBoxColliders)
         {
             var meshFilters = asset.gameObject.GetComponentsInChildren<MeshFilter>();
             foreach (var meshFilter in meshFilters)
@@ -250,15 +267,6 @@ public class UGADownloader : MonoBehaviour
                 boxCol.center = center;
                 // Calculate the scale factor needed to match the lossyScale
                 boxCol.size = Vector3.Scale(boxCol.size, skinnedMesh.transform.lossyScale);
-            }
-        }
-        else if (addMeshColliders)
-        {
-            var meshFilters = asset.gameObject.GetComponentsInChildren<MeshFilter>();
-            foreach (var meshFilter in meshFilters)
-            {
-                var meshCol = meshFilter.gameObject.AddComponent<MeshCollider>();
-                meshCol.sharedMesh = meshFilter.mesh;
             }
         }
     }

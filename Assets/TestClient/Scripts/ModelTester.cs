@@ -66,9 +66,8 @@ public class ModelTester : MonoBehaviour
             var structureAttribute = Array.Find(metadata.attributes, a => a.trait_type == "Structure");
             if(structureAttribute != null && (string)structureAttribute.value == "Building")
             {
-                defaultLoader.addBoxColliders = false;
                 //Buildings should always use mesh colliders for interior wall collisions
-                defaultLoader.addMeshColliders = true;
+                defaultLoader.SetLoadOptions(false, true, true, false, false);
             }
             defaultLoader.Load(nftId);
         }
