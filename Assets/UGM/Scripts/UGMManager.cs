@@ -31,7 +31,7 @@ public static class UGMManager
 
     //Gets all models owned by an address, maximum 100 results
     //If a cursor is in the response it can be used to get the next page of results
-    public static async Task<ModelsOwnedResult> GetModelsOwned(string address, string cursor = "")
+    public static async Task<NFTsOwnedResult> GetNftsOwned(string address, string cursor = "")
     {
         string fullUri = $"{MODELS_OWNED_URI}?address={address}";
 
@@ -57,7 +57,7 @@ public static class UGMManager
             var jsonString = request.downloadHandler.text;
             try
             {
-                return JsonConvert.DeserializeObject<ModelsOwnedResult>(jsonString);
+                return JsonConvert.DeserializeObject<NFTsOwnedResult>(jsonString);
             }
             catch (Exception e)
             {

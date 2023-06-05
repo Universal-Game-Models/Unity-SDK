@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class HumanoidToolLoader : UGMDownloader
+public class HumanoidEquipmentLoader : UGMDownloader
 {
     public HumanBodyBones humanoidBone;
     [SerializeField]

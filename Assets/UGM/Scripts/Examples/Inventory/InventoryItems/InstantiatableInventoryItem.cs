@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class InstantiateModelItem : ModelItem
+public class InstantiatableInventoryItem : InventoryItem
 {
     protected override void DoAction()
     {
         base.DoAction();
         //Change this to initialize an onMouse listener
-        InstantiateModelControl.Instance.SetTokenInfo(tokenInfo);
+        InstantiatableInventoryControl.Instance.SetTokenInfo(tokenInfo);
     }
 }

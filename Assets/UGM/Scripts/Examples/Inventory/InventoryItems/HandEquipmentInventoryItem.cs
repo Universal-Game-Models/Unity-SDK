@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class EquipmentModelItem : ModelItem, IPointerClickHandler
+public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
 {
     AvatarLoader avatarLoader;
-    HumanoidToolLoader[] tools;
+    HumanoidEquipmentLoader[] tools;
     private int Hand;
 
     private void OnEnable()
     {
         //Not good practice for production, create a static reference to your player
         avatarLoader = FindObjectOfType<AvatarLoader>();
-        if(avatarLoader) tools = avatarLoader.GetComponentsInChildren<HumanoidToolLoader>();
+        if(avatarLoader) tools = avatarLoader.GetComponentsInChildren<HumanoidEquipmentLoader>();
     }
 
     protected override void DoAction()

@@ -18,7 +18,7 @@ public class QuickSelectControl : MonoBehaviour
     {
         public Button button;
         public Image image;
-        public ModelsOwnedTokenInfo tokenInfo;
+        public TokenInfo tokenInfo;
         public UnityAction action;
     }
 
@@ -53,7 +53,7 @@ public class QuickSelectControl : MonoBehaviour
         }
     }
 
-    public async void SetQuickSelect(int numberKeyPressed, ModelsOwnedTokenInfo tokenInfo, UnityAction action)
+    public async void SetQuickSelect(int numberKeyPressed, TokenInfo tokenInfo, UnityAction action)
     {
         var existing = Array.Find(quickSelects, q => q.tokenInfo == tokenInfo);
         if (existing != null)

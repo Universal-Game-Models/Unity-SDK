@@ -7,12 +7,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using static UGMDataTypes;
 
-public class InstantiateModelControl : MonoBehaviour
+public class InstantiatableInventoryControl : MonoBehaviour
 {
-    private static InstantiateModelControl _instance;
+    private static InstantiatableInventoryControl _instance;
 
     // Public property to access the instance
-    public static InstantiateModelControl Instance { get { return _instance; } }
+    public static InstantiatableInventoryControl Instance { get { return _instance; } }
 
     [SerializeField]
     private GameObject hologramPrefab;
@@ -26,7 +26,7 @@ public class InstantiateModelControl : MonoBehaviour
     private bool showHologram;
     private Vector3 modelScale = Vector3.zero;
     private bool canPlace;
-    protected ModelsOwnedTokenInfo currentTokenInfo;
+    protected TokenInfo currentTokenInfo;
     private Vector3 scrollOffset;
 
     private void Awake()
@@ -51,7 +51,7 @@ public class InstantiateModelControl : MonoBehaviour
         }
     }
 
-    public void SetTokenInfo(ModelsOwnedTokenInfo tokenInfo)
+    public void SetTokenInfo(TokenInfo tokenInfo)
     {
         currentTokenInfo = tokenInfo;
         var cameraRotation = mainCamera.transform.rotation.eulerAngles;

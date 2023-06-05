@@ -7,16 +7,16 @@ using static UGMManager;
 using static UGMDataTypes;
 using UnityEngine.EventSystems;
 
-public class ModelInventory : MonoBehaviour
+public class Inventory : MonoBehaviour
 {
-    public GetModelsOwned modelsOwned;
+    public GetNftsOwned nftsOwned;
 
     [SerializeField]
     private GameObject parent;
     [SerializeField]
     private Transform content;
     [SerializeField]
-    private ModelItem defaultItemPrefab;
+    private InventoryItem defaultItemPrefab;
     [SerializeField]
     private ItemPrefabs[] itemPrefabs;
 
@@ -25,16 +25,16 @@ public class ModelInventory : MonoBehaviour
     {
         public string name;
         public bool nameIsTraitType;
-        public ModelItem prefab;
+        public InventoryItem prefab;
     }
 
-    private List<ModelsOwnedTokenInfo> tokenInfos;
+    private List<TokenInfo> tokenInfos;
 
     // Start is called before the first frame update
     async void Start()
     {
         //Load the data
-        tokenInfos = await modelsOwned.GetModelsOwnedByAddress();
+        tokenInfos = await nftsOwned.GetNftsByAddress();
         if (tokenInfos != null)
         {
             UpdateDisplay();
@@ -50,9 +50,7 @@ public class ModelInventory : MonoBehaviour
         ClearDisplay();
         foreach (var tokenInfo in tokenInfos)
         {
-            //Could add a switch case for different item types
-            //They could use custom ModelItems that have a unique action
-            ModelItem prefab = null;
+            InventoryItem prefab = null;
             foreach (var mi in itemPrefabs)
             {
                 if (tokenInfo.metadata.attributes.FirstOrDefault(md => mi.nameIsTraitType ? md.trait_type == mi.name : md.value.ToString() == mi.name) != null)

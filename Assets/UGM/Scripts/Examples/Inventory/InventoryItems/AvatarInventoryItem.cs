@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AvatarModelItem : ModelItem
+public class AvatarInventoryItem : InventoryItem
 {
     AvatarLoader avatarLoader;
     private void OnEnable()

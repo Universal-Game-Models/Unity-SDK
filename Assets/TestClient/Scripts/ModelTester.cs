@@ -14,7 +14,7 @@ public class ModelTester : MonoBehaviour
     [SerializeField]
     private AvatarLoader avatarLoader;
     [SerializeField]
-    private HumanoidToolLoader toolLoader;
+    private HumanoidEquipmentLoader toolLoader;
 
     [Button]
     public void Test()

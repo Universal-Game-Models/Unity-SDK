@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4807803127503273022}
   - component: {fileID: 493599033626758227}
   m_Layer: 5
-  m_Name: EquipItemPrefab
+  m_Name: HandEquipItemPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

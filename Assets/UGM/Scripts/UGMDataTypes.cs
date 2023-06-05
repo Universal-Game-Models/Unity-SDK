@@ -21,7 +21,7 @@ public class UGMDataTypes
 
     //Classes for Models Owned Response
     [System.Serializable]
-    public class ModelsOwnedTokenInfo
+    public class TokenInfo
     {
         public string token_address;
         public string token_id;
@@ -56,13 +56,13 @@ public class UGMDataTypes
         public bool possible_spam;
     }
     [System.Serializable]
-    public class ModelsOwnedResult
+    public class NFTsOwnedResult
     {
         public string total;
         public int page;
         public int page_size;
         public string cursor;
-        public List<ModelsOwnedTokenInfo> result;
+        public List<TokenInfo> result;
         public string status;
     }
 }

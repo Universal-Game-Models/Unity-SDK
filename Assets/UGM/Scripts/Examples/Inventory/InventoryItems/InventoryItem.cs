@@ -5,13 +5,13 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static UGMDataTypes;
 
-public class ModelItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField]
     protected Button button;
     [SerializeField]
     private TMPro.TextMeshProUGUI nameText;
-    protected ModelsOwnedTokenInfo tokenInfo;
+    protected TokenInfo tokenInfo;
 
     private bool hovering = false;
     //To be override for custom actions
@@ -22,7 +22,7 @@ public class ModelItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         hovering = false;
     }
 
-    public void Init(ModelsOwnedTokenInfo tokenInfo)
+    public void Init(TokenInfo tokenInfo)
     {
         this.tokenInfo = tokenInfo;
         if (nameText) nameText.text = this.tokenInfo.metadata.name;

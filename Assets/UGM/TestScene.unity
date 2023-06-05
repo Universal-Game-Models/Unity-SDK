@@ -786,7 +786,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7830004f6bba72a439d38d6649c124b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelsOwned: {fileID: 318742924}
+  nftsOwned: {fileID: 318742924}
   parent: {fileID: 657297656}
   content: {fileID: 1269342125}
   defaultItemPrefab: {fileID: 7078145980242911706, guid: 1c729bf57fcbb28448e27e4ce58d4e2f, type: 3}
