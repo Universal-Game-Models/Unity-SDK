@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
-using static UGMAssetManager;
+using static UGMDataTypes;
 
 public class UGMDownloader : MonoBehaviour
 {
@@ -181,7 +181,7 @@ public class UGMDownloader : MonoBehaviour
         asset.InstantiationSettings = new GLTFast.InstantiationSettings() { Mask = GLTFast.ComponentType.Animation | GLTFast.ComponentType.Mesh };
         var childCount = transform.childCount;
         // Load the asset
-        var url = UGMAssetManager.MODEL_URI + nftId.PadLeft(64, '0') + ".glb";
+        var url = UGMManager.MODEL_URI + nftId.PadLeft(64, '0') + ".glb";
         var didLoad = await asset.Load(url, new UGMDownloadProvider());
         if (transform.childCount > childCount)
         {
@@ -191,7 +191,7 @@ public class UGMDownloader : MonoBehaviour
     }
     public static async Task<Metadata> DownloadMetadataAsync(string nftId)
     {
-        var url = UGMAssetManager.METADATA_URI + nftId.PadLeft(64, '0') + ".json";
+        var url = UGMManager.METADATA_URI + nftId.PadLeft(64, '0') + ".json";
         var request = UnityWebRequest.Get(url);
 
         var tcs = new TaskCompletionSource<bool>();
@@ -284,7 +284,7 @@ public class UGMDownloader : MonoBehaviour
     [Button]
     public void ClearCache()
     {
-        UGMAssetManager.ClearCache();
+        UGMManager.ClearCache();
     }
 }
 
@@ -358,7 +358,7 @@ class UGMDownloadProvider : GLTFast.Loading.IDownloadProvider
 
     private void AddHeaders(UnityWebRequest request)
     {
-        request.SetRequestHeader("x-api-key", UGMAssetManager.GetConfig().apiKey);
+        request.SetRequestHeader("x-api-key", UGMManager.GetConfig().apiKey);
     }
 
     public class Download : IDownload

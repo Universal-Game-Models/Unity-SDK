@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static UGMAssetManager;
+using static UGMDataTypes;
 
 public class InstantiateModelControl : MonoBehaviour
 {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using static UGMAssetManager;
+using static UGMDataTypes;
 
 public class GetModelsOwned : MonoBehaviour
 {
@@ -29,7 +29,7 @@ public class GetModelsOwned : MonoBehaviour
         }
         string cursor = pages[pageNumber];
         // Retrieve the requested page
-        var response = await UGMAssetManager.GetModelsOwned(address, cursor);
+        var response = await UGMManager.GetModelsOwned(address, cursor);
         if (response == null)
         {
             Debug.LogWarning("NULL response");

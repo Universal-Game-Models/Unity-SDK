@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UGMDataTypes;
 
 public class QuickSelectControl : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class QuickSelectControl : MonoBehaviour
     {
         public Button button;
         public Image image;
-        public UGMAssetManager.ModelsOwnedTokenInfo tokenInfo;
+        public ModelsOwnedTokenInfo tokenInfo;
         public UnityAction action;
     }
 
@@ -52,7 +53,7 @@ public class QuickSelectControl : MonoBehaviour
         }
     }
 
-    public async void SetQuickSelect(int numberKeyPressed, UGMAssetManager.ModelsOwnedTokenInfo tokenInfo, UnityAction action)
+    public async void SetQuickSelect(int numberKeyPressed, ModelsOwnedTokenInfo tokenInfo, UnityAction action)
     {
         var existing = Array.Find(quickSelects, q => q.tokenInfo == tokenInfo);
         if (existing != null)

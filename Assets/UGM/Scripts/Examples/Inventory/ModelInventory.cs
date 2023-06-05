@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using static UGMAssetManager;
+using static UGMManager;
+using static UGMDataTypes;
 using UnityEngine.EventSystems;
 
 public class ModelInventory : MonoBehaviour

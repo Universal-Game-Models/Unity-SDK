@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UGMAssetManager;
+using static UGMDataTypes;
 
 public class ModelItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
