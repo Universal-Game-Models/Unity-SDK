@@ -44,7 +44,7 @@ public class ModelTester : MonoBehaviour
             if ((string)characterAttribute.value == "Avatar")
             {
                 //Load the avatar
-                avatarLoader.Load(nftId);
+                avatarLoader.LoadAsync(nftId);
             }
             else if ((string)characterAttribute.value == "Equipment")
             {
@@ -52,16 +52,16 @@ public class ModelTester : MonoBehaviour
                 avatarLoader.onModelSuccess.AddListener((model) =>
                 {
                     //When the avatar is loaded
-                    toolLoader.Load(nftId);
+                    toolLoader.LoadAsync(nftId);
                 });
                 //Start loading the avatar and equipment
-                avatarLoader.Load(defaultAvatarId);
+                avatarLoader.LoadAsync(defaultAvatarId);
             }
         }
         else
         {
             //Load an avatar to explore with
-            avatarLoader.Load(defaultAvatarId);
+            avatarLoader.LoadAsync(defaultAvatarId);
             //Default load method
             var structureAttribute = Array.Find(metadata.attributes, a => a.trait_type == "Structure");
             if(structureAttribute != null && (string)structureAttribute.value == "Building")
@@ -69,7 +69,7 @@ public class ModelTester : MonoBehaviour
                 //Buildings should always use mesh colliders for interior wall collisions
                 defaultLoader.SetLoadOptions(false, true, true, false, false);
             }
-            defaultLoader.Load(nftId);
+            defaultLoader.LoadAsync(nftId);
         }
     }
 }

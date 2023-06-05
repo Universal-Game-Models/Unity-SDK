@@ -85,6 +85,7 @@ public class AssetHoverInfo : MonoBehaviour
         {
             var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one / 2f);
             image.sprite = sprite;
+            image.preserveAspect = true;
         }
     }
 }

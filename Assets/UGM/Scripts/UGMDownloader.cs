@@ -85,7 +85,7 @@ public class UGMDownloader : MonoBehaviour
     {
         if (loadOnStart && !string.IsNullOrEmpty(nftId))
         {
-            LoadAsset();
+            Load(nftId);
         }
     }
     protected virtual void OnDestroy()
@@ -110,19 +110,27 @@ public class UGMDownloader : MonoBehaviour
         this.loadMetadata = loadMetadata;
         this.loadImage = loadImage;
     }
+
+    //Can be used in public events syncronously
     public void Load(string nftId)
     {
-        this.nftId = nftId;
-        LoadAsset();
+        LoadAsync(nftId);
     }
-    protected async void LoadAsset()
+
+    public async Task LoadAsync(string nftId)
     {
+        this.nftId = nftId;
+        //Prevent double load
+        if (isLoading) return;
         isLoading = true;
         if (loadModel)
         {
+            if (InstantiatedGO != null)
+            {
+                DestroyImmediate(InstantiatedGO);
+            }
             //Load the model
-            var modelUrl = UGMAssetManager.MODEL_URI + nftId.PadLeft(64, '0') + ".glb";
-            bool didLoad = await DownloadModelAsync(modelUrl);
+            bool didLoad = await DownloadModelAsync(nftId);
             if (didLoad)
             {
                 if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
@@ -136,8 +144,7 @@ public class UGMDownloader : MonoBehaviour
         if (loadMetadata)
         {
             //Load Metadata
-            var metadataUrl = UGMAssetManager.METADATA_URI + nftId.PadLeft(64, '0') + ".json";
-            metadata = await DownloadMetadataAsync(metadataUrl);
+            metadata = await DownloadMetadataAsync(nftId);
             if (metadata != null)
             {
                 OnMetadataSuccess(metadata);
@@ -165,7 +172,7 @@ public class UGMDownloader : MonoBehaviour
     }
 
     #region Private Functions
-    private async Task<bool> DownloadModelAsync(string url)
+    private async Task<bool> DownloadModelAsync(string nftId)
     {
         if (asset == null)
         {
@@ -174,6 +181,7 @@ public class UGMDownloader : MonoBehaviour
         asset.InstantiationSettings = new GLTFast.InstantiationSettings() { Mask = GLTFast.ComponentType.Animation | GLTFast.ComponentType.Mesh };
         var childCount = transform.childCount;
         // Load the asset
+        var url = UGMAssetManager.MODEL_URI + nftId.PadLeft(64, '0') + ".glb";
         var didLoad = await asset.Load(url, new UGMDownloadProvider());
         if (transform.childCount > childCount)
         {
@@ -181,8 +189,9 @@ public class UGMDownloader : MonoBehaviour
         }
         return didLoad;
     }
-    public static async Task<Metadata> DownloadMetadataAsync(string url)
+    public static async Task<Metadata> DownloadMetadataAsync(string nftId)
     {
+        var url = UGMAssetManager.METADATA_URI + nftId.PadLeft(64, '0') + ".json";
         var request = UnityWebRequest.Get(url);
 
         var tcs = new TaskCompletionSource<bool>();
@@ -212,7 +221,7 @@ public class UGMDownloader : MonoBehaviour
             throw new Exception($"HTTP error {request.responseCode}");
         }
     }
-    public async Task<Texture2D> DownloadImageAsync(string url)
+    public static async Task<Texture2D> DownloadImageAsync(string url)
     {
         using (var request = UnityWebRequestTexture.GetTexture(url))
         {

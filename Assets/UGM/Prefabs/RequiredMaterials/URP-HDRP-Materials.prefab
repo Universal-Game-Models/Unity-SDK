@@ -107,7 +107,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4768418256832365366}
   m_Layer: 0
-  m_Name: URP-Materials
+  m_Name: URP-HDRP-Materials
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
