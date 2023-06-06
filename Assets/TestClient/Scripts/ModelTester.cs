@@ -14,7 +14,7 @@ public class ModelTester : MonoBehaviour
     [SerializeField]
     private AvatarLoader avatarLoader;
     [SerializeField]
-    private HumanoidToolLoader toolLoader;
+    private HumanoidEquipmentLoader toolLoader;
 
     [Button]
     public void Test()
@@ -36,7 +36,7 @@ public class ModelTester : MonoBehaviour
     private async Task Load(string nftId)
     {
         //Get the nft metadata
-        var metadata = await UGMDownloader.DownloadMetadataAsync(UGMAssetManager.METADATA_URI + nftId.PadLeft(64, '0') + ".json");
+        var metadata = await UGMDownloader.DownloadMetadataAsync(UGMManager.METADATA_URI + nftId.PadLeft(64, '0') + ".json");
         //Use the appropriate UGA Downloader to create it
         var characterAttribute = Array.Find(metadata.attributes, a => a.trait_type == "Character");
         if (characterAttribute != null)

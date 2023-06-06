@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class HumanoidToolLoader : UGMDownloader
+public class HumanoidEquipmentLoader : UGMDownloader
 {
     public HumanBodyBones humanoidBone;
     [SerializeField]
@@ -24,9 +24,9 @@ public class HumanoidToolLoader : UGMDownloader
     {
         base.OnModelSuccess(toolGO);
         Transform parent = GetHumanoidBone(humanoidBone);
-        toolGO.transform.SetParent(parent);
-        toolGO.transform.localPosition = positionOffset;
-        toolGO.transform.localRotation = Quaternion.Euler(rotationOffset);
+        InstantiatedGO.transform.SetParent(parent);
+        InstantiatedGO.transform.localPosition = positionOffset;
+        InstantiatedGO.transform.localRotation = Quaternion.Euler(rotationOffset);
         //Fix for hand rotation and position, comment or customize if not needed
         if(anim && humanoidBone == HumanBodyBones.LeftHand)
         {

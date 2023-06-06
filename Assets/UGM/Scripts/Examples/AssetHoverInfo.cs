@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UGMAssetManager;
+using static UGMDataTypes;
 
 public class AssetHoverInfo : MonoBehaviour
 {
@@ -85,6 +85,7 @@ public class AssetHoverInfo : MonoBehaviour
         {
             var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one / 2f);
             image.sprite = sprite;
+            image.preserveAspect = true;
         }
     }
 }
