@@ -21,17 +21,12 @@ public class AnimationSelector: MonoBehaviour
     {
         if (!loader) loader = GetComponent<UGMDownloader>();
         if(!loader) loader = GetComponentInParent<UGMDownloader>();
-        if (!loader)
-        {
-            Debug.LogError("AnimationSelector could not find a UGMDownloader");
-            return;
-        }
-        loader.onMetadataSuccess.AddListener(OnMetadataSuccess);
+        if(loader) loader.onMetadataSuccess.AddListener(OnMetadataSuccess);
     }
 
     private void OnDestroy()
     {
-        loader.onMetadataSuccess.RemoveListener(OnMetadataSuccess);
+        if(loader) loader.onMetadataSuccess.RemoveListener(OnMetadataSuccess);
     }
 
     private void OnMetadataSuccess(Metadata metadata)
@@ -94,5 +89,27 @@ public class AnimationSelector: MonoBehaviour
         if (content.childCount <= 0) active = false;
         contentActive = active;
         parent.SetActive(contentActive);
+    }
+
+    public void SetLoader(UGMDownloader uGMDownloader, Metadata metadata = null)
+    {
+        if(uGMDownloader == null)
+        {
+            Debug.LogWarning("The UGMDownloader was null");
+            return;
+        }
+        if(loader != null)
+        {
+            loader.onMetadataSuccess.RemoveListener(OnMetadataSuccess);
+        }
+        loader = uGMDownloader;
+        if (metadata != null)
+        {
+            OnMetadataSuccess(metadata);
+        }
+
+        //Wait for metadata to be downloaded
+        //Must have UGMDownloader.loadMetadata = true before calling Load
+        loader.onMetadataSuccess.AddListener(OnMetadataSuccess);      
     }
 }
