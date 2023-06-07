@@ -93,23 +93,4 @@ public class AvatarLoader : UGMDownloader
         animator.cullingMode = cullingMode;
         animator.enabled = true;
     }
-
-    //TEMP
-    private bool playingAnimation = false;
-    private void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.Period))
-        {
-            if (playingAnimation)
-            {
-                StopAnimation();
-                playingAnimation = false;
-            }
-            else
-            {
-                PlayAnimation("", true);
-                playingAnimation = true;
-            }
-        }
-    }
 }
