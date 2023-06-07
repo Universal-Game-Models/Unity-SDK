@@ -89,6 +89,7 @@ public class AnimationSelector: MonoBehaviour
         if (content.childCount <= 0) active = false;
         contentActive = active;
         parent.SetActive(contentActive);
+        ExampleUIEvents.OnShowCursor.Invoke(active);
     }
 
     public void SetLoader(UGMDownloader uGMDownloader, Metadata metadata = null)

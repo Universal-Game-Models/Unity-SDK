@@ -91,6 +91,8 @@ public class Inventory : MonoBehaviour
 
     private void ToggleInventory()
     {
-        parent.SetActive(!parent.activeInHierarchy);
+        var active = !parent.activeInHierarchy;
+        parent.SetActive(active);
+        ExampleUIEvents.OnShowCursor.Invoke(active);
     }
 }
