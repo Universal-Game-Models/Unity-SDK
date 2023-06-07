@@ -22,7 +22,6 @@ public class AvatarLoader : UGMDownloader
     private AnimatorCullingMode cullingMode;
 
     private Animator animator;
-
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -36,15 +35,6 @@ public class AvatarLoader : UGMDownloader
             SetupAvatar(previewCharacter);
         }
     }
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-    }
-
-    protected override void OnModelFailure()
-    {
-        base.OnModelFailure();
-    }
 
     protected override void OnModelSuccess(GameObject targetAvatar)
     {
@@ -55,6 +45,19 @@ public class AvatarLoader : UGMDownloader
         }
         SetupAvatar(targetAvatar);
         base.OnModelSuccess(targetAvatar);
+    }
+
+    //The Animator is disabled to allow Animation component to play
+    protected override void OnAnimationStart(string animationName)
+    {
+        animator.enabled = false;
+        base.OnAnimationStart(animationName);
+    }
+    //The Animator is enabled when the Animation component completes
+    protected override void OnAnimationEnd(string animationName)
+    {
+        base.OnAnimationEnd(animationName);
+        animator.enabled = true;
     }
 
     private void SetupAvatar(GameObject targetAvatar)
@@ -89,5 +92,24 @@ public class AvatarLoader : UGMDownloader
         animator.updateMode = updateMode;
         animator.cullingMode = cullingMode;
         animator.enabled = true;
+    }
+
+    //TEMP
+    private bool playingAnimation = false;
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Period))
+        {
+            if (playingAnimation)
+            {
+                StopAnimation();
+                playingAnimation = false;
+            }
+            else
+            {
+                PlayAnimation("", true);
+                playingAnimation = true;
+            }
+        }
     }
 }

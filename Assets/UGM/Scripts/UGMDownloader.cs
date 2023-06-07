@@ -2,6 +2,7 @@ using GLTFast.Loading;
 using NaughtyAttributes;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -45,14 +46,80 @@ public class UGMDownloader : MonoBehaviour
     public UnityEvent<Texture2D> onImageSuccess = new UnityEvent<Texture2D>();
     [Foldout("Events")] 
     public UnityEvent onImageFailure = new UnityEvent();
+    [Foldout("Events")]
+    public UnityEvent<string> onAnimationStart = new UnityEvent<string>();
+    [Foldout("Events")]
+    public UnityEvent<string> onAnimationEnd = new UnityEvent<string>();
     #endregion
 
-    #region Data
+    #region Private Variables
     private GLTFast.GltfAsset asset;
     private Metadata metadata;
     private Texture2D image;
     private bool isLoading = false;
     private GameObject instantiated;
+    private Animation embeddedAnimationsComponent;
+    private string currentEmbeddedAnimationName;
+    #endregion
+
+    #region Private Functions
+    private async Task<bool> DownloadModelAsync(string nftId)
+    {
+        if (asset == null)
+        {
+            asset = gameObject.AddComponent<GLTFast.GltfAsset>();
+        }
+        asset.InstantiationSettings = new GLTFast.InstantiationSettings() { Mask = GLTFast.ComponentType.Animation | GLTFast.ComponentType.Mesh };
+        var childCount = transform.childCount;
+        // Load the asset
+        nftId = int.Parse(nftId).ToString("X").ToLower();
+        var url = UGMManager.MODEL_URI + nftId.PadLeft(64, '0') + ".glb";
+        var didLoad = await asset.Load(url, new UGMDownloadProvider());
+        if (transform.childCount > childCount)
+        {
+            instantiated = transform.GetChild(childCount).gameObject;
+        }
+        return didLoad;
+    }
+    private void AddColliders(GLTFast.GltfAsset asset)
+    {
+        if (addMeshColliders)
+        {
+            var meshFilters = asset.gameObject.GetComponentsInChildren<MeshFilter>();
+            foreach (var meshFilter in meshFilters)
+            {
+                var meshCol = meshFilter.gameObject.AddComponent<MeshCollider>();
+                meshCol.sharedMesh = meshFilter.mesh;
+            }
+        }
+        else if (addBoxColliders)
+        {
+            var meshFilters = asset.gameObject.GetComponentsInChildren<MeshFilter>();
+            foreach (var meshFilter in meshFilters)
+            {
+                var boxCol = meshFilter.gameObject.AddComponent<BoxCollider>();
+                //boxCol.center = meshFilter.mesh.bounds.center;
+                //boxCol.size = meshFilter.mesh.bounds.size;
+            }
+            //Only add box colliders to skinned meshes as they are expected to be animated
+            //Could add an optional bone capsule colliders that could be used for specific use-cases
+            var skinnedMeshes = asset.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+            foreach (var skinnedMesh in skinnedMeshes)
+            {
+                var boxCol = skinnedMesh.gameObject.AddComponent<BoxCollider>();
+                // Convert the bounding box center to local space
+                Vector3 center = skinnedMesh.transform.InverseTransformPoint(skinnedMesh.bounds.center);
+                boxCol.center = center;
+                // Calculate the scale factor needed to match the lossyScale
+                boxCol.size = Vector3.Scale(boxCol.size, skinnedMesh.transform.lossyScale);
+            }
+        }
+    }
+    private IEnumerator WaitForAnimationEnd(string animationName, float clipLength)
+    {
+        yield return new WaitForSeconds(clipLength);
+        OnAnimationEnd(animationName);
+    }
     #endregion
 
     #region Virtual Functions
@@ -80,9 +147,20 @@ public class UGMDownloader : MonoBehaviour
     {
         onImageFailure.Invoke();
     }
+    protected virtual void OnAnimationStart(string animationName)
+    {
+        currentEmbeddedAnimationName = animationName;
+        onAnimationStart.Invoke(animationName);
+    }
+    protected virtual void OnAnimationEnd(string animationName)
+    {
+        currentEmbeddedAnimationName = "";
+        onAnimationEnd.Invoke(animationName);
+    }
 
     protected virtual void Start()
     {
+        asset = GetComponent<GLTFast.GltfAsset>();
         if (loadOnStart && !string.IsNullOrEmpty(nftId))
         {
             Load(nftId);
@@ -100,8 +178,11 @@ public class UGMDownloader : MonoBehaviour
     public string AssetName { get => metadata?.name; }
     public bool IsLoading { get => isLoading; }
     public GameObject InstantiatedGO { get => instantiated; }
+
+    public string CurrentEmbeddedAnimationName { get => currentEmbeddedAnimationName; }
     #endregion
 
+    #region Public Functions
     public void SetLoadOptions(bool addBoxColliders, bool addMeshColliders, bool loadModel, bool loadMetadata, bool loadImage)
     {
         this.addBoxColliders = addBoxColliders;
@@ -111,12 +192,10 @@ public class UGMDownloader : MonoBehaviour
         this.loadImage = loadImage;
     }
 
-    //Can be used in public events syncronously
     public void Load(string nftId)
     {
         LoadAsync(nftId);
     }
-
     public async Task LoadAsync(string nftId)
     {
         this.nftId = nftId;
@@ -125,6 +204,10 @@ public class UGMDownloader : MonoBehaviour
         isLoading = true;
         if (loadModel)
         {
+            if(embeddedAnimationsComponent)
+            {
+                DestroyImmediate(embeddedAnimationsComponent);
+            }
             if (InstantiatedGO != null)
             {
                 DestroyImmediate(InstantiatedGO);
@@ -135,6 +218,7 @@ public class UGMDownloader : MonoBehaviour
             {
                 if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
                 OnModelSuccess(asset.gameObject);
+                embeddedAnimationsComponent = gameObject.GetComponentInChildren<Animation>();
             }
             else
             {
@@ -171,26 +255,9 @@ public class UGMDownloader : MonoBehaviour
         isLoading = false;
     }
 
-    #region Private Functions
-    private async Task<bool> DownloadModelAsync(string nftId)
-    {
-        if (asset == null)
-        {
-            asset = gameObject.AddComponent<GLTFast.GltfAsset>();
-        }
-        asset.InstantiationSettings = new GLTFast.InstantiationSettings() { Mask = GLTFast.ComponentType.Animation | GLTFast.ComponentType.Mesh };
-        var childCount = transform.childCount;
-        // Load the asset
-        var url = UGMManager.MODEL_URI + nftId.PadLeft(64, '0') + ".glb";
-        var didLoad = await asset.Load(url, new UGMDownloadProvider());
-        if (transform.childCount > childCount)
-        {
-            instantiated = transform.GetChild(childCount).gameObject;
-        }
-        return didLoad;
-    }
     public static async Task<Metadata> DownloadMetadataAsync(string nftId)
     {
+        nftId = int.Parse(nftId).ToString("X").ToLower();
         var url = UGMManager.METADATA_URI + nftId.PadLeft(64, '0') + ".json";
         var request = UnityWebRequest.Get(url);
 
@@ -245,38 +312,53 @@ public class UGMDownloader : MonoBehaviour
         }
     }
 
-    private void AddColliders(GLTFast.GltfAsset asset)
+    public void PlayAnimation(string animationName = "", bool loop = false)
     {
-        if (addMeshColliders)
+        if (embeddedAnimationsComponent && embeddedAnimationsComponent.GetClipCount() > 0)
         {
-            var meshFilters = asset.gameObject.GetComponentsInChildren<MeshFilter>();
-            foreach (var meshFilter in meshFilters)
+            if (string.IsNullOrEmpty(animationName))
             {
-                var meshCol = meshFilter.gameObject.AddComponent<MeshCollider>();
-                meshCol.sharedMesh = meshFilter.mesh;
+                foreach (AnimationState animState in embeddedAnimationsComponent)
+                {
+                    animationName = animState.clip.name;
+                }
+            }
+            var clip = embeddedAnimationsComponent.GetClip(animationName);
+            if (clip)
+            {
+                if (embeddedAnimationsComponent.isPlaying)
+                {
+                    embeddedAnimationsComponent.Stop();
+                }
+                OnAnimationStart(animationName);
+                if (loop)
+                {
+                    embeddedAnimationsComponent.wrapMode = WrapMode.Loop;
+                    embeddedAnimationsComponent.Play(animationName);
+                }
+                else
+                {
+                    embeddedAnimationsComponent.wrapMode = WrapMode.Default;
+                    embeddedAnimationsComponent.Play(animationName);
+                    StartCoroutine(WaitForAnimationEnd(animationName, clip.length));
+                }
             }
         }
-        else if (addBoxColliders)
+    }
+    public void StopAnimation()
+    {
+        if (embeddedAnimationsComponent && embeddedAnimationsComponent.isPlaying)
         {
-            var meshFilters = asset.gameObject.GetComponentsInChildren<MeshFilter>();
-            foreach (var meshFilter in meshFilters)
-            {
-                var boxCol = meshFilter.gameObject.AddComponent<BoxCollider>();
-                //boxCol.center = meshFilter.mesh.bounds.center;
-                //boxCol.size = meshFilter.mesh.bounds.size;
-            }
-            //Only add box colliders to skinned meshes as they are expected to be animated
-            //Could add an optional bone capsule colliders that could be used for specific use-cases
-            var skinnedMeshes = asset.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
-            foreach (var skinnedMesh in skinnedMeshes)
-            {
-                var boxCol = skinnedMesh.gameObject.AddComponent<BoxCollider>();
-                // Convert the bounding box center to local space
-                Vector3 center = skinnedMesh.transform.InverseTransformPoint(skinnedMesh.bounds.center);
-                boxCol.center = center;
-                // Calculate the scale factor needed to match the lossyScale
-                boxCol.size = Vector3.Scale(boxCol.size, skinnedMesh.transform.lossyScale);
-            }
+            var clip = embeddedAnimationsComponent.clip;
+            embeddedAnimationsComponent.Stop();
+            // Set the hand position to the first frame's pose
+            AnimationState animState = embeddedAnimationsComponent[clip.name];
+            animState.time = 0f;
+            animState.enabled = true;
+            animState.weight = 1f;
+            embeddedAnimationsComponent.Sample();
+            animState.enabled = false;
+            OnAnimationEnd(clip.name);
         }
     }
     #endregion
