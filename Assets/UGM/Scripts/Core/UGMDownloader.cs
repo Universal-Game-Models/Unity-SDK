@@ -316,14 +316,17 @@ public class UGMDownloader : MonoBehaviour
     {
         if (embeddedAnimationsComponent && embeddedAnimationsComponent.GetClipCount() > 0)
         {
-            if (string.IsNullOrEmpty(animationName))
+            var animClipName = animationName;
+            var clip = embeddedAnimationsComponent.GetClip(animationName);
+            if (string.IsNullOrEmpty(animationName) || clip == null)
             {
                 foreach (AnimationState animState in embeddedAnimationsComponent)
                 {
-                    animationName = animState.clip.name;
+                    clip = animState.clip;
+                    animClipName = clip.name;
+                    break;
                 }
             }
-            var clip = embeddedAnimationsComponent.GetClip(animationName);
             if (clip)
             {
                 if (embeddedAnimationsComponent.isPlaying)
@@ -334,12 +337,12 @@ public class UGMDownloader : MonoBehaviour
                 if (loop)
                 {
                     embeddedAnimationsComponent.wrapMode = WrapMode.Loop;
-                    embeddedAnimationsComponent.Play(animationName);
+                    embeddedAnimationsComponent.Play(animClipName);
                 }
                 else
                 {
                     embeddedAnimationsComponent.wrapMode = WrapMode.Default;
-                    embeddedAnimationsComponent.Play(animationName);
+                    embeddedAnimationsComponent.Play(animClipName);
                     StartCoroutine(WaitForAnimationEnd(animationName, clip.length));
                 }
             }
