@@ -1,6 +1,9 @@
-using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// Manages the loading and positioning of humanoid equipment on the character model.
+/// Inherits from the UGMDownloader class.
+/// </summary>
 public class HumanoidEquipmentLoader : UGMDownloader
 {
     public HumanBodyBones humanoidBone;
@@ -11,15 +14,12 @@ public class HumanoidEquipmentLoader : UGMDownloader
 
     private Animator anim;
 
-    // Start is called before the first frame update
-    protected override void Start()
-    {
-        base.Start();
-    }
-    protected override void OnModelFailure()
-    {
-        base.OnModelFailure();
-    }
+    /// <summary>
+    /// Called when the model loading succeeds.
+    /// Calls the base OnModelSuccess method from the parent class.
+    /// Gets the parent bone transform and sets the position and rotation of the instantiated game object.
+    /// Fixes the hand rotation and position if necessary.
+    /// </summary>
     protected override void OnModelSuccess(GameObject toolGO)
     {
         base.OnModelSuccess(toolGO);
@@ -37,6 +37,11 @@ public class HumanoidEquipmentLoader : UGMDownloader
             anim.SetInteger("RightItem", 0);
         }
     }
+
+    /// <summary>
+    /// Retrieves the humanoid bone transform based on the specified bone type.
+    /// Searches for the bone transform in the parent or sibling objects.
+    /// </summary>
     private Transform GetHumanoidBone(HumanBodyBones bone)
     {
         //Check my parent for Animator
@@ -71,6 +76,11 @@ public class HumanoidEquipmentLoader : UGMDownloader
         return null;
     }
 
+    /// <summary>
+    /// Called when the component is being destroyed.
+    /// Resets the hand animation states to -1.
+    /// Calls the base OnDestroy method from the parent class.
+    /// </summary>
     protected override void OnDestroy()
     {
         if (anim)

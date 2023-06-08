@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Manages the loading and setup of avatars, including animators and controllers.
+/// Inherits from the UGMDownloader class.
+/// </summary>
 public class AvatarLoader : UGMDownloader
 {
     [SerializeField]
@@ -22,11 +26,21 @@ public class AvatarLoader : UGMDownloader
     private AnimatorCullingMode cullingMode;
 
     private Animator animator;
+
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// Retrieves the Animator component attached to the GameObject.
+    /// </summary>
     private void Awake()
     {
         animator = GetComponent<Animator>();
     }
 
+    /// <summary>
+    /// Called before the first frame update.
+    /// Calls the base Start method from the parent class.
+    /// Sets up the preview avatar if available.
+    /// </summary>
     protected override void Start()
     {
         base.Start();
@@ -36,6 +50,10 @@ public class AvatarLoader : UGMDownloader
         }
     }
 
+    /// <summary>
+    /// Called when the model loading succeeds.
+    /// Destroys the preview character, sets up the target avatar, and calls the base OnModelSuccess method from the parent class.
+    /// </summary>
     protected override void OnModelSuccess(GameObject targetAvatar)
     {
         if (previewCharacter != null)
@@ -47,19 +65,31 @@ public class AvatarLoader : UGMDownloader
         base.OnModelSuccess(targetAvatar);
     }
 
-    //The Animator is disabled to allow Animation component to play
+    /// <summary>
+    /// Called when the animation starts playing.
+    /// Disables the animator to allow the Animation component to play.
+    /// Calls the base OnAnimationStart method from the parent class.
+    /// </summary>
     protected override void OnAnimationStart(string animationName)
     {
         animator.enabled = false;
         base.OnAnimationStart(animationName);
     }
-    //The Animator is enabled when the Animation component completes
+
+    /// <summary>
+    /// Called when the animation completes.
+    /// Calls the base OnAnimationEnd method from the parent class.
+    /// Enables the animator.
+    /// </summary>
     protected override void OnAnimationEnd(string animationName)
     {
         base.OnAnimationEnd(animationName);
         animator.enabled = true;
     }
 
+    /// <summary>
+    /// Sets up the target avatar by configuring the animator and third-person controller.
+    /// </summary>
     private void SetupAvatar(GameObject targetAvatar)
     {
         SetupAnimator();
@@ -71,6 +101,9 @@ public class AvatarLoader : UGMDownloader
         }
     }
 
+    /// <summary>
+    /// Sets up the animator by removing the old animator and adding a new one with the updated settings.
+    /// </summary>
     private void SetupAnimator()
     {
         //Remove old animator as it doesn't point to the character
