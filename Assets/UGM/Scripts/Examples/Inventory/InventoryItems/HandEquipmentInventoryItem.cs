@@ -8,8 +8,8 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
 {
-    AvatarLoader avatarLoader;
-    HumanoidEquipmentLoader[] tools;
+    private AvatarLoader avatarLoader;
+    private HumanoidEquipmentLoader[] tools;
     private int currentHand;
 
     /// <summary>

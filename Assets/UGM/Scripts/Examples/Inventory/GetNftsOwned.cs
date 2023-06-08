@@ -19,15 +19,11 @@ using static UGMDataTypes;
 /// </remarks>
 public class GetNftsOwned : MonoBehaviour
 {
-    /// <summary>
-    /// Variable to store the wallet address.
-    /// </summary>
+    [Tooltip("Variable to store the wallet address.")]
     [SerializeField]
     private string address;
 
-    /// <summary>
-    /// Variable to store the current page number.
-    /// </summary>
+    [Tooltip("Variable to store the current page number.")]
     [SerializeField]
     private int currentPage = 0;
 
@@ -36,10 +32,7 @@ public class GetNftsOwned : MonoBehaviour
     /// </summary>
     private Dictionary<int, string> pages = new Dictionary<int, string>();
 
-    /// <summary>
-    /// Use this property to determine how many page buttons to show
-    /// and what the maximum pageNumber is for GetNftsByAddress.
-    /// </summary>
+    [Tooltip("Use this property to determine how many page buttons to show and what the maximum pageNumber is for GetNftsByAddress.")]
     public int MaxPageNumber { get => pages.Count - 1; }
 
     /// <summary>

@@ -19,15 +19,11 @@ public class InstantiatableInventoryControl : MonoBehaviour
     /// </summary>
     public static InstantiatableInventoryControl Instance { get { return _instance; } }
 
-    /// <summary>
-    /// Reference to the hologram prefab used for visualization.
-    /// </summary>
+    [Tooltip("Reference to the hologram prefab used for visualization.")]
     [SerializeField]
     private GameObject hologramPrefab;
 
-    /// <summary>
-    /// The speed at which the hologram rotates from scrolling.
-    /// </summary>
+    [Tooltip("The speed at which the hologram rotates from scrolling.")]
     [SerializeField]
     private float rotateSpeed;
 

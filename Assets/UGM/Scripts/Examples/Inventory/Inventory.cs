@@ -19,40 +19,34 @@ using UnityEngine.EventSystems;
 /// </remarks>
 public class Inventory : MonoBehaviour
 {
-    /// <summary>
-    /// Reference to the GetNftsOwned component responsible for retrieving NFTs owned by a specific address.
-    /// </summary>
+    [Tooltip("Reference to the GetNftsOwned component responsible for retrieving NFTs owned by a specific address.")]
     public GetNftsOwned nftsOwned;
 
-    /// <summary>
-    /// Reference to the parent GameObject that contains the inventory UI elements.
-    /// </summary>
+    [Tooltip("Reference to the parent GameObject that contains the inventory UI elements.")]
     [SerializeField]
     private GameObject parent;
-    /// <summary>
-    /// Reference to the Transform component representing the content area where inventory items are displayed.
-    /// </summary>
+
+    [Tooltip("Reference to the Transform component representing the content area where inventory items are displayed.")]
     [SerializeField]
     private Transform content;
-    /// <summary>
-    /// Reference to the prefab of the default inventory item.
-    /// </summary>
+
+    [Tooltip("Reference to the prefab of the default inventory item.")]
     [SerializeField]
     private InventoryItem defaultItemPrefab;
-    /// <summary>
-    /// Array of item prefabs to be used for specific token attributes in the inventory.
-    /// </summary>
+
+    [Tooltip("Array of item prefabs to be used for specific token attributes in the inventory.")]
     [SerializeField]
     private ItemPrefabs[] itemPrefabs;
 
-    /// <summary>
-    /// Structure defining the attributes of an item prefab used in the inventory.
-    /// </summary>
+    [Tooltip("Structure defining the attributes of an item prefab used in the inventory.")]
     [Serializable]
     public struct ItemPrefabs
     {
+        [Tooltip("The name of the attribute trait type or trait value")]
         public string name;
+        [Tooltip("Flag to determine if the name is type or value")]
         public bool nameIsTraitType;
+        [Tooltip("The inventory prefab that should be used when the name matches the attribute trait type or value")]
         public InventoryItem prefab;
     }
 

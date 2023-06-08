@@ -11,14 +11,10 @@ using static UGMDataTypes;
 /// </summary>
 public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    /// <summary>
-    /// Reference to the Button component of the inventory item.
-    /// </summary>
+    [Tooltip("Reference to the Button component of the inventory item.")]
     [SerializeField]
     protected Button button;
-    /// <summary>
-    /// Reference to the TMPro.TextMeshProUGUI component for displaying the name of the inventory item.
-    /// </summary>
+    [Tooltip("Reference to the TMPro.TextMeshProUGUI component for displaying the name of the inventory item.")]
     [SerializeField]
     private TMPro.TextMeshProUGUI nameText;
     /// <summary>
