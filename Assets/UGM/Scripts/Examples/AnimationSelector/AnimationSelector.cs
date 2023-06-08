@@ -2,16 +2,24 @@
 using UnityEngine;
 using static UGMDataTypes;
 
+/// <summary>
+/// Represents an animation selector that generates animation selector buttons based on metadata.
+/// </summary>
 public class AnimationSelector: MonoBehaviour
 {
+    [Tooltip("The prefab for the animation selector button.")]
     [SerializeField]
     private AnimationSelectorButton animationSelectorButtonPrefab;
+    [Tooltip("The parent GameObject to hide and show the animation selector buttons.")]
     [SerializeField]
     private GameObject parent;
+    [Tooltip("The Transform component representing the content area for animation selector buttons.")]
     [SerializeField]
     private Transform content;
+    [Tooltip("The UGMDownloader component responsible for metadata retrieval.")]
     [SerializeField]
     private UGMDownloader loader;
+    [Tooltip("Determines if the animation should loop when played.")]
     [SerializeField]
     private bool loopAnimation = true;
 
@@ -29,6 +37,10 @@ public class AnimationSelector: MonoBehaviour
         if(loader) loader.onMetadataSuccess.RemoveListener(OnMetadataSuccess);
     }
 
+    /// <summary>
+    /// Event handler for successful metadata retrieval.
+    /// </summary>
+    /// <param name="metadata">The retrieved metadata.</param>
     private void OnMetadataSuccess(Metadata metadata)
     {
         List<string> animationNames = new List<string>();
@@ -43,6 +55,10 @@ public class AnimationSelector: MonoBehaviour
         Init(animationNames.ToArray());
     }
 
+    /// <summary>
+    /// Initializes the animation selector with the specified animation names.
+    /// </summary>
+    /// <param name="animationNames">The array of animation names.</param>
     private void Init(string[] animationNames)
     {
         //Destroy the existing animation selector buttons
@@ -75,6 +91,9 @@ public class AnimationSelector: MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Update function called once per frame. Checks if the "B" key has been released and toggles the visibility of the content accordingly.
+    /// </summary>
     private void Update()
     {
         if (Input.GetKeyUp(KeyCode.B))
@@ -83,6 +102,10 @@ public class AnimationSelector: MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Toggles the visibility of the content.
+    /// </summary>
+    /// <param name="active">The desired visibility state.</param>
     public void ToggleContent(bool active)
     {
         //Do not allow if their are no animations
@@ -92,6 +115,11 @@ public class AnimationSelector: MonoBehaviour
         ExampleUIEvents.OnShowCursor.Invoke(active);
     }
 
+    /// <summary>
+    /// Sets the UGMDownloader and metadata for the animation selector.
+    /// </summary>
+    /// <param name="uGMDownloader">The UGMDownloader to be set.</param>
+    /// <param name="metadata">Optional metadata to be provided.</param>
     public void SetLoader(UGMDownloader uGMDownloader, Metadata metadata = null)
     {
         if(uGMDownloader == null)
