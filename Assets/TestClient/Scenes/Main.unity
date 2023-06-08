@@ -523,15 +523,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3165227001193740921, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: 3165227001193740921, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 3165227001193740921, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 3165227001193740921, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
       propertyPath: m_AnchorMin.y
@@ -539,11 +539,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3165227001193740921, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -500
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3165227001193740921, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 3165227001193740921, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1574,6 +1574,7 @@ MonoBehaviour:
   metadataText: {fileID: 1273517945}
   image: {fileID: 2009547060}
   cam: {fileID: 699124926}
+  showAttributes: 0
 --- !u!114 &1969827191
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,7 +15,8 @@ public class AssetHoverInfo : MonoBehaviour
     private Image image;
     [SerializeField]
     private Camera cam;
-
+    [SerializeField]
+    private bool showAttributes = false;
 
     private UGMDownloader current;
     private float timer = 0f;
@@ -67,7 +68,7 @@ public class AssetHoverInfo : MonoBehaviour
         if (!string.IsNullOrEmpty(metadata.name)) text += "Name: " + metadata.name + "\n\n";
         if(!string.IsNullOrEmpty(metadata.description)) text += "Description: " + metadata.description + "\n\n";
 
-        if(metadata.attributes != null && metadata.attributes.Length > 0)
+        if(showAttributes && metadata.attributes != null && metadata.attributes.Length > 0)
         {
             text += "Attributes:\n";
             foreach (var attribute in metadata.attributes)
