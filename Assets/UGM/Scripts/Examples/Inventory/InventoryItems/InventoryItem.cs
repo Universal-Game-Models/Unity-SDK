@@ -17,10 +17,16 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [Tooltip("Reference to the TMPro.TextMeshProUGUI component for displaying the name of the inventory item.")]
     [SerializeField]
     private TMPro.TextMeshProUGUI nameText;
+
     /// <summary>
     /// The TokenInfo object associated with the inventory item.
     /// </summary>
     protected TokenInfo tokenInfo;
+
+    /// <summary>
+    /// The Inventory object associated with the inventory item.
+    /// </summary>
+    protected Inventory inventory;
 
     /// <summary>
     /// Flag indicating if the mouse pointer is hovering over the inventory item.
@@ -44,9 +50,10 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /// Initializes the inventory item with the specified TokenInfo.
     /// </summary>
     /// <param name="tokenInfo">The TokenInfo object associated with the inventory item.</param>
-    public void Init(TokenInfo tokenInfo)
+    public void Init(Inventory inventory, TokenInfo tokenInfo)
     {
         this.tokenInfo = tokenInfo;
+        this.inventory = inventory;
         if (nameText) nameText.text = this.tokenInfo.metadata.name;
     }
 

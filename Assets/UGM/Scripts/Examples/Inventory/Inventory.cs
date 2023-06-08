@@ -22,6 +22,9 @@ public class Inventory : MonoBehaviour
     [Tooltip("Reference to the GetNftsOwned component responsible for retrieving NFTs owned by a specific address.")]
     public GetNftsOwned nftsOwned;
 
+    [Tooltip("The avatar loader that should be used by this inventory and its items")]
+    public AvatarLoader avatarLoader;
+
     [Tooltip("Reference to the parent GameObject that contains the inventory UI elements.")]
     [SerializeField]
     private GameObject parent;
@@ -100,7 +103,7 @@ public class Inventory : MonoBehaviour
             }
             var item = Instantiate(prefab, content);
             if(EventSystem.current.firstSelectedGameObject == null) EventSystem.current.firstSelectedGameObject = item.gameObject;
-            item.Init(tokenInfo);
+            item.Init(this, tokenInfo);
         }
     }
 
