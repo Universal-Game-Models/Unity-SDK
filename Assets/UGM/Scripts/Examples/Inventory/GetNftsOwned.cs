@@ -7,19 +7,43 @@ using System.Threading.Tasks;
 using UnityEngine;
 using static UGMDataTypes;
 
+/// <summary>
+/// The GetNftsOwned class retrieves NFTs owned by a specific address.
+/// It manages pagination, storing pages and cursors, and provides methods to get the next or previous page of NFTs.
+/// </summary>
+/// <remarks>
+/// This class is attached to a GameObject and requires the NaughtyAttributes and Newtonsoft.Json namespaces.
+/// It uses a dictionary to store the pages and their respective cursors. The MaxPageNumber property determines
+/// the maximum page number for GetNftsByAddress and is used to determine how many page buttons to show.
+/// The GetNftsByAddress method retrieves a list of TokenInfo objects asynchronously. It accepts parameters for the
+/// page number, wallet address, and a flag to retrieve all pages recursively. The method retrieves a maximum of
+/// 100 results per request. The GetNextPage and GetPreviousPage methods are button functions to navigate through the pages.
+/// </remarks>
 public class GetNftsOwned : MonoBehaviour
 {
+    /// <summary>
+    /// Variable to store the wallet address.
+    /// </summary>
     [SerializeField]
     private string address;
+
+    /// <summary>
+    /// Variable to store the current page number.
+    /// </summary>
     [SerializeField]
     private int currentPage = 0;
+
+    /// <summary>
+    /// Dictionary to store the pages and their respective cursors.
+    /// </summary>
     private Dictionary<int, string> pages = new Dictionary<int, string>();
 
-    //Use this to determine how many page buttons to show
-    //and what the maximum pageNumber is for GetNftsByAddress
+    /// <summary>
+    /// Use this property to determine how many page buttons to show
+    /// and what the maximum pageNumber is for GetNftsByAddress.
+    /// </summary>
     public int MaxPageNumber { get => pages.Count - 1; }
 
-    [Button]
     /// <summary>
     /// Retrieves a list of TokenInfo objects representing NFTs owned by a specific address.
     /// </summary>
@@ -29,8 +53,9 @@ public class GetNftsOwned : MonoBehaviour
     /// WARNING: This is recursive as long as the response returns a cursor.
     /// Suggested approach is to only use this with pageNumber 0 during initial loading.
     /// To check for new pages during gameplay, you can use this with pageNumber = MaxPageNumber.
-    /// Each request gets a maximum of 100 results.</param>    /// <returns>A task that represents the asynchronous operation. The task result contains the list of TokenInfo objects.</returns>
-
+    /// Each request gets a maximum of 100 results.</param>    
+    /// <returns>A task that represents the asynchronous operation. The task result contains the list of TokenInfo objects.</returns>
+    [Button]
     public async Task<List<TokenInfo>> GetNftsByAddress(int pageNumber = 0, string walletAddress = "",  bool getAllPagesRecursive = false)
     {
         if(!string.IsNullOrEmpty(walletAddress) && address != walletAddress)
@@ -71,6 +96,9 @@ public class GetNftsOwned : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// Button function to get the next page of NFTs.
+    /// </summary>
     [Button]
     public void GetNextPage()
     {
@@ -85,6 +113,9 @@ public class GetNftsOwned : MonoBehaviour
         GetNftsByAddress(nextPageNumber);
     }
 
+    /// <summary>
+    /// Button function to get the previous page of NFTs.
+    /// </summary>
     [Button]
     public void GetPreviousPage()
     {

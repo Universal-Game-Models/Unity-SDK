@@ -4,12 +4,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Represents a hand equipment inventory item with additional functionality.
+/// Inherits from the base class InventoryItem and implements the IPointerClickHandler interface.
+/// Overrides the DoAction() method to add custom behavior.
+/// Implements the OnPointerClick() method to handle pointer click events.
+/// </summary>
 public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
 {
     AvatarLoader avatarLoader;
     HumanoidEquipmentLoader[] tools;
-    private int Hand;
+    private int currentHand;
 
+    /// <summary>
+    /// Called when the object becomes enabled and active.
+    /// Finds an instance of the AvatarLoader component in the scene and retrieves the HumanoidEquipmentLoader components.
+    /// </summary>
     private void OnEnable()
     {
         //Not good practice for production, create a static reference to your player
@@ -17,26 +27,40 @@ public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
         if(avatarLoader) tools = avatarLoader.GetComponentsInChildren<HumanoidEquipmentLoader>();
     }
 
+    /// <summary>
+    /// Overrides the base class method to perform custom actions when the item is interacted with.
+    /// Calls the base implementation first and then changes the equipment model to the default hand.
+    /// </summary>
     protected override void DoAction()
     {
         base.DoAction();
-        Hand = 0;
+        currentHand = 0;
         ChangeEquipmentModel();
     }
+
+    /// <summary>
+    /// Implements the IPointerClickHandler interface method to handle pointer click events.
+    /// Changes the equipment model to the alternate hand when the right mouse button is clicked.
+    /// </summary>
+    /// <param name="eventData">The pointer event data associated with the click.</param>
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            Hand = 1;
+            currentHand = 1;
             ChangeEquipmentModel();
         }
     }
 
+    /// <summary>
+    /// Changes the equipment model to the specified hand.
+    /// Loads the equipment asynchronously using the HumanoidEquipmentLoader component and the token ID.
+    /// </summary>
     private void ChangeEquipmentModel()
     {
-        if (tools != null && tools.Length > Hand)
+        if (tools != null && tools.Length > currentHand)
         {
-            tools[Hand].LoadAsync(tokenInfo.token_id);
+            tools[currentHand].LoadAsync(tokenInfo.token_id);
         }
     }
 }
