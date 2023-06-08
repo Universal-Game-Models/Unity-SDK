@@ -5,7 +5,7 @@
 /// </summary>
 public class AvatarInventoryItem : InventoryItem
 {
-    AvatarLoader avatarLoader;
+    private AvatarLoader avatarLoader;
 
     /// <summary>
     /// Called when the object becomes enabled and active.

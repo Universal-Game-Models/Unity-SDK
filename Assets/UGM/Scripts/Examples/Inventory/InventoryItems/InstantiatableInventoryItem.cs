@@ -12,7 +12,6 @@ public class InstantiatableInventoryItem : InventoryItem
     protected override void DoAction()
     {
         base.DoAction();
-        //Change this to initialize an onMouse listener
         InstantiatableInventoryControl.Instance.SetTokenInfo(tokenInfo);
     }
 }
