@@ -1,18 +1,26 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static UGMDataTypes;
 
+/// <summary>
+/// Represents the QuickSelectControl class responsible for managing quick select buttons and their associated actions.
+/// </summary>
 public class QuickSelectControl : MonoBehaviour
 {
     private static QuickSelectControl _instance;
 
-    // Public property to access the instance
+    /// <summary>
+    /// Public property to access the instance of the QuickSelectControl script.
+    /// </summary>
     public static QuickSelectControl Instance { get { return _instance; } }
+
+    /// <summary>
+    /// Represents a quick select button along with its associated data, including the button component, image component,
+    /// token information, and the action to be performed when the button is clicked.
+    /// </summary>
     [Serializable]
     public class QuickSelect
     {
@@ -22,7 +30,11 @@ public class QuickSelectControl : MonoBehaviour
         public UnityAction action;
     }
 
-    public QuickSelect[] quickSelects;
+    /// <summary>
+    /// Array of QuickSelect objects representing the quick select buttons and associated data.
+    /// </summary>
+    [SerializeField]
+    private QuickSelect[] quickSelects;
 
     private void Awake()
     {
@@ -40,7 +52,10 @@ public class QuickSelectControl : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Update function called once per frame. Checks if the pointer is not over a UI object,
+    /// retrieves the number key pressed, and invokes the associated action for the corresponding quick select button.
+    /// </summary>
     void Update()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
@@ -53,6 +68,12 @@ public class QuickSelectControl : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the quick select button with the specified number key.
+    /// </summary>
+    /// <param name="numberKeyPressed">The number key associated with the quick select button.</param>
+    /// <param name="tokenInfo">The TokenInfo object containing the data for the quick select.</param>
+    /// <param name="action">The UnityAction to be invoked when the quick select button is clicked.</param>
     public async void SetQuickSelect(int numberKeyPressed, TokenInfo tokenInfo, UnityAction action)
     {
         var existing = Array.Find(quickSelects, q => q.tokenInfo == tokenInfo);
@@ -76,6 +97,11 @@ public class QuickSelectControl : MonoBehaviour
             image.preserveAspect = true;
         }
     }
+
+    /// <summary>
+    /// Checks if a number key (0-9) is pressed and returns the corresponding number.
+    /// </summary>
+    /// <returns>The number key (0-9) that is pressed. Returns -1 if no number key is pressed.</returns>
     public int GetNumberKeyPressed()
     {
         for (int i = 0; i <= 9; i++)
