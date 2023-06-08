@@ -1,19 +1,25 @@
-﻿using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Networking;
 using UnityEngine.UI;
-using static UGMDataTypes;
 
+/// <summary>
+/// Represents a button for selecting an animation. 
+/// </summary>
 public class AnimationSelectorButton : MonoBehaviour
 {
     [SerializeField]
+    [Tooltip("The button component used for selection.")]
     private Button selectorButton;
+
+    [Tooltip("The text component displaying the animation name.")]
     [SerializeField]
     private TMPro.TextMeshProUGUI animationNameText;
 
+    /// <summary>
+    /// Initializes the AnimationSelectorButton with the specified button action and animation name.
+    /// </summary>
+    /// <param name="buttonAction">The UnityAction to be invoked when the button is clicked.</param>
+    /// <param name="animationName">The name of the animation to be displayed.</param>
     public void Init(UnityAction buttonAction, string animationName)
     {
         selectorButton.onClick.RemoveAllListeners();
