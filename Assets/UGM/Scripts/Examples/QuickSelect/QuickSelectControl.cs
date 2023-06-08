@@ -24,15 +24,20 @@ public class QuickSelectControl : MonoBehaviour
     [Serializable]
     public class QuickSelect
     {
+        [Tooltip("The button component associated with the quick select.")]
         public Button button;
+
+        [Tooltip("The image component associated with the quick select.")]
         public Image image;
+
+        [Tooltip("The token information associated with the quick select.")]
         public TokenInfo tokenInfo;
+
+        [Tooltip("The action to be performed when the quick select button is clicked.")]
         public UnityAction action;
     }
 
-    /// <summary>
-    /// Array of QuickSelect objects representing the quick select buttons and associated data.
-    /// </summary>
+    [Tooltip("Array of QuickSelect objects representing the quick select buttons and associated data.")]
     [SerializeField]
     private QuickSelect[] quickSelects;
 
