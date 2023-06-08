@@ -1,6 +1,9 @@
 
 using UnityEngine;
 
+/// <summary>
+/// Represents a camera orbit controller for player input.
+/// </summary>
 public class CameraOrbit : MonoBehaviour
 {
     private const float SMOOTH_TIME = 0.1f;
@@ -28,6 +31,9 @@ public class CameraOrbit : MonoBehaviour
         pitch = rotation.x;
     }
 
+    /// <summary>
+    /// Performs the camera rotation based on player input.
+    /// </summary>
     private void LateUpdate()
     {
         if (playerInput == null) return;
@@ -47,6 +53,13 @@ public class CameraOrbit : MonoBehaviour
         transform.transform.rotation = Quaternion.Euler(rotation);
     }
 
+    /// <summary>
+    /// Clamps the given angle between the minimum and maximum values.
+    /// </summary>
+    /// <param name="angle">The angle to clamp.</param>
+    /// <param name="min">The minimum angle.</param>
+    /// <param name="max">The maximum angle.</param>
+    /// <returns>The clamped angle value.</returns>
     private float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360F)

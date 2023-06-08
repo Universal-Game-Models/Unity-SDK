@@ -1,7 +1,9 @@
-using System;
 using UnityEngine;
 
-
+/// <summary>
+/// Handles the movement and physics of a third-person character.
+/// Requires a CharacterController and GroundCheck component.
+/// </summary>
 [RequireComponent(typeof(CharacterController), typeof(GroundCheck))]
 public class ThirdPersonMovement : MonoBehaviour
 {
@@ -29,13 +31,21 @@ public class ThirdPersonMovement : MonoBehaviour
     private bool isRunning;
 
     private GroundCheck groundCheck;
-        
+
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// Retrieves the CharacterController and GroundCheck components.
+    /// </summary>
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
         groundCheck = GetComponent<GroundCheck>();
     }
 
+    /// <summary>
+    /// Sets up the third-person movement for the target avatar.
+    /// </summary>
+    /// <param name="target">The target avatar GameObject.</param>
     public void Setup(GameObject target)
     {
         avatar = target;
@@ -45,6 +55,11 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves the character based on the input.
+    /// </summary>
+    /// <param name="inputX">The horizontal input axis.</param>
+    /// <param name="inputY">The vertical input axis.</param>
     public void Move(float inputX, float inputY)
     {
         var moveDirection = playerCamera.right * inputX + playerCamera.forward * inputY;
@@ -62,6 +77,10 @@ public class ThirdPersonMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Rotates the avatar towards the move direction.
+    /// </summary>
+    /// <param name="moveDirection">The direction of movement.</param>
     private void RotateAvatarTowardsMoveDirection(Vector3 moveDirection)
     {
         float targetAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg + transform.rotation.y;
@@ -69,6 +88,9 @@ public class ThirdPersonMovement : MonoBehaviour
         avatar.transform.rotation = Quaternion.Euler(0, angle, 0);
     }
 
+    /// <summary>
+    /// Handles the jump and gravity logic.
+    /// </summary>
     private void JumpAndGravity()
     {
         if (controller.isGrounded && verticalVelocity< 0)
@@ -85,11 +107,19 @@ public class ThirdPersonMovement : MonoBehaviour
         verticalVelocity += gravity * Time.deltaTime;
     }
 
+    /// <summary>
+    /// Sets the running state of the character.
+    /// </summary>
+    /// <param name="running">True if the character is running, false otherwise.</param>
     public void SetIsRunning(bool running)
     {
         isRunning = running;
     }
-        
+
+    /// <summary>
+    /// Attempts to trigger a jump action.
+    /// </summary>
+    /// <returns>True if the jump action is triggered, false otherwise.</returns>
     public bool TryJump()
     {
         jumpTrigger = false;
@@ -100,6 +130,10 @@ public class ThirdPersonMovement : MonoBehaviour
         return jumpTrigger;
     }
 
+    /// <summary>
+    /// Checks if the character is grounded.
+    /// </summary>
+    /// <returns>True if the character is grounded, false otherwise.</returns>
     public bool IsGrounded()
     {
         if (verticalVelocity > 0)

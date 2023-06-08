@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// Handles the player input and controls the third-person character.
+/// Requires a ThirdPersonMovement and CustomPlayerInput component.
+/// </summary>
 [RequireComponent(typeof(ThirdPersonMovement),typeof(CustomPlayerInput))]
 public class ThirdPersonController : MonoBehaviour
 {
@@ -10,10 +14,7 @@ public class ThirdPersonController : MonoBehaviour
     private static readonly int FreeFallHash = Animator.StringToHash("FreeFall");
     private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
         
-    private Transform playerCamera;
     private Animator animator;
-    private Vector2 inputVector;
-    private Vector3 moveVector;
     private GameObject avatar;
     private ThirdPersonMovement thirdPersonMovement;
     private CustomPlayerInput playerInput;
@@ -24,6 +25,9 @@ public class ThirdPersonController : MonoBehaviour
     private bool inputEnabled = true;
     private bool isInitialized;
 
+    /// <summary>
+    /// Initializes the ThirdPersonController by retrieving required components.
+    /// </summary>
     private void Init()
     {
         thirdPersonMovement = GetComponent<ThirdPersonMovement>();
@@ -32,6 +36,10 @@ public class ThirdPersonController : MonoBehaviour
         isInitialized = true;
     }
 
+    /// <summary>
+    /// Sets up the ThirdPersonController for the target avatar.
+    /// </summary>
+    /// <param name="target">The target avatar GameObject.</param>
     public void Setup(GameObject target)
     {
         if (!isInitialized)
@@ -42,7 +50,10 @@ public class ThirdPersonController : MonoBehaviour
         thirdPersonMovement.Setup(avatar);
         animator = avatar.GetComponent<Animator>();
     }
-        
+
+    /// <summary>
+    /// Updates the controller, checking player input and updating the animator.
+    /// </summary>
     private void Update()
     {
         if (avatar == null)
@@ -60,6 +71,9 @@ public class ThirdPersonController : MonoBehaviour
         UpdateAnimator();
     }
 
+    /// <summary>
+    /// Updates the animator parameters based on the character's movement state.
+    /// </summary>
     private void UpdateAnimator()
     {
         var isGrounded = thirdPersonMovement.IsGrounded();
@@ -83,6 +97,9 @@ public class ThirdPersonController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles the jump event and triggers the jump animation.
+    /// </summary>
     private void OnJump()
     {
         if (thirdPersonMovement.TryJump())

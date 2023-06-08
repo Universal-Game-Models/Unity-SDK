@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Handles custom player input and provides access to input values.
+/// </summary>
 public class CustomPlayerInput : MonoBehaviour
 {
     private const string HORIZONTAL_AXIS = "Horizontal";
@@ -22,6 +25,9 @@ public class CustomPlayerInput : MonoBehaviour
         
     public bool IsHoldingLeftShift => Input.GetKey(KeyCode.LeftShift);
 
+    /// <summary>
+    /// Checks the player input and updates the input values accordingly.
+    /// </summary>
     public void CheckInput()
     {
         AxisHorizontal = Input.GetAxis(HORIZONTAL_AXIS);

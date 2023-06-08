@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Controls the camera to follow a target GameObject.
+/// </summary>
 public class CameraFollow : MonoBehaviour
 {
     private const string TARGET_NOT_SET = "Target not set, disabling component";
