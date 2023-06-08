@@ -80,21 +80,32 @@ public class QuickSelectControl : MonoBehaviour
         if (existing != null)
         {
             existing.tokenInfo = null;
-            existing.image.sprite = null;
-            existing.button.onClick.RemoveAllListeners();
+            if(existing.image) existing.image.sprite = null;
+            if (existing.button) existing.button.onClick.RemoveAllListeners();     
             existing.action = null;
+        }
+        if(quickSelects.Length <= numberKeyPressed)
+        {
+            Debug.LogError("Not enough quick selects assigned");
+            return;
         }
         //Set the new quick select
         quickSelects[numberKeyPressed].tokenInfo = tokenInfo;
         quickSelects[numberKeyPressed].action = action;
-        quickSelects[numberKeyPressed].button.onClick.RemoveAllListeners();
-        quickSelects[numberKeyPressed].button.onClick.AddListener(action);
+        if (quickSelects[numberKeyPressed].button)
+        {
+            quickSelects[numberKeyPressed].button.onClick.RemoveAllListeners();
+            quickSelects[numberKeyPressed].button.onClick.AddListener(action);
+        }
         var texture = await UGMDownloader.DownloadImageAsync(tokenInfo.metadata.image);
         if (texture)
         {
             var image = quickSelects[numberKeyPressed].image;
-            image.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one / 2f);
-            image.preserveAspect = true;
+            if (image)
+            {
+                image.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one / 2f);
+                image.preserveAspect = true;
+            }
         }
     }
 
