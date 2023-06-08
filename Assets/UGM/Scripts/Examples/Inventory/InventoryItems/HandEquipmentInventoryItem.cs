@@ -8,9 +8,7 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
 {
-    private AvatarLoader avatarLoader;
     private HumanoidEquipmentLoader[] tools;
-    private int currentHand;
 
     /// <summary>
     /// Called when the object becomes enabled and active.
@@ -18,9 +16,7 @@ public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
     /// </summary>
     private void OnEnable()
     {
-        //Not good practice for production, create a static reference to your player
-        avatarLoader = FindObjectOfType<AvatarLoader>();
-        if(avatarLoader) tools = avatarLoader.GetComponentsInChildren<HumanoidEquipmentLoader>();
+        if (inventory.avatarLoader) tools = inventory.avatarLoader.GetComponentsInChildren<HumanoidEquipmentLoader>();
     }
 
     /// <summary>
@@ -30,8 +26,7 @@ public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
     protected override void DoAction()
     {
         base.DoAction();
-        currentHand = 0;
-        ChangeEquipmentModel();
+        ChangeEquipmentModel(0);
     }
 
     /// <summary>
@@ -43,8 +38,7 @@ public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            currentHand = 1;
-            ChangeEquipmentModel();
+            ChangeEquipmentModel(1);
         }
     }
 
@@ -52,11 +46,11 @@ public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
     /// Changes the equipment model to the specified hand.
     /// Loads the equipment asynchronously using the HumanoidEquipmentLoader component and the token ID.
     /// </summary>
-    private void ChangeEquipmentModel()
+    private void ChangeEquipmentModel(int handIndex)
     {
-        if (tools != null && tools.Length > currentHand)
+        if (tools != null && tools.Length > handIndex)
         {
-            tools[currentHand].LoadAsync(tokenInfo.token_id);
+            tools[handIndex].LoadAsync(tokenInfo.token_id);
         }
     }
 }
