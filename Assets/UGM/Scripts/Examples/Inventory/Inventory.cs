@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using static UGMManager;
 using static UGMDataTypes;
 using UnityEngine.EventSystems;
 
