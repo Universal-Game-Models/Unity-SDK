@@ -7,7 +7,7 @@ using static UGMDataTypes;
 /// <summary>
 /// Represents the QuickSelectControl class responsible for managing quick select buttons and their associated actions.
 /// </summary>
-public partial class QuickSelectControl : MonoBehaviour
+public class QuickSelectControl : MonoBehaviour
 {
     private static QuickSelectControl _instance;
 
