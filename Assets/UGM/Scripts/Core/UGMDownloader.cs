@@ -200,57 +200,68 @@ public class UGMDownloader : MonoBehaviour
     {
         this.nftId = nftId;
         //Prevent double load
-        if (isLoading) return;
-        isLoading = true;
-        if (loadModel)
+        if (isLoading)
         {
-            if(embeddedAnimationsComponent)
-            {
-                DestroyImmediate(embeddedAnimationsComponent);
-            }
-            if (InstantiatedGO != null)
-            {
-                DestroyImmediate(InstantiatedGO);
-            }
-            //Load the model
-            bool didLoad = await DownloadModelAsync(nftId);
-            if (didLoad)
-            {
-                if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
-                OnModelSuccess(asset.gameObject);
-                embeddedAnimationsComponent = gameObject.GetComponentInChildren<Animation>();
-            }
-            else
-            {
-                OnModelFailure();
-            }
+            Debug.LogWarning("Double load");
+            return;
         }
-        if (loadMetadata)
+        isLoading = true;
+        try
         {
-            //Load Metadata
-            metadata = await DownloadMetadataAsync(nftId);
-            if (metadata != null)
+            if (loadModel)
             {
-                OnMetadataSuccess(metadata);
-                if (loadImage)
+                if (embeddedAnimationsComponent)
                 {
-                    //Load Image
-                    var imageUrl = metadata.image;
-                    image = await DownloadImageAsync(imageUrl);
-                    if (image != null)
-                    {
-                        OnImageSuccess(image);
-                    }
-                    else
-                    {
-                        OnImageFailure();
-                    }
+                    DestroyImmediate(embeddedAnimationsComponent);
+                }
+                if (InstantiatedGO != null)
+                {
+                    DestroyImmediate(InstantiatedGO);
+                }
+                //Load the model
+                bool didLoad = await DownloadModelAsync(nftId);
+                if (didLoad)
+                {
+                    if (asset != null ? asset.gameObject : null != null) AddColliders(asset);
+                    OnModelSuccess(asset.gameObject);
+                    embeddedAnimationsComponent = gameObject.GetComponentInChildren<Animation>();
+                }
+                else
+                {
+                    OnModelFailure();
                 }
             }
-            else
+            if (loadMetadata)
             {
-                OnMetadataFailure();
+                //Load Metadata
+                metadata = await DownloadMetadataAsync(nftId);
+                if (metadata != null)
+                {
+                    OnMetadataSuccess(metadata);
+                    if (loadImage)
+                    {
+                        //Load Image
+                        var imageUrl = metadata.image;
+                        image = await DownloadImageAsync(imageUrl);
+                        if (image != null)
+                        {
+                            OnImageSuccess(image);
+                        }
+                        else
+                        {
+                            OnImageFailure();
+                        }
+                    }
+                }
+                else
+                {
+                    OnMetadataFailure();
+                }
             }
+        }
+        catch (Exception e)
+        {
+            isLoading = false;
         }
         isLoading = false;
     }
@@ -433,6 +444,12 @@ class UGMDownloadProvider : GLTFast.Loading.IDownloadProvider
 
     private void SaveBytes(string path, byte[] bytes)
     {
+        // Check if the file already exists
+        if (File.Exists(path))
+        {
+            // Delete the existing file
+            File.Delete(path);
+        }
         using (var fileStream = new FileStream(path, FileMode.OpenOrCreate))
         {
             fileStream.Write(bytes);

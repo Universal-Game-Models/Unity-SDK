@@ -14,8 +14,9 @@ public class HandEquipmentInventoryItem : InventoryItem, IPointerClickHandler
     /// Called when the object becomes enabled and active.
     /// Finds an instance of the AvatarLoader component in the scene and retrieves the HumanoidEquipmentLoader components.
     /// </summary>
-    private void OnEnable()
+    public override void Init(Inventory inventory, UGMDataTypes.TokenInfo tokenInfo)
     {
+        base.Init(inventory, tokenInfo);
         if (inventory.avatarLoader) tools = inventory.avatarLoader.GetComponentsInChildren<HumanoidEquipmentLoader>();
     }
 

@@ -50,7 +50,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /// Initializes the inventory item with the specified TokenInfo.
     /// </summary>
     /// <param name="tokenInfo">The TokenInfo object associated with the inventory item.</param>
-    public void Init(Inventory inventory, TokenInfo tokenInfo)
+    public virtual void Init(Inventory inventory, TokenInfo tokenInfo)
     {
         this.tokenInfo = tokenInfo;
         this.inventory = inventory;
@@ -61,7 +61,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /// Called when the inventory item is started.
     /// Adds a listener to the button click event.
     /// </summary>
-    private void Start()
+    protected virtual void Start()
     {
         button.onClick.AddListener(DoAction);
     }
