@@ -202,7 +202,19 @@ public class WeaponController : MonoBehaviour
                         default:
                             break;
                     }
-                    gunWeapon.Init(gunDamage, fireType, gunType, bulletPrefab);
+                    int hand = 0;
+                    if (ugmDownloader is HumanoidEquipmentLoader) {
+                        var bone = ((HumanoidEquipmentLoader)ugmDownloader).humanoidBone;
+                        if(bone == HumanBodyBones.RightHand)
+                        {
+                            hand = 0;
+                        }
+                        else if(bone == HumanBodyBones.LeftHand)
+                        {
+                            hand = 1;
+                        }
+                    }
+                    gunWeapon.Init(gunDamage, fireType, gunType, hand, bulletPrefab);
                     break;
                 }
         }

@@ -14,6 +14,20 @@ public class HumanoidEquipmentLoader : UGMDownloader
 
     private Animator anim;
 
+
+    public void ToggleLoad(string tokenId)
+    {
+        if(tokenId == this.nftId && InstantiatedGO)
+        {
+            this.nftId = "";
+            DestroyImmediate(InstantiatedGO);
+        }
+        else
+        {
+            Load(tokenId);
+        }
+
+    }
     /// <summary>
     /// Called when the model loading succeeds.
     /// Calls the base OnModelSuccess method from the parent class.

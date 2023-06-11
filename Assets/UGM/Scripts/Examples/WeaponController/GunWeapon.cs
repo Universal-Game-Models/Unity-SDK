@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class GunWeapon : Weapon
 {
-    private static readonly int GunHandsHash = Animator.StringToHash("GunHands");
+    private static readonly int LeftItemHash = Animator.StringToHash("LeftItem");
+    private static readonly int RightItemHash = Animator.StringToHash("RightItem");
     private static readonly int ShootHash = Animator.StringToHash("Shoot");
 
     private GameObject bulletPrefab;
@@ -18,20 +19,21 @@ public class GunWeapon : Weapon
     private float bulletDistance = 2;
     private float maxRange = 100;
     private List<GameObject> bullets = new List<GameObject>();
+    private int hand;
 
-    public void Init(int damage, FireType fireType, GunType gunType, GameObject bulletPrefab)
+    public void Init(int damage, FireType fireType, GunType gunType, int hand, GameObject bulletPrefab)
     {
         this.damage = damage;
         this.fireType = fireType;
         this.gunType = gunType;
         this.bulletPrefab = bulletPrefab;
-        //No rifle animation setup that works
-        SetGunHands(true);//gunType == GunType.Pistol
+        this.hand = hand;
+        SetGunHands();
     }
 
-    private void SetGunHands(bool isPistol)
+    private void SetGunHands()
     {
-        animator.SetInteger(GunHandsHash, isPistol?1:2);
+        animator.SetInteger(hand == 0 ? RightItemHash : LeftItemHash, 1);
     }
 
     public override void Attack()
@@ -58,7 +60,7 @@ public class GunWeapon : Weapon
     }
     private void OnDestroy()
     {
-        animator.SetInteger("GunHands", 0);
+        animator.SetInteger(hand == 0 ? RightItemHash : LeftItemHash, -1);
     }
 
     public override void StopAttacking()
