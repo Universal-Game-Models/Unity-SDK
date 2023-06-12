@@ -33,7 +33,23 @@ public class GunWeapon : Weapon
 
     private void SetGunHands()
     {
-        animator.SetInteger(hand == 0 ? RightItemHash : LeftItemHash, 1);
+        if(gunType == GunType.Pistol)
+        {
+            animator.SetInteger(hand == 0 ? RightItemHash : LeftItemHash, 1);
+        }
+        else if(gunType == GunType.Rifle)
+        {
+            //Unequip all other hand items
+            if (animator) {
+                var weaponControllers = animator.GetComponentsInChildren<WeaponController>();
+                foreach (var weaponController in weaponControllers)
+                {
+                    weaponController.DestroyWeapon(hand);
+                }
+            }
+            animator.SetInteger(RightItemHash, 2);
+            animator.SetInteger(LeftItemHash, 2);
+        }
     }
 
     public override void Attack()
@@ -60,7 +76,15 @@ public class GunWeapon : Weapon
     }
     private void OnDestroy()
     {
-        animator.SetInteger(hand == 0 ? RightItemHash : LeftItemHash, -1);
+        if (gunType == GunType.Pistol)
+        {
+            animator.SetInteger(hand == 0 ? RightItemHash : LeftItemHash, -1);
+        }
+        else if (gunType == GunType.Rifle)
+        {
+            animator.SetInteger(RightItemHash, -1);
+            animator.SetInteger(LeftItemHash, -1);
+        }
     }
 
     public override void StopAttacking()

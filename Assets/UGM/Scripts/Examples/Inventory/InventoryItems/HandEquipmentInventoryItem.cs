@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class HandEquipmentInventoryItem : InventoryItem
 {
-    private HumanoidEquipmentLoader[] tools;
+    protected HumanoidEquipmentLoader[] tools;
 
     /// <summary>
     /// Called when the object becomes enabled and active.
@@ -44,7 +44,7 @@ public class HandEquipmentInventoryItem : InventoryItem
     /// Changes the equipment model to the specified hand or destroys it if it is equipped.
     /// Loads the equipment asynchronously using the HumanoidEquipmentLoader component and the token ID.
     /// </summary>
-    private void ChangeEquipmentModel(int handIndex)
+    protected void ChangeEquipmentModel(int handIndex)
     {
         if (tools != null && tools.Length > handIndex)
         {

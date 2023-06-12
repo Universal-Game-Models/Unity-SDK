@@ -48,6 +48,7 @@ public class WeaponController : MonoBehaviour
 
     private MeleeWeapon meleeWeapon;
     private GunWeapon gunWeapon;
+    private int hand = 0;
 
     private void Awake()
     {
@@ -202,7 +203,6 @@ public class WeaponController : MonoBehaviour
                         default:
                             break;
                     }
-                    int hand = 0;
                     if (ugmDownloader is HumanoidEquipmentLoader) {
                         var bone = ((HumanoidEquipmentLoader)ugmDownloader).humanoidBone;
                         if(bone == HumanBodyBones.RightHand)
@@ -238,5 +238,13 @@ public class WeaponController : MonoBehaviour
                 return true;
         }
         return false;
+    }
+
+    public void DestroyWeapon(int dontDestroyHand)
+    {
+        if (ugmDownloader && hand != dontDestroyHand)
+        {
+            DestroyImmediate(ugmDownloader.InstantiatedGO);
+        }
     }
 }
