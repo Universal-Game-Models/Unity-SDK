@@ -1765,10 +1765,6 @@ PrefabInstance:
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 2146518395}
-    - target: {fileID: 4911574074263345110, guid: b269980bbf449d44a8c1e635e19118ad, type: 3}
-      propertyPath: matchCameraRotation
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4911574074263345115, guid: b269980bbf449d44a8c1e635e19118ad, type: 3}
       propertyPath: m_Name
       value: AvatarLoader-Player
@@ -2351,18 +2347,6 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 435626592}
-    - target: {fileID: 7997408184502922439, guid: 6ad7f74f70eab854f828b9dd89b35769, type: 3}
-      propertyPath: xOffset
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7997408184502922439, guid: 6ad7f74f70eab854f828b9dd89b35769, type: 3}
-      propertyPath: yOffset
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7997408184502922439, guid: 6ad7f74f70eab854f828b9dd89b35769, type: 3}
-      propertyPath: cameraDistance
-      value: -1.5
-      objectReference: {fileID: 0}
     - target: {fileID: 7997408184502922458, guid: 6ad7f74f70eab854f828b9dd89b35769, type: 3}
       propertyPath: m_Name
       value: Camera Rig
