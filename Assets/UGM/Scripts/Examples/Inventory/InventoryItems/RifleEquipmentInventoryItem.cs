@@ -10,16 +10,6 @@ public class RifleEquipmentInventoryItem : HandEquipmentInventoryItem
 {
     /// <summary>
     /// Overrides the base class method to perform custom actions when the item is interacted with.
-    /// Calls the base implementation first and then changes the equipment model to the primary hand.
-    /// </summary>
-    protected override void DoAction()
-    {
-        base.DoAction();
-        ChangeEquipmentModel(0);
-    }
-
-    /// <summary>
-    /// Overrides the base class method to perform custom actions when the item is interacted with.
     /// Calls the base implementation first and then changes the equipment model to the secondary hand.
     /// </summary>
     protected override void DoSecondaryAction()
