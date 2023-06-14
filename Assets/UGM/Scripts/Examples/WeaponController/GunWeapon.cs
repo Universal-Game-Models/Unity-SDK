@@ -24,6 +24,8 @@ public class GunWeapon : Weapon
     [SerializeField]
     private float maxRange = 100;
 
+    private float gunTipOffsetX;
+    private float gunTipOffsetY;
     private float bulletDistance = 2;
     private List<GameObject> bullets = new List<GameObject>();
     private int hand;
@@ -36,7 +38,25 @@ public class GunWeapon : Weapon
         this.gunType = gunType;
         this.bulletPrefab = bulletPrefab;
         this.hand = hand;
+        GetGunTipOffset();
         SetGunHands();
+    }
+
+    private void GetGunTipOffset()
+    {
+        // Get all the renderers in the instantiated prefab
+        Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+
+        // Calculate the bounds of the renderers to calculate the position of the tip along the x-axis
+        Bounds bounds = new Bounds(transform.position, Vector3.zero);
+        foreach (Renderer renderer in renderers)
+        {
+            bounds.Encapsulate(renderer.bounds);
+        }
+        // Rotate the bounds based on the desired rotations
+        bounds.size = Quaternion.Euler(90, 180, 90) * bounds.size;
+        this.gunTipOffsetX = bounds.max.x;
+        this.gunTipOffsetY = 0.05f;
     }
 
     private void SetGunHands()
@@ -115,7 +135,7 @@ public class GunWeapon : Weapon
         while (isAttacking)
         {
             Shoot();
-            yield return new WaitForSeconds(1 / fireRate);
+            yield return new WaitForSeconds(1f / fireRate);
         }
         StopAttacking();
     }
@@ -137,7 +157,6 @@ public class GunWeapon : Weapon
     }
     private void Shoot()
     {
-        // Instantiate a bullet flying towards the center of the screen
         if (bulletPrefab == null)
         {
             Debug.LogError("GunWeapon was not initialized with a bullet prefab");
@@ -157,8 +176,7 @@ public class GunWeapon : Weapon
 
             // Calculate the rotation to aim the bullet towards the hit point
             Quaternion rotation = Quaternion.LookRotation(playerToHit);
-
-            GameObject bulletInstance = Instantiate(bulletPrefab, transform.position, rotation);
+            GameObject bulletInstance = Instantiate(bulletPrefab, GetBulletSpawnPosition(), rotation);
             // Add the bullet to the list
             bullets.Add(bulletInstance);
         }
@@ -168,10 +186,14 @@ public class GunWeapon : Weapon
             // This is not great as the bullets aren't shooting exactly the right direction
             Quaternion rotation = Quaternion.LookRotation(Camera.main.transform.forward);
 
-            GameObject bulletInstance = Instantiate(bulletPrefab, transform.position, rotation);
+            GameObject bulletInstance = Instantiate(bulletPrefab, GetBulletSpawnPosition(), rotation);
             // Add the bullet to the list
             bullets.Add(bulletInstance);
         }
+    }
+    private Vector3 GetBulletSpawnPosition()
+    {
+        return transform.position + (transform.right * gunTipOffsetX) + (transform.up * gunTipOffsetY);
     }
 
     protected override void Update()
