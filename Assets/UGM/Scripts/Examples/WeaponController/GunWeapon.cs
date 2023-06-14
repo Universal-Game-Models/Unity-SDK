@@ -9,17 +9,25 @@ public class GunWeapon : Weapon
     private static readonly int RightItemHash = Animator.StringToHash("RightItem");
     private static readonly int ShootHash = Animator.StringToHash("Shoot");
 
+    [SerializeField]
     private GameObject bulletPrefab;
+    [SerializeField]
     private FireType fireType;
+    [SerializeField]
     private GunType gunType;
-    private Coroutine shootingRoutine;
+    [SerializeField]
     private int burstAmount = 3;
+    [SerializeField]
     private int fireRate = 25;
-    private float bulletSpeed = 100;
-    private float bulletDistance = 2;
+    [SerializeField]
+    private float bulletSpeed = 75;
+    [SerializeField]
     private float maxRange = 100;
+
+    private float bulletDistance = 2;
     private List<GameObject> bullets = new List<GameObject>();
     private int hand;
+    private Coroutine shootingRoutine;
 
     public void Init(int damage, FireType fireType, GunType gunType, int hand, GameObject bulletPrefab)
     {

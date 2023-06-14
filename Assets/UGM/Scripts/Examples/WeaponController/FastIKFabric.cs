@@ -53,7 +53,7 @@ public class FastIKFabric : MonoBehaviour
         Init();
     }
 
-    void Init()
+    protected void Init()
     {
         //initial array
         Bones = new Transform[ChainLength + 1];
@@ -109,7 +109,7 @@ public class FastIKFabric : MonoBehaviour
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    protected virtual void LateUpdate()
     {
         ResolveIK();
     }
