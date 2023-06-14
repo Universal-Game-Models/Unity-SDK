@@ -36,8 +36,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4911574075275108685}
-  - {fileID: 4911574075880129131}
   - {fileID: 4911574075500281422}
+  - {fileID: 4911574075880129131}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
@@ -89,6 +89,7 @@ MonoBehaviour:
   runSpeed: 8
   gravity: -18
   jumpHeight: 2
+  matchCameraRotation: 1
 --- !u!114 &4911574074263345111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,8 +231,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4911574075500281422}
   - component: {fileID: 4911574075500281423}
+  - component: {fileID: 2711123457789390331}
   m_Layer: 0
-  m_Name: Tool (1)
+  m_Name: Right Hand Tool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -250,7 +252,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4911574074263345109}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4911574075500281423
 MonoBehaviour:
@@ -296,8 +298,21 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   humanoidBone: 18
-  positionOffset: {x: -0.03, y: 0.1, z: 0.06}
+  positionOffset: {x: 0, y: 0.09, z: 0.03}
   rotationOffset: {x: 0, y: 0, z: 90}
+--- !u!114 &2711123457789390331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911574075500281420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1554387570398e4282acff43808f57d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 1037597103899993786, guid: 5a06e68609fc8f64e8d22209c495194f, type: 3}
 --- !u!1 &4911574075880129129
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,8 +323,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4911574075880129131}
   - component: {fileID: 4911574075880129128}
+  - component: {fileID: 2492126053074353757}
   m_Layer: 0
-  m_Name: Tool
+  m_Name: Left Hand Tool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -328,7 +344,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4911574074263345109}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4911574075880129128
 MonoBehaviour:
@@ -374,5 +390,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   humanoidBone: 17
-  positionOffset: {x: 0.03, y: 0.1, z: 0.06}
-  rotationOffset: {x: 0, y: 0, z: -90}
+  positionOffset: {x: 0, y: 0.09, z: 0.03}
+  rotationOffset: {x: 180, y: 0, z: -90}
+--- !u!114 &2492126053074353757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4911574075880129129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1554387570398e4282acff43808f57d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 1037597103899993786, guid: 5a06e68609fc8f64e8d22209c495194f, type: 3}

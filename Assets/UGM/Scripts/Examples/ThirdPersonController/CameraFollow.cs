@@ -13,6 +13,10 @@ public class CameraFollow : MonoBehaviour
     private Transform target;
     [SerializeField][Tooltip("Defines the camera distance from the player along Z (forward) axis. Value should be negative to position behind the player")]
     private float cameraDistance = -2.4f;
+    [SerializeField][Tooltip("Defines the camera offset from the player along X (right) axis. Value should be negative to position left of the player")]
+    private float xOffset = 2f;
+    [SerializeField][Tooltip("Defines the camera offset from the player along Y (up) axis. Value should be negative to position down of the player")]
+    private float yOffset = 0;
     [SerializeField] private bool followOnStart = true;
     private bool isFollowing;
         
@@ -34,7 +38,7 @@ public class CameraFollow : MonoBehaviour
     {
         if (isFollowing)
         {
-            playerCamera.transform.localPosition = Vector3.forward * cameraDistance;
+            playerCamera.transform.localPosition = (Vector3.forward * cameraDistance) + (Vector3.right * xOffset) + (Vector3.up * yOffset);
             playerCamera.transform.localRotation = Quaternion.Euler(Vector3.zero);
             transform.position = target.position;
         }

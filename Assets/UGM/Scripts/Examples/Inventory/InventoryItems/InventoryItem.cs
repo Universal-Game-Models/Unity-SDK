@@ -9,7 +9,7 @@ using static UGMDataTypes;
 /// Implements the necessary interfaces to respond to pointer events.
 /// This class can be used as a parent class to create custom inventory items with unique behaviors.
 /// </summary>
-public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [Tooltip("Reference to the Button component of the inventory item.")]
     [SerializeField]
@@ -37,7 +37,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /// Method to be overridden for custom actions associated with the inventory item.
     /// </summary>
     protected virtual void DoAction(){}
-
+    protected virtual void DoSecondaryAction(){}
     /// <summary>
     /// Called when the inventory item is disabled.
     /// </summary>
@@ -50,7 +50,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /// Initializes the inventory item with the specified TokenInfo.
     /// </summary>
     /// <param name="tokenInfo">The TokenInfo object associated with the inventory item.</param>
-    public void Init(Inventory inventory, TokenInfo tokenInfo)
+    public virtual void Init(Inventory inventory, TokenInfo tokenInfo)
     {
         this.tokenInfo = tokenInfo;
         this.inventory = inventory;
@@ -61,7 +61,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /// Called when the inventory item is started.
     /// Adds a listener to the button click event.
     /// </summary>
-    private void Start()
+    protected virtual void Start()
     {
         button.onClick.AddListener(DoAction);
     }
@@ -85,7 +85,7 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             var numberKeyPressed = QuickSelectControl.Instance.GetNumberKeyPressed();
             if(numberKeyPressed >= 0)
             {
-                QuickSelectControl.Instance.SetQuickSelect(numberKeyPressed, tokenInfo, DoAction);
+                QuickSelectControl.Instance.SetQuickSelect(numberKeyPressed, tokenInfo, DoAction, DoSecondaryAction);
             }
         }
     }
@@ -106,5 +106,13 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void OnPointerExit(PointerEventData eventData)
     {
         hovering = false;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            DoSecondaryAction();
+        }
     }
 }

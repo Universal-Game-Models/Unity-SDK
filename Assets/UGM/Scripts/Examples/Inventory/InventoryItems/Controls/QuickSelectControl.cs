@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using static UGMDataTypes;
 
 /// <summary>
@@ -16,26 +15,6 @@ public class QuickSelectControl : MonoBehaviour
     /// Public property to access the instance of the QuickSelectControl script.
     /// </summary>
     public static QuickSelectControl Instance { get { return _instance; } }
-
-    /// <summary>
-    /// Represents a quick select button along with its associated data, including the button component, image component,
-    /// token information, and the action to be performed when the button is clicked.
-    /// </summary>
-    [Serializable]
-    public class QuickSelect
-    {
-        [Tooltip("The button component associated with the quick select.")]
-        public Button button;
-
-        [Tooltip("The image component associated with the quick select.")]
-        public Image image;
-
-        [Tooltip("The token information associated with the quick select.")]
-        public TokenInfo tokenInfo;
-
-        [Tooltip("The action to be performed when the quick select button is clicked.")]
-        public UnityAction action;
-    }
 
     [Tooltip("Array of QuickSelect objects representing the quick select buttons and associated data.")]
     [SerializeField]
@@ -79,39 +58,14 @@ public class QuickSelectControl : MonoBehaviour
     /// <param name="numberKeyPressed">The number key associated with the quick select button.</param>
     /// <param name="tokenInfo">The TokenInfo object containing the data for the quick select.</param>
     /// <param name="action">The UnityAction to be invoked when the quick select button is clicked.</param>
-    public async void SetQuickSelect(int numberKeyPressed, TokenInfo tokenInfo, UnityAction action)
+    public void SetQuickSelect(int numberKeyPressed, TokenInfo tokenInfo, UnityAction action, UnityAction secondaryAction)
     {
-        var existing = Array.Find(quickSelects, q => q.tokenInfo == tokenInfo);
-        if (existing != null)
-        {
-            existing.tokenInfo = null;
-            if(existing.image) existing.image.sprite = null;
-            if (existing.button) existing.button.onClick.RemoveAllListeners();     
-            existing.action = null;
-        }
         if(quickSelects.Length <= numberKeyPressed)
         {
             Debug.LogError("Not enough quick selects assigned");
             return;
         }
-        //Set the new quick select
-        quickSelects[numberKeyPressed].tokenInfo = tokenInfo;
-        quickSelects[numberKeyPressed].action = action;
-        if (quickSelects[numberKeyPressed].button)
-        {
-            quickSelects[numberKeyPressed].button.onClick.RemoveAllListeners();
-            quickSelects[numberKeyPressed].button.onClick.AddListener(action);
-        }
-        var texture = await UGMDownloader.DownloadImageAsync(tokenInfo.metadata.image);
-        if (texture)
-        {
-            var image = quickSelects[numberKeyPressed].image;
-            if (image)
-            {
-                image.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one / 2f);
-                image.preserveAspect = true;
-            }
-        }
+        quickSelects[numberKeyPressed].Init(tokenInfo, action, secondaryAction);
     }
 
     /// <summary>

@@ -133,7 +133,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 7997408184465663048}
   target: {fileID: 0}
-  cameraDistance: -3
+  cameraDistance: -1.5
+  xOffset: 0.6
+  yOffset: 0.25
   followOnStart: 1
 --- !u!114 &7997408184502922436
 MonoBehaviour:

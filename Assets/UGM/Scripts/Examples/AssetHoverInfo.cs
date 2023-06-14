@@ -36,21 +36,22 @@ public class AssetHoverInfo : MonoBehaviour
     private void RaycastUGADownloader()
     {
         // Cast a ray from the mouse position and check for UGADownloaders in the collider or any of its parents
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+        Ray ray = cam.ScreenPointToRay(screenCenter);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
             var downloader = hit.transform.GetComponentInParent<UGMDownloader>();
             if (downloader != null)
             {
-                if (downloader.Metadata != null && current != downloader)
+                if (downloader.Metadata != null)
                 {
                     current = downloader;
                     panelParent.SetActive(true);
-                    SetText(downloader.Metadata);
-                    if (downloader.Image != null)
+                    SetText(current.Metadata);
+                    if (current.Image != null)
                     {
-                        SetImage(downloader.Image);
+                        SetImage(current.Image);
                     }
                     return;
                 }

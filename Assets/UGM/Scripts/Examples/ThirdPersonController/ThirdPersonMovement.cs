@@ -19,6 +19,9 @@ public class ThirdPersonMovement : MonoBehaviour
     private float gravity = -18f;
     [SerializeField][Tooltip("The height the player can jump ")] 
     private float jumpHeight = 3f;
+    [SerializeField]
+    [Tooltip("Determines if the player faces same direction as playerCamera")]
+    private bool matchCameraRotation;
 
     private CharacterController controller;
     private GameObject avatar;
@@ -83,9 +86,20 @@ public class ThirdPersonMovement : MonoBehaviour
     /// <param name="moveDirection">The direction of movement.</param>
     private void RotateAvatarTowardsMoveDirection(Vector3 moveDirection)
     {
-        float targetAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg + transform.rotation.y;
-        float angle = Mathf.SmoothDampAngle(avatar.transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, TURN_SMOOTH_TIME);
-        avatar.transform.rotation = Quaternion.Euler(0, angle, 0);
+        if (matchCameraRotation && moveDirection.x == 0)
+        {
+            // Get the playerCamera's y rotation
+            float cameraYRotation = playerCamera.transform.eulerAngles.y;
+
+            // Set the avatar's rotation to match the playerCamera's y rotation
+            avatar.transform.rotation = Quaternion.Euler(0, cameraYRotation, 0);
+        }
+        else
+        {
+            float targetAngle = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg + transform.rotation.y;
+            float angle = Mathf.SmoothDampAngle(avatar.transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, TURN_SMOOTH_TIME);
+            avatar.transform.rotation = Quaternion.Euler(0, angle, 0);
+        }
     }
 
     /// <summary>
