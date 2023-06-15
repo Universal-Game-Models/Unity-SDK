@@ -112,7 +112,7 @@ namespace UGM.Examples.AnimationSelector
         public void ToggleContent(bool active)
         {
             //Do not allow if their are no animations
-            if (content.childCount <= 0) active = false;
+            if (content.childCount <= 0) return;
             contentActive = active;
             parent.SetActive(contentActive);
             ExampleUIEvents.OnShowCursor.Invoke(active);
