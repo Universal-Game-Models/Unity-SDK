@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using UGM.Core;
 using UnityEngine;
-using static UGMDataTypes;
+using static UGM.Core.UGMDataTypes;
 
 /// <summary>
 /// Represents an animation selector that generates animation selector buttons based on metadata.

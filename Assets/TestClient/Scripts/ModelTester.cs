@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UGM.Core;
 using UnityEngine;
 
 public class ModelTester : MonoBehaviour

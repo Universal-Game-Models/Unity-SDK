@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using static UGMDataTypes;
+using static UGM.Core.UGMDataTypes;
 using UnityEngine.EventSystems;
 
 /// <summary>

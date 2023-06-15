@@ -1,9 +1,10 @@
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using UGM.Core;
 using UnityEngine;
 using UnityEngine.UI;
-using static UGMDataTypes;
+using static UGM.Core.UGMDataTypes;
 
 public class AssetHoverInfo : MonoBehaviour
 {

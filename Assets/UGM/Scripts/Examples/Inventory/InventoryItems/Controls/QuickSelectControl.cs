@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using static UGMDataTypes;
+using static UGM.Core.UGMDataTypes;
 
 /// <summary>
 /// Represents the QuickSelectControl class responsible for managing quick select buttons and their associated actions.

@@ -1,7 +1,8 @@
 using System.Runtime.Serialization;
+using UGM.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static UGMDataTypes;
+using static UGM.Core.UGMDataTypes;
 
 public enum WeaponType
 {

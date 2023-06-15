@@ -1,9 +1,10 @@
 ﻿using System;
+using UGM.Core;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UGMDataTypes;
+using static UGM.Core.UGMDataTypes;
 
 /// <summary>
 /// Represents a quick select button along with its associated data, including the button component, image component,

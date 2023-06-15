@@ -2,8 +2,9 @@ using NaughtyAttributes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UGM.Core;
 using UnityEngine;
-using static UGMDataTypes;
+using static UGM.Core.UGMDataTypes;
 
 /// <summary>
 /// The GetNftsOwned class retrieves NFTs owned by a specific address.

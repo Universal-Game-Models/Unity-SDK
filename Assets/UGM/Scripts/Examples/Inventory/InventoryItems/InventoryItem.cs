@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UGMDataTypes;
+using static UGM.Core.UGMDataTypes;
 
 /// <summary>
 /// Represents an item in the inventory UI.

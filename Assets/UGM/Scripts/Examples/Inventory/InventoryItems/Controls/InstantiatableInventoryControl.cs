@@ -1,9 +1,10 @@
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using UGM.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static UGMDataTypes;
+using static UGM.Core.UGMDataTypes;
 
 /// <summary>
 /// Controls the behavior of instantiatable inventory items.
