@@ -168,8 +168,9 @@ public class GunWeapon : Weapon
 
         // Perform a raycast from the camera's position through the center of the screen
         Ray ray = Camera.main.ScreenPointToRay(screenCenter);
+        int layerMask = ~LayerMask.GetMask("Player"); // Exclude the "Player" layer
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask) && hit.collider.gameObject.GetComponentInParent<Weapon>() != this)
         {
             // Calculate the direction from the player to the hit point
             Vector3 playerToHit = hit.point - transform.position;
@@ -224,9 +225,8 @@ public class GunWeapon : Weapon
             RaycastHit hit;
             if (Physics.Raycast(bullet.transform.position, bullet.transform.forward, out hit, bulletDistance, layerMask))
             {
-                //Prevent hitting any weapons
-                var weapon = hit.collider.gameObject.GetComponentInParent<Weapon>();
-                if (weapon == null)
+                //Prevent hitting self
+                if (hit.collider.gameObject.GetComponentInParent<Weapon>() != this)
                 {
                     // Handle the hit object
                     OnHit(hit.collider.gameObject);
