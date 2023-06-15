@@ -48,7 +48,7 @@ public class GunWeapon : Weapon
         Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
 
         // Calculate the bounds of the renderers to calculate the position of the tip along the x-axis
-        Bounds bounds = new Bounds(transform.position, Vector3.zero);
+        Bounds bounds = new Bounds();
         foreach (Renderer renderer in renderers)
         {
             bounds.Encapsulate(renderer.bounds);
@@ -177,6 +177,7 @@ public class GunWeapon : Weapon
             // Calculate the rotation to aim the bullet towards the hit point
             Quaternion rotation = Quaternion.LookRotation(playerToHit);
             GameObject bulletInstance = Instantiate(bulletPrefab, GetBulletSpawnPosition(), rotation);
+
             // Add the bullet to the list
             bullets.Add(bulletInstance);
         }
@@ -185,15 +186,15 @@ public class GunWeapon : Weapon
             // If the raycast didn't hit anything, shoot in the camera's forward direction
             // This is not great as the bullets aren't shooting exactly the right direction
             Quaternion rotation = Quaternion.LookRotation(Camera.main.transform.forward);
-
             GameObject bulletInstance = Instantiate(bulletPrefab, GetBulletSpawnPosition(), rotation);
+            
             // Add the bullet to the list
             bullets.Add(bulletInstance);
         }
     }
     private Vector3 GetBulletSpawnPosition()
     {
-        return transform.position + (transform.right * gunTipOffsetX) + (transform.up * gunTipOffsetY);
+        return transform.position + (transform.right * 0.1f) + (transform.up * 0.05f);
     }
 
     protected override void Update()
@@ -223,7 +224,9 @@ public class GunWeapon : Weapon
             RaycastHit hit;
             if (Physics.Raycast(bullet.transform.position, bullet.transform.forward, out hit, bulletDistance, layerMask))
             {
-                if (hit.collider.gameObject != this.gameObject)
+                //Prevent hitting any weapons
+                var weapon = hit.collider.gameObject.GetComponentInParent<Weapon>();
+                if (weapon == null)
                 {
                     // Handle the hit object
                     OnHit(hit.collider.gameObject);

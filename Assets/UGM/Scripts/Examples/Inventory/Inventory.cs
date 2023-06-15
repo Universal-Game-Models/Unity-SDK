@@ -58,6 +58,8 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private List<TokenInfo> tokenInfos;
 
+    private bool contentActive;
+
     /// <summary>
     /// Starts the execution of the script by loading data and updating the display of the inventory UI.
     /// </summary>
@@ -135,8 +137,8 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private void ToggleInventory()
     {
-        var active = !parent.activeInHierarchy;
-        parent.SetActive(active);
-        ExampleUIEvents.OnShowCursor.Invoke(active);
+        contentActive = !parent.activeInHierarchy;
+        parent.SetActive(contentActive);
+        ExampleUIEvents.OnShowCursor.Invoke(contentActive);
     }
 }

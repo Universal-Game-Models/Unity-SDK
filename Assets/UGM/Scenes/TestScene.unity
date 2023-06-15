@@ -2301,6 +2301,18 @@ PrefabInstance:
       propertyPath: playerInput
       value: 
       objectReference: {fileID: 1161909495}
+    - target: {fileID: 7997408184502922437, guid: 6ad7f74f70eab854f828b9dd89b35769, type: 3}
+      propertyPath: hideCursor
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7997408184502922437, guid: 6ad7f74f70eab854f828b9dd89b35769, type: 3}
+      propertyPath: applyOnStart
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7997408184502922437, guid: 6ad7f74f70eab854f828b9dd89b35769, type: 3}
+      propertyPath: cursorLockMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7997408184502922438, guid: 6ad7f74f70eab854f828b9dd89b35769, type: 3}
       propertyPath: m_RootOrder
       value: 2
