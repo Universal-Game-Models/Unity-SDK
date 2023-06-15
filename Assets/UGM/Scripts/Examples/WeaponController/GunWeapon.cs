@@ -1,242 +1,244 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunWeapon : Weapon
+namespace UGM.Examples.WeaponController
 {
-    private static readonly int LeftItemHash = Animator.StringToHash("LeftItem");
-    private static readonly int RightItemHash = Animator.StringToHash("RightItem");
-    private static readonly int ShootHash = Animator.StringToHash("Shoot");
-
-    [SerializeField]
-    private GameObject bulletPrefab;
-    [SerializeField]
-    private FireType fireType;
-    [SerializeField]
-    private GunType gunType;
-    [SerializeField]
-    private int burstAmount = 3;
-    [SerializeField]
-    private int fireRate = 25;
-    [SerializeField]
-    private float bulletSpeed = 75;
-    [SerializeField]
-    private float maxRange = 100;
-
-    private float gunTipOffsetX;
-    private float gunTipOffsetY;
-    private float bulletDistance = 2;
-    private List<GameObject> bullets = new List<GameObject>();
-    private int hand;
-    private Coroutine shootingRoutine;
-
-    public void Init(int damage, FireType fireType, GunType gunType, int hand, GameObject bulletPrefab)
+    public class GunWeapon : Weapon
     {
-        this.damage = damage;
-        this.fireType = fireType;
-        this.gunType = gunType;
-        this.bulletPrefab = bulletPrefab;
-        this.hand = hand;
-        GetGunTipOffset();
-        SetGunHands();
-    }
+        private static readonly int LeftItemHash = Animator.StringToHash("LeftItem");
+        private static readonly int RightItemHash = Animator.StringToHash("RightItem");
+        private static readonly int ShootHash = Animator.StringToHash("Shoot");
 
-    private void GetGunTipOffset()
-    {
-        // Get all the renderers in the instantiated prefab
-        Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+        [SerializeField]
+        private GameObject bulletPrefab;
+        [SerializeField]
+        private FireType fireType;
+        [SerializeField]
+        private GunType gunType;
+        [SerializeField]
+        private int burstAmount = 3;
+        [SerializeField]
+        private int fireRate = 25;
+        [SerializeField]
+        private float bulletSpeed = 75;
+        [SerializeField]
+        private float maxRange = 100;
 
-        // Calculate the bounds of the renderers to calculate the position of the tip along the x-axis
-        Bounds bounds = new Bounds(transform.position, Vector3.zero);
-        foreach (Renderer renderer in renderers)
+        private float gunTipOffsetX;
+        private float gunTipOffsetY;
+        private float bulletDistance = 2;
+        private List<GameObject> bullets = new List<GameObject>();
+        private int hand;
+        private Coroutine shootingRoutine;
+
+        public void Init(int damage, FireType fireType, GunType gunType, int hand, GameObject bulletPrefab)
         {
-            bounds.Encapsulate(renderer.bounds);
+            this.damage = damage;
+            this.fireType = fireType;
+            this.gunType = gunType;
+            this.bulletPrefab = bulletPrefab;
+            this.hand = hand;
+            GetGunTipOffset();
+            SetGunHands();
         }
-        // Rotate the bounds based on the desired rotations
-        bounds.size = Quaternion.Euler(90, 180, 90) * bounds.size;
-        this.gunTipOffsetX = bounds.max.x;
-        this.gunTipOffsetY = 0.05f;
-    }
 
-    private void SetGunHands()
-    {
-        if(gunType == GunType.Pistol)
+        private void GetGunTipOffset()
         {
-            animator.SetInteger(hand == 0 ? RightItemHash : LeftItemHash, 1);
+            // Get all the renderers in the instantiated prefab
+            Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+
+            // Calculate the bounds of the renderers to calculate the position of the tip along the x-axis
+            Bounds bounds = new Bounds(transform.position, Vector3.zero);
+            foreach (Renderer renderer in renderers)
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+            // Rotate the bounds based on the desired rotations
+            bounds.size = Quaternion.Euler(90, 180, 90) * bounds.size;
+            this.gunTipOffsetX = bounds.max.x;
+            this.gunTipOffsetY = 0.05f;
         }
-        else if(gunType == GunType.Rifle)
+
+        private void SetGunHands()
         {
-            //Unequip all other hand items
-            if (animator) {
-                var weaponControllers = animator.GetComponentsInChildren<WeaponController>();
-                foreach (var weaponController in weaponControllers)
-                {
-                    weaponController.DestroyWeapon(hand);
+            if(gunType == GunType.Pistol)
+            {
+                animator.SetInteger(hand == 0 ? RightItemHash : LeftItemHash, 1);
+            }
+            else if(gunType == GunType.Rifle)
+            {
+                //Unequip all other hand items
+                if (animator) {
+                    var weaponControllers = animator.GetComponentsInChildren<global::UGM.Examples.WeaponController.WeaponController>();
+                    foreach (var weaponController in weaponControllers)
+                    {
+                        weaponController.DestroyWeapon(hand);
+                    }
                 }
+                animator.SetInteger(RightItemHash, 2);
+                animator.SetInteger(LeftItemHash, 2);
             }
-            animator.SetInteger(RightItemHash, 2);
-            animator.SetInteger(LeftItemHash, 2);
         }
-    }
 
-    public override void Attack()
-    {
-        base.Attack();
-        animator.SetBool(ShootHash, true);
-        switch (fireType)
+        public override void Attack()
         {
-            case FireType.Automatic:
-                //Start a couroutine that continuously shoots
-                shootingRoutine = StartCoroutine(ContinuousShooting());
-                break;
-            case FireType.Burst:
-                //Start a couroutine that shoots a short burst of bullets
-                shootingRoutine = StartCoroutine(BurstShooting());
-                break;
-            case FireType.Single:
-                //Shoot a single bullet
-                StartCoroutine(SingleShot());
-                break;
-            default:
-                break;
-        }
-    }
-    private void OnDestroy()
-    {
-        var handAnimHash = hand == 0 ? RightItemHash : LeftItemHash;
-        var offhandAnimHash = hand == 0 ? LeftItemHash : RightItemHash;
-        if (gunType == GunType.Pistol)
-        {
-            animator.SetInteger(handAnimHash, -1);
-        }
-        else if (gunType == GunType.Rifle)
-        {
-            var offhandAnimInt = animator.GetInteger(offhandAnimHash);
-            if(offhandAnimInt == 2)
+            base.Attack();
+            animator.SetBool(ShootHash, true);
+            switch (fireType)
             {
-                animator.SetInteger(offhandAnimHash, -1);
+                case FireType.Automatic:
+                    //Start a couroutine that continuously shoots
+                    shootingRoutine = StartCoroutine(ContinuousShooting());
+                    break;
+                case FireType.Burst:
+                    //Start a couroutine that shoots a short burst of bullets
+                    shootingRoutine = StartCoroutine(BurstShooting());
+                    break;
+                case FireType.Single:
+                    //Shoot a single bullet
+                    StartCoroutine(SingleShot());
+                    break;
+                default:
+                    break;
             }
-            animator.SetInteger(handAnimHash, -1);
         }
-    }
-
-    public override void StopAttacking()
-    {
-        //Stop the coroutine if their is one
-        if (shootingRoutine != null) StopCoroutine(shootingRoutine);
-        shootingRoutine = null;
-        animator.SetBool(ShootHash, false);
-        base.StopAttacking();
-    }
-
-    private IEnumerator ContinuousShooting()
-    {
-        while (isAttacking)
+        private void OnDestroy()
         {
-            Shoot();
-            yield return new WaitForSeconds(1f / fireRate);
-        }
-        StopAttacking();
-    }
-    private IEnumerator BurstShooting()
-    {
-        for (int i = 0; i < burstAmount; i++)
-        {
-            Shoot();
-            yield return new WaitForSeconds(1 / fireRate);
-        }
-        StopAttacking();
-    }
-    private IEnumerator SingleShot()
-    {
-        Shoot();
-        animator.SetBool(ShootHash, false);
-        yield return new WaitForSeconds(1 / fireRate);
-        StopAttacking();
-    }
-    private void Shoot()
-    {
-        if (bulletPrefab == null)
-        {
-            Debug.LogError("GunWeapon was not initialized with a bullet prefab");
-            return;
-        }
-
-        // Calculate the center of the screen
-        Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
-
-        // Perform a raycast from the camera's position through the center of the screen
-        Ray ray = Camera.main.ScreenPointToRay(screenCenter);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
-        {
-            // Calculate the direction from the player to the hit point
-            Vector3 playerToHit = hit.point - transform.position;
-
-            // Calculate the rotation to aim the bullet towards the hit point
-            Quaternion rotation = Quaternion.LookRotation(playerToHit);
-            GameObject bulletInstance = Instantiate(bulletPrefab, GetBulletSpawnPosition(), rotation);
-            // Add the bullet to the list
-            bullets.Add(bulletInstance);
-        }
-        else
-        {
-            // If the raycast didn't hit anything, shoot in the camera's forward direction
-            // This is not great as the bullets aren't shooting exactly the right direction
-            Quaternion rotation = Quaternion.LookRotation(Camera.main.transform.forward);
-
-            GameObject bulletInstance = Instantiate(bulletPrefab, GetBulletSpawnPosition(), rotation);
-            // Add the bullet to the list
-            bullets.Add(bulletInstance);
-        }
-    }
-    private Vector3 GetBulletSpawnPosition()
-    {
-        return transform.position + (transform.right * gunTipOffsetX) + (transform.up * gunTipOffsetY);
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-        // Perform raycasting from the bullets
-        UpdateBullets();
-    }
-
-    private void UpdateBullets()
-    {
-        int layerMask = ~LayerMask.GetMask("Player"); // Exclude the "Player" layer
-        for (int i = bullets.Count - 1; i >= 0; i--)
-        {
-            GameObject bullet = bullets[i];
-            if (bullet == null)
+            var handAnimHash = hand == 0 ? RightItemHash : LeftItemHash;
+            var offhandAnimHash = hand == 0 ? LeftItemHash : RightItemHash;
+            if (gunType == GunType.Pistol)
             {
-                // Remove destroyed bullets from the list
-                bullets.RemoveAt(i);
-                continue;
+                animator.SetInteger(handAnimHash, -1);
             }
-
-            //Move the bullet
-            bullet.transform.position += bullet.transform.forward * bulletSpeed * Time.deltaTime;
-
-            // Perform a raycast from the bullet's position and forward direction
-            RaycastHit hit;
-            if (Physics.Raycast(bullet.transform.position, bullet.transform.forward, out hit, bulletDistance, layerMask))
+            else if (gunType == GunType.Rifle)
             {
-                if (hit.collider.gameObject != this.gameObject)
+                var offhandAnimInt = animator.GetInteger(offhandAnimHash);
+                if(offhandAnimInt == 2)
                 {
-                    // Handle the hit object
-                    OnHit(hit.collider.gameObject);
+                    animator.SetInteger(offhandAnimHash, -1);
+                }
+                animator.SetInteger(handAnimHash, -1);
+            }
+        }
 
-                    Destroy(bullet.gameObject);
+        public override void StopAttacking()
+        {
+            //Stop the coroutine if their is one
+            if (shootingRoutine != null) StopCoroutine(shootingRoutine);
+            shootingRoutine = null;
+            animator.SetBool(ShootHash, false);
+            base.StopAttacking();
+        }
+
+        private IEnumerator ContinuousShooting()
+        {
+            while (isAttacking)
+            {
+                Shoot();
+                yield return new WaitForSeconds(1f / fireRate);
+            }
+            StopAttacking();
+        }
+        private IEnumerator BurstShooting()
+        {
+            for (int i = 0; i < burstAmount; i++)
+            {
+                Shoot();
+                yield return new WaitForSeconds(1 / fireRate);
+            }
+            StopAttacking();
+        }
+        private IEnumerator SingleShot()
+        {
+            Shoot();
+            animator.SetBool(ShootHash, false);
+            yield return new WaitForSeconds(1 / fireRate);
+            StopAttacking();
+        }
+        private void Shoot()
+        {
+            if (bulletPrefab == null)
+            {
+                Debug.LogError("GunWeapon was not initialized with a bullet prefab");
+                return;
+            }
+
+            // Calculate the center of the screen
+            Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+
+            // Perform a raycast from the camera's position through the center of the screen
+            Ray ray = Camera.main.ScreenPointToRay(screenCenter);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                // Calculate the direction from the player to the hit point
+                Vector3 playerToHit = hit.point - transform.position;
+
+                // Calculate the rotation to aim the bullet towards the hit point
+                Quaternion rotation = Quaternion.LookRotation(playerToHit);
+                GameObject bulletInstance = Instantiate(bulletPrefab, GetBulletSpawnPosition(), rotation);
+                // Add the bullet to the list
+                bullets.Add(bulletInstance);
+            }
+            else
+            {
+                // If the raycast didn't hit anything, shoot in the camera's forward direction
+                // This is not great as the bullets aren't shooting exactly the right direction
+                Quaternion rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+
+                GameObject bulletInstance = Instantiate(bulletPrefab, GetBulletSpawnPosition(), rotation);
+                // Add the bullet to the list
+                bullets.Add(bulletInstance);
+            }
+        }
+        private Vector3 GetBulletSpawnPosition()
+        {
+            return transform.position + (transform.right * gunTipOffsetX) + (transform.up * gunTipOffsetY);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            // Perform raycasting from the bullets
+            UpdateBullets();
+        }
+
+        private void UpdateBullets()
+        {
+            int layerMask = ~LayerMask.GetMask("Player"); // Exclude the "Player" layer
+            for (int i = bullets.Count - 1; i >= 0; i--)
+            {
+                GameObject bullet = bullets[i];
+                if (bullet == null)
+                {
+                    // Remove destroyed bullets from the list
+                    bullets.RemoveAt(i);
+                    continue;
+                }
+
+                //Move the bullet
+                bullet.transform.position += bullet.transform.forward * bulletSpeed * Time.deltaTime;
+
+                // Perform a raycast from the bullet's position and forward direction
+                RaycastHit hit;
+                if (Physics.Raycast(bullet.transform.position, bullet.transform.forward, out hit, bulletDistance, layerMask))
+                {
+                    if (hit.collider.gameObject != this.gameObject)
+                    {
+                        // Handle the hit object
+                        OnHit(hit.collider.gameObject);
+
+                        Destroy(bullet.gameObject);
+                        bullets.RemoveAt(i);
+                    }
+                }
+                else if (Vector3.Distance(bullet.transform.position, transform.position) > maxRange)
+                {
+                    // Destroy the bullet if it travels beyond the bullet distance without hitting anything
+                    Destroy(bullet);
                     bullets.RemoveAt(i);
                 }
-            }
-            else if (Vector3.Distance(bullet.transform.position, transform.position) > maxRange)
-            {
-                // Destroy the bullet if it travels beyond the bullet distance without hitting anything
-                Destroy(bullet);
-                bullets.RemoveAt(i);
             }
         }
     }

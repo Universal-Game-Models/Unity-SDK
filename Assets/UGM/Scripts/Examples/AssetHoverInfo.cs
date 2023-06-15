@@ -1,94 +1,94 @@
-using Newtonsoft.Json;
-using System.Collections;
-using System.Collections.Generic;
 using UGM.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using static UGM.Core.UGMDataTypes;
 
-public class AssetHoverInfo : MonoBehaviour
+namespace UGM.Examples
 {
-    [SerializeField]
-    private GameObject panelParent;
-    [SerializeField]
-    private TMPro.TextMeshProUGUI metadataText;
-    [SerializeField]
-    private Image image;
-    [SerializeField]
-    private Camera cam;
-    [SerializeField]
-    private bool showAttributes = false;
-
-    private UGMDownloader current;
-    private float timer = 0f;
-    private float interval = 1f;
-
-    private void Update()
+    public class AssetHoverInfo : MonoBehaviour
     {
-        timer += Time.deltaTime;
+        [SerializeField]
+        private GameObject panelParent;
+        [SerializeField]
+        private TMPro.TextMeshProUGUI metadataText;
+        [SerializeField]
+        private Image image;
+        [SerializeField]
+        private Camera cam;
+        [SerializeField]
+        private bool showAttributes = false;
 
-        if (timer >= interval)
-        {
-            timer = 0;
-            RaycastUGADownloader();
-        }
-    }
+        private UGMDownloader current;
+        private float timer = 0f;
+        private float interval = 1f;
 
-    private void RaycastUGADownloader()
-    {
-        // Cast a ray from the mouse position and check for UGADownloaders in the collider or any of its parents
-        Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
-        Ray ray = cam.ScreenPointToRay(screenCenter);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        private void Update()
         {
-            var downloader = hit.transform.GetComponentInParent<UGMDownloader>();
-            if (downloader != null)
+            timer += Time.deltaTime;
+
+            if (timer >= interval)
             {
-                if (downloader.Metadata != null)
+                timer = 0;
+                RaycastUGADownloader();
+            }
+        }
+
+        private void RaycastUGADownloader()
+        {
+            // Cast a ray from the mouse position and check for UGADownloaders in the collider or any of its parents
+            Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+            Ray ray = cam.ScreenPointToRay(screenCenter);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                var downloader = hit.transform.GetComponentInParent<UGMDownloader>();
+                if (downloader != null)
                 {
-                    current = downloader;
-                    panelParent.SetActive(true);
-                    SetText(current.Metadata);
-                    if (current.Image != null)
+                    if (downloader.Metadata != null)
                     {
-                        SetImage(current.Image);
+                        current = downloader;
+                        panelParent.SetActive(true);
+                        SetText(current.Metadata);
+                        if (current.Image != null)
+                        {
+                            SetImage(current.Image);
+                        }
+                        return;
                     }
-                    return;
+                }
+                else
+                {
+                    panelParent.SetActive(false);
                 }
             }
-            else
-            {
-                panelParent.SetActive(false);
-            }
         }
-    }
 
-    private void SetText(Metadata metadata)
-    {
-        string text = "";
-        if (!string.IsNullOrEmpty(metadata.name)) text += "Name: " + metadata.name + "\n\n";
-        if(!string.IsNullOrEmpty(metadata.description)) text += "Description: " + metadata.description + "\n\n";
-
-        if(showAttributes && metadata.attributes != null && metadata.attributes.Length > 0)
+        private void SetText(Metadata metadata)
         {
-            text += "Attributes:\n";
-            foreach (var attribute in metadata.attributes)
+            string text = "";
+            if (!string.IsNullOrEmpty(metadata.name)) text += "Name: " + metadata.name + "\n\n";
+            if(!string.IsNullOrEmpty(metadata.description)) text += "Description: " + metadata.description + "\n\n";
+
+            if(showAttributes && metadata.attributes != null && metadata.attributes.Length > 0)
             {
-                text += attribute.trait_type + ": " + attribute.value + "\n";
+                text += "Attributes:\n";
+                foreach (var attribute in metadata.attributes)
+                {
+                    text += attribute.trait_type + ": " + attribute.value + "\n";
+                }
             }
+            metadataText.text = text;
         }
-        metadataText.text = text;
-    }
 
-    private void SetImage(Texture2D texture)
-    {
-        //Create a sprite from the texture and assign it to the image
-        if (texture != null)
+        private void SetImage(Texture2D texture)
         {
-            var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one / 2f);
-            image.sprite = sprite;
-            image.preserveAspect = true;
+            //Create a sprite from the texture and assign it to the image
+            if (texture != null)
+            {
+                var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one / 2f);
+                image.sprite = sprite;
+                image.preserveAspect = true;
+            }
         }
     }
 }
