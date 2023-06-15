@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace UGM.Examples.ThirdPersonController
 {
@@ -8,13 +7,18 @@ namespace UGM.Examples.ThirdPersonController
     /// </summary>
     public class MouseCursorLock : MonoBehaviour
     {
-        [SerializeField][Tooltip("Defines the Cursor Lock Mode to apply")] 
+        [SerializeField]
+        [Tooltip("Defines the Cursor Lock Mode to apply")]
         private CursorLockMode cursorLockMode;
-        [SerializeField][Tooltip("If true will hide mouse cursor")] 
+        [SerializeField]
+        [Tooltip("If true will hide mouse cursor")]
         private bool hideCursor = true;
-        [SerializeField][Tooltip("If true it apply cursor settings on start")]
+        [SerializeField]
+        [Tooltip("If true it apply cursor settings on start")]
         private bool applyOnStart = true;
-    
+
+        private int cursorShowCount = 0;
+
         /// <summary>
         /// Called before the first frame update. Hides the cursor on start if applyOnStart is true and subscribes to the OnShowCursor event.
         /// </summary>
@@ -40,7 +44,7 @@ namespace UGM.Examples.ThirdPersonController
         /// </summary>
         private void Update()
         {
-            if(Input.GetMouseButtonDown(0)) HideCursor();
+            if (Input.GetMouseButtonDown(0)) HideCursor();
             if (Input.GetKeyDown(KeyCode.Escape)) ShowCursor();
             if (Input.GetKeyUp(KeyCode.Escape)) ShowCursor();
         }
@@ -59,7 +63,8 @@ namespace UGM.Examples.ThirdPersonController
         /// </summary>
         private void HideCursor()
         {
-            if (!EventSystem.current.IsPointerOverGameObject())
+            if (cursorShowCount < 0) cursorShowCount = 0;
+            if (cursorShowCount == 0)
             {
                 Cursor.visible = hideCursor;
                 Cursor.lockState = cursorLockMode;
@@ -75,25 +80,12 @@ namespace UGM.Examples.ThirdPersonController
             if (active)
             {
                 ShowCursor();
+                cursorShowCount++;
             }
             else
             {
+                cursorShowCount--;
                 HideCursor();
-            }
-        }
-
-        /// <summary>
-        /// Toggle the cursor visibility based on its current state.
-        /// </summary>
-        public void ToggleCursor()
-        {
-            if (Cursor.visible)
-            {
-                HideCursor();
-            }
-            else
-            {
-                ShowCursor();
             }
         }
 
