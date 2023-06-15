@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UGM.Examples.Inventory.InventoryItems;
-using UGM.Examples.ThirdPersonController;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.EventSystems;
+using UGM.Examples.Inventory.InventoryItems;
 using static UGM.Core.UGMDataTypes;
+using UGM.Examples.ThirdPersonController;
 
 namespace UGM.Examples.Inventory
 {
@@ -62,23 +62,12 @@ namespace UGM.Examples.Inventory
         /// </summary>
         private List<TokenInfo> tokenInfos;
 
-<<<<<<< HEAD
-    private bool contentActive;
+        private bool contentActive;
 
-    /// <summary>
-    /// Starts the execution of the script by loading data and updating the display of the inventory UI.
-    /// </summary>
-    async void Start()
-    {
-        //Load the data
-        tokenInfos = await nftsOwned.GetNftsByAddress();
-        if (tokenInfos != null)
-=======
         /// <summary>
         /// Starts the execution of the script by loading data and updating the display of the inventory UI.
         /// </summary>
         async void Start()
->>>>>>> master
         {
             //Load the data
             tokenInfos = await nftsOwned.GetNftsByAddress();
@@ -119,7 +108,7 @@ namespace UGM.Examples.Inventory
                     prefab = defaultItemPrefab;
                 }
                 var item = Instantiate(prefab, content);
-                if(EventSystem.current.firstSelectedGameObject == null) EventSystem.current.firstSelectedGameObject = item.gameObject;
+                if (EventSystem.current.firstSelectedGameObject == null) EventSystem.current.firstSelectedGameObject = item.gameObject;
                 item.Init(this, tokenInfo);
             }
         }
@@ -141,7 +130,7 @@ namespace UGM.Examples.Inventory
         /// </summary>
         void Update()
         {
-            if(Input.GetKeyDown(KeyCode.I))
+            if (Input.GetKeyDown(KeyCode.I))
             {
                 ToggleInventory();
             }

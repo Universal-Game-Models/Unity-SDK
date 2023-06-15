@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -62,14 +63,15 @@ namespace UGM.Examples.WeaponController
 
         private void SetGunHands()
         {
-            if(gunType == GunType.Pistol)
+            if (gunType == GunType.Pistol)
             {
                 animator.SetInteger(hand == 0 ? RightItemHash : LeftItemHash, 1);
             }
-            else if(gunType == GunType.Rifle)
+            else if (gunType == GunType.Rifle)
             {
                 //Unequip all other hand items
-                if (animator) {
+                if (animator)
+                {
                     var weaponControllers = animator.GetComponentsInChildren<WeaponController>();
                     foreach (var weaponController in weaponControllers)
                     {
@@ -114,7 +116,7 @@ namespace UGM.Examples.WeaponController
             else if (gunType == GunType.Rifle)
             {
                 var offhandAnimInt = animator.GetInteger(offhandAnimHash);
-                if(offhandAnimInt == 2)
+                if (offhandAnimInt == 2)
                 {
                     animator.SetInteger(offhandAnimHash, -1);
                 }
@@ -169,8 +171,9 @@ namespace UGM.Examples.WeaponController
 
             // Perform a raycast from the camera's position through the center of the screen
             Ray ray = Camera.main.ScreenPointToRay(screenCenter);
+            int layerMask = ~LayerMask.GetMask("Player"); // Exclude the "Player" layer
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask) && hit.collider.gameObject.GetComponentInParent<Weapon>() != this)
             {
                 // Calculate the direction from the player to the hit point
                 Vector3 playerToHit = hit.point - transform.position;
@@ -188,7 +191,7 @@ namespace UGM.Examples.WeaponController
                 // This is not great as the bullets aren't shooting exactly the right direction
                 Quaternion rotation = Quaternion.LookRotation(Camera.main.transform.forward);
                 GameObject bulletInstance = Instantiate(bulletPrefab, GetBulletSpawnPosition(), rotation);
-                
+
                 // Add the bullet to the list
                 bullets.Add(bulletInstance);
             }
@@ -225,9 +228,8 @@ namespace UGM.Examples.WeaponController
                 RaycastHit hit;
                 if (Physics.Raycast(bullet.transform.position, bullet.transform.forward, out hit, bulletDistance, layerMask))
                 {
-                    //Prevent hitting any weapons
-                    var weapon = hit.collider.gameObject.GetComponentInParent<Weapon>();
-                    if (weapon == null)
+                    //Prevent hitting self
+                    if (hit.collider.gameObject.GetComponentInParent<Weapon>() != this)
                     {
                         // Handle the hit object
                         OnHit(hit.collider.gameObject);

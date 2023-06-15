@@ -1,113 +1,109 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-/// <summary>
-/// Controls the behavior of the mouse cursor, including locking, hiding, and showing.
-/// </summary>
-public class MouseCursorLock : MonoBehaviour
+namespace UGM.Examples.ThirdPersonController
 {
-    [SerializeField][Tooltip("Defines the Cursor Lock Mode to apply")] 
-    private CursorLockMode cursorLockMode;
-    [SerializeField][Tooltip("If true will hide mouse cursor")] 
-    private bool hideCursor = true;
-    [SerializeField][Tooltip("If true it apply cursor settings on start")]
-    private bool applyOnStart = true;
-    
     /// <summary>
-    /// Called before the first frame update. Hides the cursor on start if applyOnStart is true and subscribes to the OnShowCursor event.
+    /// Controls the behavior of the mouse cursor, including locking, hiding, and showing.
     /// </summary>
-    void Start()
+    public class MouseCursorLock : MonoBehaviour
     {
-        if (applyOnStart)
-        {
-            HideCursor();
-        }
-        ExampleUIEvents.OnShowCursor.AddListener(SetCursor);
-    }
+        [SerializeField]
+        [Tooltip("Defines the Cursor Lock Mode to apply")]
+        private CursorLockMode cursorLockMode;
+        [SerializeField]
+        [Tooltip("If true will hide mouse cursor")]
+        private bool hideCursor = true;
+        [SerializeField]
+        [Tooltip("If true it apply cursor settings on start")]
+        private bool applyOnStart = true;
 
-    /// <summary>
-    /// Called when the script instance is being destroyed. Unsubscribes from the OnShowCursor event.
-    /// </summary>
-    private void OnDestroy()
-    {
-        ExampleUIEvents.OnShowCursor.RemoveListener(SetCursor);
-    }
+        private int cursorShowCount = 0;
 
-    /// <summary>
-    /// Update is called once per frame. Detects mouse click and hides the cursor when the left mouse button is clicked.
-    /// </summary>
-    private void Update()
-    {
-        if(Input.GetMouseButtonDown(0)) HideCursor();
-        if (Input.GetKeyDown(KeyCode.Escape)) ShowCursor();
-        if (Input.GetKeyUp(KeyCode.Escape)) ShowCursor();
-    }
+        /// <summary>
+        /// Called before the first frame update. Hides the cursor on start if applyOnStart is true and subscribes to the OnShowCursor event.
+        /// </summary>
+        void Start()
+        {
+            if (applyOnStart)
+            {
+                HideCursor();
+            }
+            ExampleUIEvents.OnShowCursor.AddListener(SetCursor);
+        }
 
-    /// <summary>
-    /// Show the cursor and set its lock state to Confined.
-    /// </summary>
-    private void ShowCursor()
-    {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
-    }
+        /// <summary>
+        /// Called when the script instance is being destroyed. Unsubscribes from the OnShowCursor event.
+        /// </summary>
+        private void OnDestroy()
+        {
+            ExampleUIEvents.OnShowCursor.RemoveListener(SetCursor);
+        }
 
-    /// <summary>
-    /// Hide the cursor based on the hideCursor flag and the current pointer over UI condition.
-    /// </summary>
-    private void HideCursor()
-    {
-        if (!EventSystem.current.IsPointerOverGameObject())
+        /// <summary>
+        /// Update is called once per frame. Detects mouse click and hides the cursor when the left mouse button is clicked.
+        /// </summary>
+        private void Update()
         {
-            Cursor.visible = hideCursor;
-            Cursor.lockState = cursorLockMode;
+            if (Input.GetMouseButtonDown(0)) HideCursor();
+            if (Input.GetKeyDown(KeyCode.Escape)) ShowCursor();
+            if (Input.GetKeyUp(KeyCode.Escape)) ShowCursor();
         }
-    }
 
-    /// <summary>
-    /// Set the cursor visibility based on the provided active flag.
-    /// </summary>
-    /// <param name="active">Flag indicating whether to show or hide the cursor.</param>
-    public void SetCursor(bool active)
-    {
-        if (active)
+        /// <summary>
+        /// Show the cursor and set its lock state to Confined.
+        /// </summary>
+        private void ShowCursor()
         {
-            ShowCursor();
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
         }
-        else
-        {
-            HideCursor();
-        }
-    }
 
-    /// <summary>
-    /// Toggle the cursor visibility based on its current state.
-    /// </summary>
-    public void ToggleCursor()
-    {
-        if (Cursor.visible)
+        /// <summary>
+        /// Hide the cursor based on the hideCursor flag and the current pointer over UI condition.
+        /// </summary>
+        private void HideCursor()
         {
-            HideCursor();
+            if (cursorShowCount < 0) cursorShowCount = 0;
+            if (cursorShowCount == 0)
+            {
+                Cursor.visible = hideCursor;
+                Cursor.lockState = cursorLockMode;
+            }
         }
-        else
-        {
-            ShowCursor();
-        }
-    }
 
-    /// <summary>
-    /// Called when the application gains or loses focus. Hides the cursor when the application loses focus and shows it when the application gains focus.
-    /// </summary>
-    /// <param name="hasFocus">Flag indicating whether the application has focus.</param>
-    void OnApplicationFocus(bool hasFocus)
-    {
-        if (hasFocus)
+        /// <summary>
+        /// Set the cursor visibility based on the provided active flag.
+        /// </summary>
+        /// <param name="active">Flag indicating whether to show or hide the cursor.</param>
+        public void SetCursor(bool active)
         {
-            HideCursor();
+            if (active)
+            {
+                ShowCursor();
+                cursorShowCount++;
+            }
+            else
+            {
+                cursorShowCount--;
+                HideCursor();
+            }
         }
-        else
+
+        /// <summary>
+        /// Called when the application gains or loses focus. Hides the cursor when the application loses focus and shows it when the application gains focus.
+        /// </summary>
+        /// <param name="hasFocus">Flag indicating whether the application has focus.</param>
+        void OnApplicationFocus(bool hasFocus)
         {
-            ShowCursor();
+            if (hasFocus)
+            {
+                HideCursor();
+            }
+            else
+            {
+                ShowCursor();
+            }
         }
     }
 }
