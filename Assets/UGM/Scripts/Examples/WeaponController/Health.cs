@@ -1,72 +1,75 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-public class Health : MonoBehaviour
+namespace UGM.Examples.WeaponController
 {
-    public int maxHealth = 100;
-    public int health;
-    public float regenDelay = 2f; // Time delay after which regeneration starts
-    public float regenSpeed = 50f; // Speed at which health regenerates
-
-    public UnityEvent<int> onHealthChanged = new UnityEvent<int>();
-    public UnityEvent<float> onHealthRatioChanged = new UnityEvent<float>();
-
-    private float lastChangeTime; // Time of the last health change
-    private bool isRegenerating; // Flag to track if regeneration is in progress
-    private float accumulatedTime; // Accumulated time for health regeneration
-
-    private void Start()
+    public class Health : MonoBehaviour
     {
-        health = maxHealth;
-        onHealthChanged.AddListener((int newHealth) => onHealthRatioChanged.Invoke((float)newHealth / (float)maxHealth));
-        lastChangeTime = Time.time;
-        isRegenerating = false;
-        accumulatedTime = 0f;
-    }
+        public int maxHealth = 100;
+        public int health;
+        public float regenDelay = 2f; // Time delay after which regeneration starts
+        public float regenSpeed = 50f; // Speed at which health regenerates
 
-    private void Update()
-    {
-        if (!isRegenerating && Time.time - lastChangeTime >= regenDelay && health < maxHealth)
+        public UnityEvent<int> onHealthChanged = new UnityEvent<int>();
+        public UnityEvent<float> onHealthRatioChanged = new UnityEvent<float>();
+
+        private float lastChangeTime; // Time of the last health change
+        private bool isRegenerating; // Flag to track if regeneration is in progress
+        private float accumulatedTime; // Accumulated time for health regeneration
+
+        private void Start()
         {
-            isRegenerating = true;
+            health = maxHealth;
+            onHealthChanged.AddListener((int newHealth) => onHealthRatioChanged.Invoke((float)newHealth / (float)maxHealth));
+            lastChangeTime = Time.time;
+            isRegenerating = false;
             accumulatedTime = 0f;
         }
 
-        if (isRegenerating)
+        private void Update()
         {
-            RegenerateHealth();
-        }
-    }
-
-    private void RegenerateHealth()
-    {
-        accumulatedTime += Time.deltaTime;
-
-        while (accumulatedTime >= (1f / regenSpeed))
-        {
-            health = Mathf.Clamp(health + 1, 0, maxHealth);
-            onHealthChanged.Invoke(health);
-
-            if (health >= maxHealth)
+            if (!isRegenerating && Time.time - lastChangeTime >= regenDelay && health < maxHealth)
             {
-                health = maxHealth;
-                isRegenerating = false;
-                break;
+                isRegenerating = true;
+                accumulatedTime = 0f;
             }
 
-            accumulatedTime -= 1f / regenSpeed;
+            if (isRegenerating)
+            {
+                RegenerateHealth();
+            }
         }
-    }
 
-    public void ChangeHealth(int amount)
-    {
-        health = Mathf.Clamp(health + amount, 0, maxHealth);
-        onHealthChanged.Invoke(health);
-        lastChangeTime = Time.time;
-
-        if (isRegenerating)
+        private void RegenerateHealth()
         {
-            isRegenerating = false;
+            accumulatedTime += Time.deltaTime;
+
+            while (accumulatedTime >= (1f / regenSpeed))
+            {
+                health = Mathf.Clamp(health + 1, 0, maxHealth);
+                onHealthChanged.Invoke(health);
+
+                if (health >= maxHealth)
+                {
+                    health = maxHealth;
+                    isRegenerating = false;
+                    break;
+                }
+
+                accumulatedTime -= 1f / regenSpeed;
+            }
+        }
+
+        public void ChangeHealth(int amount)
+        {
+            health = Mathf.Clamp(health + amount, 0, maxHealth);
+            onHealthChanged.Invoke(health);
+            lastChangeTime = Time.time;
+
+            if (isRegenerating)
+            {
+                isRegenerating = false;
+            }
         }
     }
 }

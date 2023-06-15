@@ -1,7 +1,10 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "UGA-Config", menuName = "ScriptableObjects/UgaConfig", order = 1)]
-public class UGMConfig : ScriptableObject
+namespace UGM.Core
 {
-    public string apiKey;
+    [CreateAssetMenu(fileName = "UGA-Config", menuName = "ScriptableObjects/UgaConfig", order = 1)]
+    public class UGMConfig : ScriptableObject
+    {
+        public string apiKey;
+    }
 }

@@ -1,156 +1,157 @@
-using System.Runtime.Serialization;
+using UGM.Core;
+using UGM.Examples.ThirdPersonController;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using static UGMDataTypes;
 
-public enum WeaponType
+namespace UGM.Examples.WeaponController
 {
-    Melee,
-    Gun
-}
-public enum MeleeWeaponType
-{
-    Axe,
-    Sword,
-    Hammer
-}
-public enum FireType
-{
-    Automatic,
-    Burst,
-    Single
-}
-public enum GunType
-{
-    Pistol,
-    Rifle
-}
-public enum WeaponTier
-{
-    Common,
-    Rare,
-    Unique,
-    Legendary
-}
-
-public class WeaponController : MonoBehaviour
-{
-    [SerializeField]
-    private GameObject bulletPrefab;
-
-    private UGMDownloader ugmDownloader;
-
-    private WeaponType weaponType;
-    private MeleeWeaponType meleeWeaponType;
-    private FireType fireType;
-    private GunType gunType;
-    private WeaponTier weaponTier;
-
-    private MeleeWeapon meleeWeapon;
-    private GunWeapon gunWeapon;
-    private int hand = 0;
-
-    private void Awake()
+    public enum WeaponType
     {
-        ugmDownloader = GetComponent<UGMDownloader>();
-        if (ugmDownloader != null)
-        {
-            ugmDownloader.onMetadataSuccess.AddListener(HandleMetadataSuccess);
-        }
-        else
-        {
-            Debug.LogError("UGMDownloader component not found!");
-        }
+        Melee,
+        Gun
+    }
+    public enum MeleeWeaponType
+    {
+        Axe,
+        Sword,
+        Hammer
+    }
+    public enum FireType
+    {
+        Automatic,
+        Burst,
+        Single
+    }
+    public enum GunType
+    {
+        Pistol,
+        Rifle
+    }
+    public enum WeaponTier
+    {
+        Common,
+        Rare,
+        Unique,
+        Legendary
     }
 
-    private void OnDestroy()
+    public class WeaponController : MonoBehaviour
     {
-        if (ugmDownloader != null)
+        [SerializeField]
+        private GameObject bulletPrefab;
+
+        private UGMDownloader ugmDownloader;
+
+        private WeaponType weaponType;
+        private MeleeWeaponType meleeWeaponType;
+        private FireType fireType;
+        private GunType gunType;
+        private WeaponTier weaponTier;
+
+        private MeleeWeapon meleeWeapon;
+        private GunWeapon gunWeapon;
+        private int hand = 0;
+
+        private void Awake()
         {
-            ugmDownloader.onMetadataSuccess.RemoveListener(HandleMetadataSuccess);
-        }
-    }
-
-    private void HandleMetadataSuccess(Metadata metadata)
-    {
-        DetermineWeaponStats(metadata);
-    }
-
-    private void DetermineWeaponStats(Metadata metadata)
-    {
-        // Check if the equipment is a weapon
-        if (!HasTrait(metadata, "Equipment", "Weapon"))
-            return;
-
-        // Retrieve the weapon type attribute
-        Attribute weaponTypeAttribute = GetAttribute(metadata, "Weapon Type");
-        if (weaponTypeAttribute == null)
-            return;
-        // Set the weapon type based on the attribute value
-        if (System.Enum.TryParse(weaponTypeAttribute.value.ToString(), out WeaponType type))
-            weaponType = type;
-        else
-            return;
-
-        // Determine the stats based on the weapon type
-        if (weaponType == WeaponType.Melee)
-        {
-            // Retrieve the melee weapon type attribute
-            Attribute meleeWeaponTypeAttribute = GetAttribute(metadata, "Melee Weapon");
-            if (meleeWeaponTypeAttribute == null)
-                return;
-
-            // Set the melee weapon type based on the attribute value
-            if (System.Enum.TryParse(meleeWeaponTypeAttribute.value.ToString(), out MeleeWeaponType meleeType))
-                meleeWeaponType = meleeType;
+            ugmDownloader = GetComponent<UGMDownloader>();
+            if (ugmDownloader != null)
+            {
+                ugmDownloader.onMetadataSuccess.AddListener(HandleMetadataSuccess);
+            }
             else
-                return;
+            {
+                Debug.LogError("UGMDownloader component not found!");
+            }
         }
-        else if (weaponType == WeaponType.Gun)
+
+        private void OnDestroy()
         {
-            // Retrieve the fire type attribute
-            Attribute fireTypeAttribute = GetAttribute(metadata, "Fire Type");
-            if (fireTypeAttribute == null)
+            if (ugmDownloader != null)
+            {
+                ugmDownloader.onMetadataSuccess.RemoveListener(HandleMetadataSuccess);
+            }
+        }
+
+        private void HandleMetadataSuccess(UGMDataTypes.Metadata metadata)
+        {
+            DetermineWeaponStats(metadata);
+        }
+
+        private void DetermineWeaponStats(UGMDataTypes.Metadata metadata)
+        {
+            // Check if the equipment is a weapon
+            if (!HasTrait(metadata, "Equipment", "Weapon"))
                 return;
-            // Set the fire type based on the attribute value
-            if (System.Enum.TryParse(fireTypeAttribute.value.ToString(), out FireType ftype))
-                fireType = ftype;
+
+            // Retrieve the weapon type attribute
+            UGMDataTypes.Attribute weaponTypeAttribute = GetAttribute(metadata, "Weapon Type");
+            if (weaponTypeAttribute == null)
+                return;
+            // Set the weapon type based on the attribute value
+            if (System.Enum.TryParse(weaponTypeAttribute.value.ToString(), out WeaponType type))
+                weaponType = type;
             else
                 return;
 
-            // Retrieve the gun type attribute
-            Attribute gunTypeAttribute = GetAttribute(metadata, "Gun Type");
-            if (gunTypeAttribute == null)
+            // Determine the stats based on the weapon type
+            if (weaponType == WeaponType.Melee)
+            {
+                // Retrieve the melee weapon type attribute
+                UGMDataTypes.Attribute meleeWeaponTypeAttribute = GetAttribute(metadata, "Melee Weapon");
+                if (meleeWeaponTypeAttribute == null)
+                    return;
+
+                // Set the melee weapon type based on the attribute value
+                if (System.Enum.TryParse(meleeWeaponTypeAttribute.value.ToString(), out MeleeWeaponType meleeType))
+                    meleeWeaponType = meleeType;
+                else
+                    return;
+            }
+            else if (weaponType == WeaponType.Gun)
+            {
+                // Retrieve the fire type attribute
+                UGMDataTypes.Attribute fireTypeAttribute = GetAttribute(metadata, "Fire Type");
+                if (fireTypeAttribute == null)
+                    return;
+                // Set the fire type based on the attribute value
+                if (System.Enum.TryParse(fireTypeAttribute.value.ToString(), out FireType ftype))
+                    fireType = ftype;
+                else
+                    return;
+
+                // Retrieve the gun type attribute
+                UGMDataTypes.Attribute gunTypeAttribute = GetAttribute(metadata, "Gun Type");
+                if (gunTypeAttribute == null)
+                    return;
+                // Set the gun type based on the attribute value
+                if (System.Enum.TryParse(gunTypeAttribute.value.ToString(), out GunType gtype))
+                    gunType = gtype;
+                else
+                    return;
+            }
+
+            // Retrieve the weapon tier attribute
+            UGMDataTypes.Attribute weaponTierAttribute = GetAttribute(metadata, "Tier");
+            if (weaponTierAttribute == null)
                 return;
-            // Set the gun type based on the attribute value
-            if (System.Enum.TryParse(gunTypeAttribute.value.ToString(), out GunType gtype))
-                gunType = gtype;
+
+            // Set the weapon tier based on the attribute value
+            if (System.Enum.TryParse(weaponTierAttribute.value.ToString(), out WeaponTier tier))
+                weaponTier = tier;
             else
                 return;
+
+            Init();
         }
 
-        // Retrieve the weapon tier attribute
-        Attribute weaponTierAttribute = GetAttribute(metadata, "Tier");
-        if (weaponTierAttribute == null)
-            return;
-
-        // Set the weapon tier based on the attribute value
-        if (System.Enum.TryParse(weaponTierAttribute.value.ToString(), out WeaponTier tier))
-            weaponTier = tier;
-        else
-            return;
-
-        Init();
-    }
-
-    private void Init()
-    {
-        // Set Avatar animation for the weapon type
-
-        // Setup the weapon logic
-        switch (weaponType)
+        private void Init()
         {
-            case WeaponType.Melee:
+            // Set Avatar animation for the weapon type
+
+            // Setup the weapon logic
+            switch (weaponType)
+            {
+                case WeaponType.Melee:
                 {
                     if (meleeWeapon == null)
                     {
@@ -178,7 +179,7 @@ public class WeaponController : MonoBehaviour
                     meleeWeapon.Init(meleeDamage, meleeWeaponType);
                     break;
                 }
-            case WeaponType.Gun:
+                case WeaponType.Gun:
                 {
                     if (gunWeapon == null)
                     {
@@ -217,34 +218,35 @@ public class WeaponController : MonoBehaviour
                     gunWeapon.Init(gunDamage, fireType, gunType, hand, bulletPrefab);
                     break;
                 }
+            }
         }
-    }
 
-    private Attribute GetAttribute(Metadata metadata, string traitType)
-    {
-        foreach (Attribute attribute in metadata.attributes)
+        private UGMDataTypes.Attribute GetAttribute(UGMDataTypes.Metadata metadata, string traitType)
         {
-            if (attribute.trait_type == traitType)
-                return attribute;
+            foreach (UGMDataTypes.Attribute attribute in metadata.attributes)
+            {
+                if (attribute.trait_type == traitType)
+                    return attribute;
+            }
+            return null;
         }
-        return null;
-    }
 
-    private bool HasTrait(Metadata metadata, string traitType, string value)
-    {
-        foreach (Attribute attribute in metadata.attributes)
+        private bool HasTrait(UGMDataTypes.Metadata metadata, string traitType, string value)
         {
-            if (attribute.trait_type == traitType && attribute.value.ToString() == value)
-                return true;
+            foreach (UGMDataTypes.Attribute attribute in metadata.attributes)
+            {
+                if (attribute.trait_type == traitType && attribute.value.ToString() == value)
+                    return true;
+            }
+            return false;
         }
-        return false;
-    }
 
-    public void DestroyWeapon(int dontDestroyHand)
-    {
-        if (ugmDownloader && hand != dontDestroyHand)
+        public void DestroyWeapon(int dontDestroyHand)
         {
-            DestroyImmediate(ugmDownloader.InstantiatedGO);
+            if (ugmDownloader && hand != dontDestroyHand)
+            {
+                DestroyImmediate(ugmDownloader.InstantiatedGO);
+            }
         }
     }
 }
