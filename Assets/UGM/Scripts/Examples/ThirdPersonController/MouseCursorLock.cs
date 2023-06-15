@@ -12,9 +12,7 @@ public class MouseCursorLock : MonoBehaviour
     private bool hideCursor = true;
     [SerializeField][Tooltip("If true it apply cursor settings on start")]
     private bool applyOnStart = true;
-
-    private int cursorShowCount = 0;
-
+    
     /// <summary>
     /// Called before the first frame update. Hides the cursor on start if applyOnStart is true and subscribes to the OnShowCursor event.
     /// </summary>
@@ -59,8 +57,7 @@ public class MouseCursorLock : MonoBehaviour
     /// </summary>
     private void HideCursor()
     {
-        if (cursorShowCount < 0) cursorShowCount = 0;
-        if (cursorShowCount == 0)
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
             Cursor.visible = hideCursor;
             Cursor.lockState = cursorLockMode;
@@ -76,12 +73,25 @@ public class MouseCursorLock : MonoBehaviour
         if (active)
         {
             ShowCursor();
-            cursorShowCount++;
         }
         else
         {
-            cursorShowCount--;
             HideCursor();
+        }
+    }
+
+    /// <summary>
+    /// Toggle the cursor visibility based on its current state.
+    /// </summary>
+    public void ToggleCursor()
+    {
+        if (Cursor.visible)
+        {
+            HideCursor();
+        }
+        else
+        {
+            ShowCursor();
         }
     }
 
