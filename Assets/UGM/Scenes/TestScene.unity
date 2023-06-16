@@ -943,7 +943,7 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UGM.Examples.AnimationSelector.AnimationSelector,
           Assembly-CSharp
         m_MethodName: ToggleContent
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

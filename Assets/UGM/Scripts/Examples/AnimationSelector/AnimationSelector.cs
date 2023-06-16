@@ -118,7 +118,7 @@ namespace UGM.Examples.AnimationSelector
         {
             if (Input.GetKeyUp(KeyCode.B))
             {
-                ToggleContent(!contentActive);
+                ToggleContent();
             }
         }
 
@@ -126,13 +126,13 @@ namespace UGM.Examples.AnimationSelector
         /// Toggles the visibility of the content.
         /// </summary>
         /// <param name="active">The desired visibility state.</param>
-        public void ToggleContent(bool active)
+        public void ToggleContent()
         {
             //Do not allow if their are no animations
             if (content.childCount <= 0) return;
-            contentActive = active;
+            contentActive = !contentActive;
             parent.SetActive(contentActive);
-            ExampleUIEvents.OnShowCursor.Invoke(active);
+            ExampleUIEvents.OnShowCursor.Invoke(contentActive);
         }
 
         /// <summary>
