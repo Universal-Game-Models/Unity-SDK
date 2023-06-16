@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace UGM.Examples.ThirdPersonController
 {
@@ -44,7 +45,7 @@ namespace UGM.Examples.ThirdPersonController
         /// </summary>
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0)) HideCursor();
+            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()) HideCursor();
             if (Input.GetKeyDown(KeyCode.Escape)) ShowCursor();
             if (Input.GetKeyUp(KeyCode.Escape)) ShowCursor();
         }

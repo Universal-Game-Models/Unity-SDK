@@ -26,6 +26,10 @@ namespace UGM.Examples.AnimationSelector
         [SerializeField]
         private bool loopAnimation = true;
 
+        [Tooltip("Gameobject for button Animation List Button Example that shows or hides depending if there is an animation of the avatar")]
+        [SerializeField]
+        private GameObject animationButtonPanel;
+
         private bool contentActive = false;
 
         private void Awake()
@@ -73,8 +77,10 @@ namespace UGM.Examples.AnimationSelector
             if (animationNames.Length == 0)
             {
                 parent.gameObject.SetActive(false);
+                ShowAnimationButtonPanel(false);
                 return;
             }
+            ShowAnimationButtonPanel(true);
             //Set the active to its current state and display all animation selector buttons
             parent.gameObject.SetActive(contentActive);
             foreach (var animationName in animationNames)
@@ -93,6 +99,17 @@ namespace UGM.Examples.AnimationSelector
                 }, animationName);
             }
         }
+        /// <summary>
+        /// Determine if animation selector button should only show if the model has animations to be played.
+        /// </summary>
+        /// <param name="active"></param>
+        private void ShowAnimationButtonPanel(bool active)
+        {
+            if (animationButtonPanel)
+            {
+                animationButtonPanel.SetActive(active);
+            }
+        }
 
         /// <summary>
         /// Update function called once per frame. Checks if the "B" key has been released and toggles the visibility of the content accordingly.
@@ -101,7 +118,7 @@ namespace UGM.Examples.AnimationSelector
         {
             if (Input.GetKeyUp(KeyCode.B))
             {
-                ToggleContent(!contentActive);
+                ToggleContent();
             }
         }
 
@@ -109,13 +126,13 @@ namespace UGM.Examples.AnimationSelector
         /// Toggles the visibility of the content.
         /// </summary>
         /// <param name="active">The desired visibility state.</param>
-        public void ToggleContent(bool active)
+        public void ToggleContent()
         {
             //Do not allow if their are no animations
             if (content.childCount <= 0) return;
-            contentActive = active;
+            contentActive = !contentActive;
             parent.SetActive(contentActive);
-            ExampleUIEvents.OnShowCursor.Invoke(active);
+            ExampleUIEvents.OnShowCursor.Invoke(contentActive);
         }
 
         /// <summary>
