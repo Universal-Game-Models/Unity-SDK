@@ -404,6 +404,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4911574075275108685, guid: b269980bbf449d44a8c1e635e19118ad, type: 3}
   m_PrefabInstance: {fileID: 4911574075416855341}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &500144120 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3165227001193740920, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
+  m_PrefabInstance: {fileID: 3165227001113938569}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f1c12e416a8d1f4ebb23e9f5e95172a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &527586698
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,7 +498,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 527586701}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 629662151}
+        m_TargetAssemblyTypeName: UGM.Examples.Inventory.Inventory, Assembly-CSharp
+        m_MethodName: ToggleInventory
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &527586701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,6 +655,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &629662151 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4828429974817877805, guid: 6b7faa55de2b3ab4a8f1bbd321022684, type: 3}
+  m_PrefabInstance: {fileID: 4828429974503526054}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7830004f6bba72a439d38d6649c124b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &776382783
 GameObject:
   m_ObjectHideFlags: 0
@@ -904,7 +938,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 978354541}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 500144120}
+        m_TargetAssemblyTypeName: UGM.Examples.AnimationSelector.AnimationSelector,
+          Assembly-CSharp
+        m_MethodName: ToggleContent
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &978354541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2203,6 +2250,10 @@ PrefabInstance:
       propertyPath: loader
       value: 
       objectReference: {fileID: 1161909498}
+    - target: {fileID: 3165227001193740920, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
+      propertyPath: animationButtonPanel
+      value: 
+      objectReference: {fileID: 978354538}
     - target: {fileID: 3165227001193740921, guid: 67d394a8688c5254ba311602ce614ef3, type: 3}
       propertyPath: m_RootOrder
       value: 3
