@@ -26,6 +26,10 @@ namespace UGM.Examples.AnimationSelector
         [SerializeField]
         private bool loopAnimation = true;
 
+        [Tooltip("Gameobject for button Animation List Button Example that shows or hides depending if there is an animation of the avatar")]
+        [SerializeField]
+        private GameObject animationButtonPanel;
+
         private bool contentActive = false;
 
         private void Awake()
@@ -73,8 +77,10 @@ namespace UGM.Examples.AnimationSelector
             if (animationNames.Length == 0)
             {
                 parent.gameObject.SetActive(false);
+                ShowAnimationButtonPanel(false);
                 return;
             }
+            ShowAnimationButtonPanel(true);
             //Set the active to its current state and display all animation selector buttons
             parent.gameObject.SetActive(contentActive);
             foreach (var animationName in animationNames)
@@ -91,6 +97,17 @@ namespace UGM.Examples.AnimationSelector
                         loader.PlayAnimation(animationName, loopAnimation);
                     }
                 }, animationName);
+            }
+        }
+        /// <summary>
+        /// Determine if animation selector button should only show if the model has animations to be played.
+        /// </summary>
+        /// <param name="active"></param>
+        private void ShowAnimationButtonPanel(bool active)
+        {
+            if (animationButtonPanel)
+            {
+                animationButtonPanel.SetActive(active);
             }
         }
 

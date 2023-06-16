@@ -139,7 +139,7 @@ namespace UGM.Examples.Inventory
         /// <summary>
         /// Toggles the visibility of the inventory UI by activating or deactivating the parent GameObject and invoking an event to show or hide the cursor.
         /// </summary>
-        private void ToggleInventory()
+        public void ToggleInventory()
         {
             contentActive = !parent.activeInHierarchy;
             parent.SetActive(contentActive);
