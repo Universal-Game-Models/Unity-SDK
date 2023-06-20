@@ -14,6 +14,11 @@ namespace UGM.Examples.WeaponController
         {
             this.damage = damage;
             this.weaponType = weaponType;
+
+            //Add a rigidbody to detect child colliders
+            var rb = gameObject.AddComponent<Rigidbody>();
+            rb.useGravity = false;
+            rb.constraints = RigidbodyConstraints.FreezeAll;
         }
 
         public override void Attack()
@@ -42,10 +47,10 @@ namespace UGM.Examples.WeaponController
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (isAttacking && collision.gameObject != recentlyHit)
+            if (isAttacking && collision.gameObject.layer != LayerMask.NameToLayer("Player") && (recentlyHit == null || collision.gameObject != recentlyHit))
             {
                 recentlyHit = collision.gameObject;
-                Invoke("ResetRecent", 0.5f);
+                Invoke("ResetRecent", attackDuration);
                 OnHit(collision.gameObject);
             }
         }
