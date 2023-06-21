@@ -140,7 +140,7 @@ namespace UGM.Examples.WeaponController
                 weaponTier = tier;
             else
                 return;
-
+            ExampleUIEvents.OnWeaponDeterminedType.Invoke(weaponType);
             Init();
         }
 
