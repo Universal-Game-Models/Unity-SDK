@@ -81,7 +81,7 @@ namespace UGM.Examples.Inventory.InventoryItems
         /// Called every frame.
         /// Checks if the mouse is hovering over the inventory item and updates the quick select if a number key is pressed.
         /// </summary>
-        private void Update()
+        protected virtual void Update()
         {
             if (hovering)
             {
@@ -97,7 +97,7 @@ namespace UGM.Examples.Inventory.InventoryItems
         /// Called when the mouse pointer enters the inventory item.
         /// </summary>
         /// <param name="eventData">The pointer event data.</param>
-        public void OnPointerEnter(PointerEventData eventData)
+        public virtual void OnPointerEnter(PointerEventData eventData)
         {
             hovering = true;
         }
@@ -106,12 +106,12 @@ namespace UGM.Examples.Inventory.InventoryItems
         /// Called when the mouse pointer exits the inventory item.
         /// </summary>
         /// <param name="eventData">The pointer event data.</param>
-        public void OnPointerExit(PointerEventData eventData)
+        public virtual void OnPointerExit(PointerEventData eventData)
         {
             hovering = false;
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        public virtual void OnPointerClick(PointerEventData eventData)
         {
             if (eventData.button == PointerEventData.InputButton.Right)
             {
