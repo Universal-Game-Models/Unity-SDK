@@ -1458,6 +1458,7 @@ MonoBehaviour:
     nameIsTraitType: 1
     prefab: {fileID: 4762471355090830675, guid: c4635f703261ebc4bad32a15a32106f4, type: 3}
   filterByWeaponType: 0
+  <SkinSwapLoader>k__BackingField: {fileID: 1506492221}
 --- !u!114 &1189423582 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4828429974817877802, guid: 6b7faa55de2b3ab4a8f1bbd321022684, type: 3}
@@ -1790,15 +1791,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1506492219}
-  - component: {fileID: 1506492221}
   - component: {fileID: 1506492220}
+  - component: {fileID: 1506492221}
   m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1506492219
 Transform:
   m_ObjectHideFlags: 0
@@ -1807,7 +1808,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1506492218}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.0096873, y: 1.3731276, z: 0.7165291}
+  m_LocalPosition: {x: -0.367, y: 1.3731276, z: -8.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1823,11 +1824,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 1506492218}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49a20641ec0c9d447871656f9e5d7746, type: 3}
+  m_Script: {fileID: 11500000, guid: 20a41a071ad64b37a3313cb3b5803095, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  address: 0xdf14bCadb78DD6fe0eA82e50aA0c83B6F30c2207
-  currentPage: 0
+  nftId: 
+  loadOnStart: 1
+  addBoxColliders: 1
+  addMeshColliders: 0
+  loadModel: 1
+  loadMetadata: 1
+  loadImage: 1
+  onModelSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+  onModelFailure:
+    m_PersistentCalls:
+      m_Calls: []
+  onMetadataSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+  onMetadataFailure:
+    m_PersistentCalls:
+      m_Calls: []
+  onImageSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+  onImageFailure:
+    m_PersistentCalls:
+      m_Calls: []
+  onAnimationStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onAnimationEnd:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1506492221
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1837,16 +1867,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 1506492218}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40f13e3482da47df98515377226be16f, type: 3}
+  m_Script: {fileID: 11500000, guid: 72928304436e413997160dde82d8a412, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nftsOwned: {fileID: 1506492220}
-  avatarLoader: {fileID: 0}
-  parent: {fileID: 0}
-  content: {fileID: 0}
-  defaultItemPrefab: {fileID: 0}
-  itemPrefabs: []
-  filterByWeaponType: 0
+  nftId: 
+  loadOnStart: 1
+  addBoxColliders: 1
+  addMeshColliders: 0
+  loadModel: 1
+  loadMetadata: 1
+  loadImage: 1
+  onModelSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+  onModelFailure:
+    m_PersistentCalls:
+      m_Calls: []
+  onMetadataSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+  onMetadataFailure:
+    m_PersistentCalls:
+      m_Calls: []
+  onImageSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+  onImageFailure:
+    m_PersistentCalls:
+      m_Calls: []
+  onAnimationStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onAnimationEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  weaponUGM: {fileID: 1506492220}
 --- !u!1 &1507377776
 GameObject:
   m_ObjectHideFlags: 0

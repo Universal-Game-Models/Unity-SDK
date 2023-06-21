@@ -141,6 +141,11 @@ namespace UGM.Examples.Inventory
         /// </summary>
         public virtual void ToggleInventory()
         {
+            if (parent == null)
+            {
+                Debug.LogError("" + parent.name + " is missing!");
+                return;
+            }
             contentActive = !parent.activeInHierarchy;
             parent.SetActive(contentActive);
             ExampleUIEvents.OnShowCursor.Invoke(contentActive);

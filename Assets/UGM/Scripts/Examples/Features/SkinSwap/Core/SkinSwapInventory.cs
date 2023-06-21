@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UGM.Core;
+using UGM.Examples.Features.SkinSwap.Core;
 using UGM.Examples.Inventory;
 using UGM.Examples.WeaponController;
 using UnityEngine;
 
-public class SwapSkinInventory : Inventory
+public class SkinSwapInventory : Inventory
 {
     public WeaponType filterByWeaponType;
+    [field: SerializeField]
+    public SkinSwapLoader SkinSwapLoader { get; set; }
 
     private void OnEnable()
     {
