@@ -110,9 +110,10 @@ namespace UGM.Examples.WeaponController
             var offhandAnimHash = hand == 0 ? LeftItemHash : RightItemHash;
             if (gunType == GunType.Pistol)
             {
-                animator.SetInteger(handAnimHash, -1);
+                if(animator)
+                    animator.SetInteger(handAnimHash, -1);
             }
-            else if (gunType == GunType.Rifle)
+            else if (gunType == GunType.Rifle && animator)
             {
                 var offhandAnimInt = animator.GetInteger(offhandAnimHash);
                 if (offhandAnimInt == 2)
