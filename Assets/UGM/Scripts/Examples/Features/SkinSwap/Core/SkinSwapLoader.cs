@@ -6,39 +6,43 @@ using UnityEngine;
 
 namespace UGM.Examples.Features.SkinSwap.Core
 {
-    public class SkinSwapLoader : UGMDownloader, ILoadableSkin, ISwitchableSkin
+    public class SkinSwapLoader : UGMDownloader, ILoadableSkin, ITokenable, ISwappableSkin
     {
-        [SerializeField]
-        protected UGMDownloader weaponUGM;
-
         private GameObject weaponGameObject;
         private string defaultId;
+        public UGMDataTypes.TokenInfo OriginalItemTokenData { get; set; }
+        
         public void LoadSkin(UGMDataTypes.TokenInfo data)
         {
-            if (weaponGameObject == null)
-                weaponGameObject = weaponUGM.InstantiatedGO;
-            weaponGameObject.SetActive(false);
             Load(data.token_id);
+        }
+
+        protected virtual void LoadItem(UGMDataTypes.TokenInfo data)
+        {
+            OriginalItemTokenData = data;
+            Load(data.token_id);
+        }
+        private void OnEnable()
+        {
+            ExampleUIEvents.OnChangeEquipment.AddListener(LoadItem);
+        }
+
+        private void OnDisable()
+        {
+            ExampleUIEvents.OnChangeEquipment.RemoveListener(LoadItem);
         }
 
         protected override void OnModelSuccess(GameObject loadedGO)
         {
             base.OnModelSuccess(loadedGO);
-            // if(previousSkin != null)
-            //     DestroyImmediate(previousSkin);
-            loadedGO.transform.SetParent(gameObject.transform);
-            if (InstantiatedGO)
-            {
-                InstantiatedGO.transform.position = weaponGameObject.transform.position;
-                InstantiatedGO.transform.rotation = weaponGameObject.transform.rotation;
-            }
+
+            InstantiatedGO.transform.SetParent(gameObject.transform);
         }
+
         [Button()]
-        public void SwapSkinToOrigin()
+        public void SwapToOriginalSkin()
         {
-            Destroy(InstantiatedGO);
-            if(weaponGameObject)
-                weaponGameObject.SetActive(true);
+            LoadSkin(OriginalItemTokenData);
         }
     }
 }

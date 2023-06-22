@@ -4,6 +4,6 @@ namespace UGM.Examples.Features.SkinSwap.Interface
 {
     public interface ITokenable
     {
-        public UGMDataTypes.TokenInfo TokenData { get; set; }
+        public UGMDataTypes.TokenInfo OriginalItemTokenData { get; set; }
     }
 }
