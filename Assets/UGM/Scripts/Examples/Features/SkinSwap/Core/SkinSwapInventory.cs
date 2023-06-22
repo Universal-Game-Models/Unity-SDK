@@ -25,7 +25,7 @@ public class SkinSwapInventory : Inventory
 
     public override async void Start()
     {
-        OnGetWeaponType(WeaponType.Melee);
+        OnGetWeaponType(filterByWeaponType);
     }
 
     private async void OnGetWeaponType(WeaponType type)
@@ -52,6 +52,14 @@ public class SkinSwapInventory : Inventory
         
         if(tokenInfos != null)
             UpdateDisplay();
+    }
+
+    public override void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            ToggleInventory();
+        }
     }
 
     private void FilterTokenInfoListByWeaponType(List<UGMDataTypes.TokenInfo> filteredTokenInfos)

@@ -22,7 +22,7 @@ namespace UGM.Examples.Features.SkinSwap.Core
                 return;
             }
 
-            loader.LoadSkin(tokenInfo.token_id);
+            loader.LoadSkin(tokenInfo);
         }
 
         public override void Init(Inventory.Inventory inventory, UGMDataTypes.TokenInfo tokenInfo)
