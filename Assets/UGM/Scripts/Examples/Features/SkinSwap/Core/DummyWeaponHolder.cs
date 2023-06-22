@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using NaughtyAttributes;
 using UGM.Core;
@@ -6,17 +7,31 @@ using UnityEngine;
 
 namespace UGM.Examples.Features.SkinSwap.Core
 {
-    public class DummyWeaponHolder : UGMDownloader, ILoadableSkin
+    public class DummyWeaponHolder : UGMDownloader, ILoadableSkin, ITokenable
     {
+
+        public UGMDataTypes.TokenInfo TokenData { get; set; }
         protected override void Start()
         {
             base.Start();
-            LoadSkin("15");
+            // LoadSkin("15");
+            
         }
 
-        public async Task LoadSkin(string id)
+        private void OnEnable()
         {
-            await LoadAsync(id);
+            ExampleUIEvents.OnChangeEquipment.AddListener(LoadSkin);
+        }
+
+        private void OnDisable()
+        {
+            ExampleUIEvents.OnChangeEquipment.RemoveListener(LoadSkin);
+        }
+
+        public void LoadSkin(UGMDataTypes.TokenInfo data)
+        {
+            LoadAsync(data.token_id);
+            TokenData = data;
         }
 
         protected override void OnModelSuccess(GameObject loadedGO)
@@ -24,5 +39,6 @@ namespace UGM.Examples.Features.SkinSwap.Core
             base.OnModelSuccess(loadedGO);
             loadedGO.transform.SetParent(gameObject.transform);
         }
+        
     }
 }
