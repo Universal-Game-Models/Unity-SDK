@@ -27,12 +27,18 @@ namespace UGM.Examples.Features.SkinSwap.Core
             // if(previousSkin != null)
             //     DestroyImmediate(previousSkin);
             loadedGO.transform.SetParent(gameObject.transform);
+            if (InstantiatedGO)
+            {
+                InstantiatedGO.transform.position = weaponGameObject.transform.position;
+                InstantiatedGO.transform.rotation = weaponGameObject.transform.rotation;
+            }
         }
         [Button()]
         public void SwapSkinToOrigin()
         {
             Destroy(InstantiatedGO);
-            weaponGameObject.SetActive(true);
+            if(weaponGameObject)
+                weaponGameObject.SetActive(true);
         }
     }
 }
