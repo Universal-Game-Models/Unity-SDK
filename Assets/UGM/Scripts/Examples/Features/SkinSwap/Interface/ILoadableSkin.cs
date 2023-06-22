@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
+using UGM.Core;
 
 namespace UGM.Examples.Features.SkinSwap.Interface
 {
     public interface ILoadableSkin
     {
-        public Task LoadSkin(string id);
+        public void LoadSkin(UGMDataTypes.TokenInfo data);
     }
 }

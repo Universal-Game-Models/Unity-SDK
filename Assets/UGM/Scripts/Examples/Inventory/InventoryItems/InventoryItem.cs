@@ -85,6 +85,7 @@ namespace UGM.Examples.Inventory.InventoryItems
         {
             if (hovering)
             {
+                if (QuickSelectControl.Instance == null) return;
                 var numberKeyPressed = QuickSelectControl.Instance.GetNumberKeyPressed();
                 if(numberKeyPressed >= 0)
                 {
