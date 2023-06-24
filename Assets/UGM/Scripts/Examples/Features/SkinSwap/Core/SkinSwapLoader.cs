@@ -6,30 +6,40 @@ using UnityEngine;
 
 namespace UGM.Examples.Features.SkinSwap.Core
 {
-    public class SkinSwapLoader : UGMDownloader, ILoadableSkin, ITokenable, ISwappableSkin
+    public class SkinSwapLoader : UGMDownloader, ILoadableSkin, ISwappableSkin
     {
-        private GameObject weaponGameObject;
-        private string defaultId;
-        public UGMDataTypes.TokenInfo OriginalItemTokenData { get; set; }
-        
-        public void LoadSkin(UGMDataTypes.TokenInfo data)
+        [SerializeField] [Tooltip("The original gameobject of this item")]
+        protected GameObject originalGameObject;
+
+        /// <summary>
+        /// Load the item, swap the original game object to the given data.
+        /// </summary>
+        /// <param name="data"></param>
+        public virtual void LoadItem(UGMDataTypes.TokenInfo data)
         {
-            Load(data.token_id);
+            LoadItem(data.token_id);
+        }
+        /// <summary>
+        /// Load the item, swap the original game object to the given data.
+        /// </summary>
+        /// <param name="data"></param>
+        public virtual void LoadItem(string id)
+        {
+            Load(id);
+            if (originalGameObject == null) return;
+            if(originalGameObject.activeSelf == true)
+                originalGameObject.SetActive(false);
         }
 
-        protected virtual void LoadItem(UGMDataTypes.TokenInfo data)
-        {
-            OriginalItemTokenData = data;
-            Load(data.token_id);
-        }
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             ExampleUIEvents.OnChangeEquipment.AddListener(LoadItem);
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             ExampleUIEvents.OnChangeEquipment.RemoveListener(LoadItem);
+            SwapToOriginalSkin();
         }
 
         protected override void OnModelSuccess(GameObject loadedGO)
@@ -39,10 +49,18 @@ namespace UGM.Examples.Features.SkinSwap.Core
             InstantiatedGO.transform.SetParent(gameObject.transform);
         }
 
+        /// <summary>
+        /// Destroy the existing skin and activate the original game object.
+        /// </summary>
         [Button()]
-        public void SwapToOriginalSkin()
+        public virtual void SwapToOriginalSkin()
         {
-            LoadSkin(OriginalItemTokenData);
+            if (InstantiatedGO != null)
+            {
+                DestroyImmediate(InstantiatedGO);
+            }
+            if (originalGameObject == null) return;
+            originalGameObject.SetActive(true);
         }
     }
 }
