@@ -22,13 +22,13 @@ namespace UGM.Examples.Features.SkinSwap.Core
                 return;
             }
 
-            loader.LoadSkin(tokenInfo);
+            loader.LoadItem(tokenInfo);
         }
 
         public override void Init(Inventory.Inventory inventory, UGMDataTypes.TokenInfo tokenInfo)
         {
             base.Init(inventory, tokenInfo);
-            SkinSwapInventory swapInventory = (SkinSwapInventory)inventory;
+            FilteredInventory swapInventory = (FilteredInventory)inventory;
             loader = swapInventory.SkinSwapLoader;
             this.tokenInfo = tokenInfo;
         }
