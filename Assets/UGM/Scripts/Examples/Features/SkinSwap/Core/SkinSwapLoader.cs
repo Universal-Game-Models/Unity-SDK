@@ -19,10 +19,7 @@ namespace UGM.Examples.Features.SkinSwap.Core
         {
             LoadItem(data.token_id);
         }
-        /// <summary>
-        /// Load the item, swap the original game object to the given data.
-        /// </summary>
-        /// <param name="data"></param>
+
         public virtual void LoadItem(string id)
         {
             Load(id);
@@ -49,9 +46,7 @@ namespace UGM.Examples.Features.SkinSwap.Core
             InstantiatedGO.transform.SetParent(gameObject.transform);
         }
 
-        /// <summary>
-        /// Destroy the existing skin and activate the original game object.
-        /// </summary>
+
         [Button()]
         public virtual void SwapToOriginalSkin()
         {
