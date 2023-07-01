@@ -1,0 +1,8 @@
+Assembly-CSharp.csproj
+Library/
+Library/*
+Logs/
+Logs/*
+Unity-SDK.sln
+UserSettings/
+
