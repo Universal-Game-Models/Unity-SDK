@@ -23,8 +23,8 @@ namespace UGM.Editor.UGMTool
         private void OnEnable()
         {
             SetupConfiguration();
-            CreateLabel("Thank you for installing UGM.", 20f);
-            CreateLabel("To use UGM, you will need API key to \nmake request to the API server", 10);
+            CreateLabel("Thank you for installing UGM.", 10f);
+            CreateLabel("To use UGM, you will need API key to \nmake request to the API server. \nDownload the sample scene on \nPackage Manager UGM.", 10);
             CreateTextFieldForApiKey();
             CreateSaveButton();
             CreateLocateConfigurationAssetButton();
