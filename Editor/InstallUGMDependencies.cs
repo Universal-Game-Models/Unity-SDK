@@ -20,7 +20,7 @@ namespace UGM.Editor
         private const string INSTALLING_MODULES = "Installing dependencies...";
         private const string ALL_MODULES_ARE_INSTALLED = "All dependencies are installed.";
         private const int THREAD_SLEEP_TIME = 100;
-        private const float TIMEOUT_FOR_MODULE_INSTALLATION = 20f;
+        private const float TIMEOUT_FOR_MODULE_INSTALLATION = 180f;
 
         static InstallUGMDependencies()
         {
