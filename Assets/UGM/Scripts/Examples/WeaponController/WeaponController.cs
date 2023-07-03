@@ -140,7 +140,6 @@ namespace UGM.Examples.WeaponController
                 weaponTier = tier;
             else
                 return;
-
             Init();
         }
 

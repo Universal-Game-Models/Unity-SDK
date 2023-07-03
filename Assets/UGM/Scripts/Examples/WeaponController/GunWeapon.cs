@@ -85,7 +85,8 @@ namespace UGM.Examples.WeaponController
         public override void Attack()
         {
             base.Attack();
-            animator.SetBool(ShootHash, true);
+            if(animator)
+                animator.SetBool(ShootHash, true);
             switch (fireType)
             {
                 case FireType.Automatic:
@@ -110,9 +111,10 @@ namespace UGM.Examples.WeaponController
             var offhandAnimHash = hand == 0 ? LeftItemHash : RightItemHash;
             if (gunType == GunType.Pistol)
             {
-                animator.SetInteger(handAnimHash, -1);
+                if(animator)
+                    animator.SetInteger(handAnimHash, -1);
             }
-            else if (gunType == GunType.Rifle)
+            else if (gunType == GunType.Rifle && animator)
             {
                 var offhandAnimInt = animator.GetInteger(offhandAnimHash);
                 if (offhandAnimInt == 2)
@@ -128,7 +130,8 @@ namespace UGM.Examples.WeaponController
             //Stop the coroutine if their is one
             if (shootingRoutine != null) StopCoroutine(shootingRoutine);
             shootingRoutine = null;
-            animator.SetBool(ShootHash, false);
+            if(animator)
+                animator.SetBool(ShootHash, false);
             base.StopAttacking();
         }
 

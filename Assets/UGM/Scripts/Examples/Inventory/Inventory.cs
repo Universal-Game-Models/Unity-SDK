@@ -31,19 +31,19 @@ namespace UGM.Examples.Inventory
 
         [Tooltip("Reference to the parent GameObject that contains the inventory UI elements.")]
         [SerializeField]
-        private GameObject parent;
+        protected GameObject parent;
 
         [Tooltip("Reference to the Transform component representing the content area where inventory items are displayed.")]
         [SerializeField]
-        private Transform content;
+        protected Transform content;
 
         [Tooltip("Reference to the prefab of the default inventory item.")]
         [SerializeField]
-        private InventoryItem defaultItemPrefab;
+        protected InventoryItem defaultItemPrefab;
 
         [Tooltip("Array of item prefabs to be used for specific token attributes in the inventory.")]
         [SerializeField]
-        private ItemPrefabs[] itemPrefabs;
+        protected ItemPrefabs[] itemPrefabs;
 
         [Tooltip("Structure defining the attributes of an item prefab used in the inventory.")]
         [Serializable]
@@ -60,14 +60,14 @@ namespace UGM.Examples.Inventory
         /// <summary>
         /// List of TokenInfo objects representing the NFTs owned by a specific address.
         /// </summary>
-        private List<TokenInfo> tokenInfos;
+        protected List<TokenInfo> tokenInfos;
 
-        private bool contentActive;
+        protected bool contentActive;
 
         /// <summary>
         /// Starts the execution of the script by loading data and updating the display of the inventory UI.
         /// </summary>
-        async void Start()
+        public virtual async void Start()
         {
             //Load the data
             tokenInfos = await nftsOwned.GetNftsByAddress();
@@ -80,7 +80,7 @@ namespace UGM.Examples.Inventory
         /// <summary>
         /// Clears the display
         /// </summary>
-        private void OnDestroy()
+        protected void OnDestroy()
         {
             ClearDisplay();
         }
@@ -88,7 +88,7 @@ namespace UGM.Examples.Inventory
         /// <summary>
         /// Updates the display of the inventory UI by creating and initializing inventory items based on token information.
         /// </summary>
-        private void UpdateDisplay()
+        protected void UpdateDisplay()
         {
             ClearDisplay();
             foreach (var tokenInfo in tokenInfos)
@@ -116,7 +116,7 @@ namespace UGM.Examples.Inventory
         /// <summary>
         /// Clears the display
         /// </summary>
-        private void ClearDisplay()
+        protected void ClearDisplay()
         {
             int childCount = content.childCount;
             for (int i = 0; i < childCount; i++)
@@ -128,7 +128,7 @@ namespace UGM.Examples.Inventory
         /// <summary>
         /// Monitors input and toggles the visibility of the inventory UI when the 'I' key is pressed.
         /// </summary>
-        void Update()
+        public virtual void Update()
         {
             if (Input.GetKeyDown(KeyCode.I))
             {
@@ -139,8 +139,13 @@ namespace UGM.Examples.Inventory
         /// <summary>
         /// Toggles the visibility of the inventory UI by activating or deactivating the parent GameObject and invoking an event to show or hide the cursor.
         /// </summary>
-        public void ToggleInventory()
+        public virtual void ToggleInventory()
         {
+            if (parent == null)
+            {
+                Debug.LogError("" + parent.name + " is missing!");
+                return;
+            }
             contentActive = !parent.activeInHierarchy;
             parent.SetActive(contentActive);
             ExampleUIEvents.OnShowCursor.Invoke(contentActive);
