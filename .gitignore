@@ -10,3 +10,4 @@ UGM.Core.csproj
 UGM.Editor.csproj
 UGMToolEditor.csproj
 tool.csproj
+# test semver
