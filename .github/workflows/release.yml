@@ -17,7 +17,7 @@ jobs:
       - name: Checkout "UPM" branch
         uses: actions/checkout@v2
         with:
-          ref: UPM
+          ref: upm
 
       - name: Find UPM package.json & increment its version number
         uses: AlexHolderDeveloper/UnityUPMSemver@v0.0.1 # Change vX.X.X to whatever tag is newer in the AlexHolderDeveloper/UnityUPMSemver repository.
@@ -36,7 +36,7 @@ jobs:
         with:
           commit_message: "Updated semver via automated action."
           commit_options: '--no-verify --signoff'
-          branch: upm
+          branch: UPM
       
             # You must ALWAYS checkout your repo so that actions in the workflow can use it.
       - name: Checkout "master" branch
