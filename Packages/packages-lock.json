@@ -19,6 +19,18 @@
       "dependencies": {},
       "hash": "8a8fa5a9659a6d63f196391c71e06c4286c8acd7"
     },
+    "com.nftygames.ugm": {
+      "version": "file:com.nftygames.ugm",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.nftygames.ugmcore": {
+      "version": "file:com.nftygames.ugmcore",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.burst": {
       "version": "1.6.6",
       "depth": 1,
