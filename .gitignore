@@ -5,4 +5,8 @@ Logs/
 Logs/*
 Unity-SDK.sln
 UserSettings/
-
+Assembly-CSharp-Editor.csproj
+UGM.Core.csproj
+UGM.Editor.csproj
+UGMToolEditor.csproj
+tool.csproj
