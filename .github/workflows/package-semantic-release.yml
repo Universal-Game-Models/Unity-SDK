@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-    - upm
+    - UPM
 jobs:
   release:
     name: release
