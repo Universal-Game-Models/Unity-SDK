@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/Universal-Game-Models/Unity-SDK/compare/v1.0.0...v1.0.1) (2023-07-04)
+
+
+### Bug Fixes
+
+* test workflow ([7320f4c](https://github.com/Universal-Game-Models/Unity-SDK/commit/7320f4cc820757377ca211c1fc3ff810bbe95dae))
+
 # 1.0.0 (2023-07-04)
 
 
