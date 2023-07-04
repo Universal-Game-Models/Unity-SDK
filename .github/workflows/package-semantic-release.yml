@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-    - upm
+    - UPM
 jobs:
   release:
     name: release
@@ -21,4 +21,4 @@ jobs:
         extra_plugins: |
           @semantic-release/changelog
           @semantic-release/git
-        branch: upm
+        branch: UPM
