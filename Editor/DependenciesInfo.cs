@@ -1,5 +1,5 @@
 using UnityEngine;
-
+// dependency data
 namespace UGM.Editor
 {
     public struct DependenciesInfo
