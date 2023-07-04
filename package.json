@@ -1,6 +1,6 @@
 {
     "name": "com.nftygames.ugm",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "displayName": "UGM",
     "description": "This is the SDK of the UGM",
     "unity": "2020.3",
@@ -10,9 +10,9 @@
     "licensesUrl": "https://example.com/licensing.html",
     "dependencies": {},
     "author": {
-      "name": "Nfty Games",
-      "email": "unity@example.com",
-      "url": "https://www.unity3d.com"
+        "name": "Nfty Games",
+        "email": "unity@example.com",
+        "url": "https://www.unity3d.com"
     },
     "samples": [
         {
@@ -21,5 +21,4 @@
             "path": "Samples~/UGM"
         }
     ]
-  }
-  
+}
