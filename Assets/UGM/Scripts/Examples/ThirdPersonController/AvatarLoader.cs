@@ -123,7 +123,7 @@ namespace UGM.Examples.ThirdPersonController
             //Add new animator that points to the new character
             animator = gameObject.AddComponent<Animator>();
             animator.runtimeAnimatorController = animatorController;
-            animator.avatar = animatorAvatar; //AvatarCreator.CreateAvatar(animator);
+            animator.avatar = AvatarCreator.CreateAvatar(InstantiatedGO);
             animator.applyRootMotion = applyRootMotion;
             animator.updateMode = updateMode;
             animator.cullingMode = cullingMode;
