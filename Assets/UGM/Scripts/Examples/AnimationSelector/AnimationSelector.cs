@@ -85,18 +85,21 @@ namespace UGM.Examples.AnimationSelector
             parent.gameObject.SetActive(contentActive);
             foreach (var animationName in animationNames)
             {
-                var newBtn = Instantiate(animationSelectorButtonPrefab, content);
-                newBtn.Init(() =>
+                if (animationName != "0")
                 {
-                    if (loader.CurrentEmbeddedAnimationName == animationName)
+                    var newBtn = Instantiate(animationSelectorButtonPrefab, content);
+                    newBtn.Init(() =>
                     {
-                        loader.StopAnimation();
-                    }
-                    else
-                    {
-                        loader.PlayAnimation(animationName, loopAnimation);
-                    }
-                }, animationName);
+                        if (loader.CurrentEmbeddedAnimationName == animationName)
+                        {
+                            loader.StopAnimation();
+                        }
+                        else
+                        {
+                            loader.PlayAnimation(animationName, loopAnimation);
+                        }
+                    }, animationName);
+                }
             }
         }
         /// <summary>
