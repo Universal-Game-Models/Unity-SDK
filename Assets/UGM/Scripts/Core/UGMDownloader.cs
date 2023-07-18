@@ -238,10 +238,11 @@ namespace UGM.Core
             {
                 Load(nftId);
             }
+            UGMManager.OnStartUGMDownloader.Invoke(this);
         }
         protected virtual void OnDestroy()
         {
-
+            UGMManager.OnDestroyUGMDownloader.Invoke(this);
         }
         #endregion
 
