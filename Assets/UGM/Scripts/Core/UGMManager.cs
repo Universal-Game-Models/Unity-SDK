@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Networking;
 using static UGM.Core.UGMDataTypes;
 
@@ -13,7 +14,9 @@ namespace UGM.Core
     {
         //A dictionary of the currently downloaded asset bundles to maintain a runtime cache
         public static Dictionary<string, AssetBundle> assetBundles = new Dictionary<string, AssetBundle>();
-
+        public static UnityEvent<UGMDownloader> OnStartUGMDownloader = new UnityEvent<UGMDownloader>();
+        public static UnityEvent<UGMDownloader> OnDestroyUGMDownloader = new UnityEvent<UGMDownloader>();
+        
         //The base URI used for downloading
         public const string MODEL_URI = "https://assets.unitygameasset.com/models/";
         public const string METADATA_URI = "https://assets.unitygameasset.com/metadata/";
