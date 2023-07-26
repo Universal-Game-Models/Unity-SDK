@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Samples/UGM/Scenes/TestScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 0
-    path: Assets/Samples/TestClient/Scenes/Main.unity
+    path: Assets/Samples/UGM/TestClient/Scenes/Main.unity
     guid: cb8ffc139fb726346a3526889d6d673e
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: bacb870b6e81ebb4f9512c4429f4de3c, type: 2}
