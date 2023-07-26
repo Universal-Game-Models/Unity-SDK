@@ -1,0 +1,9 @@
+To update the package manager. Go to the UPM repository, checkout main branch, 
+copy and paste the children of Samples folder (all the folders inside the Samples folder. Do not do it inside Unity editor. Please show it and do it in explorer folder) 
+then paste it inside the Unity-UPM Samples~ folder
+
+To update the core script, Go to the UPM repository, checkout upmcore branch, 
+copy and paste the children of UGMCore folder (Copy all Editor, RequiredAssets, Runtime. Do not do it inside Unity editor. Please show it and do it in explorer folder) 
+then paste it on the root folder Unity-UPM. (NOTE: Make sure you are at upmcore branch)
+
+Note: The reason we want to copy it in explorer instead in unity editor is because we want to include .meta files.

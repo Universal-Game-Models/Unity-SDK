@@ -1,3 +1,4 @@
+using Samples.UGM.Scripts.Examples.Features.SkinSwap.Core;
 using UGM.Core;
 using UGM.Examples.Features.SkinSwap.Interface;
 using UGM.Examples.Inventory.InventoryItems;

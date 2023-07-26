@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using NaughtyAttributes;
+using Samples.UGM.Scripts.Examples;
 using UGM.Core;
 using UGM.Examples.Features.SkinSwap.Interface;
 using UnityEngine;

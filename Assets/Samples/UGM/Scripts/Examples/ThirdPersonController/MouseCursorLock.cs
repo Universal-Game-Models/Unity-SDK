@@ -1,3 +1,4 @@
+using Samples.UGM.Scripts.Examples;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

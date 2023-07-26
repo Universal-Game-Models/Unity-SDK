@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Samples.UGM.Scripts.Examples;
 using UnityEngine.EventSystems;
 using UGM.Examples.Inventory.InventoryItems;
 using static UGM.Core.UGMDataTypes;

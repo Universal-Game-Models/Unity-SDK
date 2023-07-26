@@ -1,3 +1,4 @@
+using Samples.UGM.Scripts.Examples;
 using UGM.Examples.Inventory.InventoryItems;
 using UGM.Examples.ThirdPersonController;
 using UnityEngine;
