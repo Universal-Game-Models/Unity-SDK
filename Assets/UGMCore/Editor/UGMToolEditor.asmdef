@@ -1,0 +1,16 @@
+{
+    "name": "UGMToolEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c90d51146802d634c8eb5c6cc87952cd"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
