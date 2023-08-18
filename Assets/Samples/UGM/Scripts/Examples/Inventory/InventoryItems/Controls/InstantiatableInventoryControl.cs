@@ -245,7 +245,7 @@ namespace UGM.Examples.Inventory.InventoryItems.Controls
             {
                 if (canPlace && !EventSystem.current.IsPointerOverGameObject())
                 {
-                    LoadModel(hit.point, hit.transform);
+                    LoadModel(hit.point - new Vector3(0, 0.05f, 0), hit.transform);
                 }
             }
             if (Input.GetMouseButtonUp(1))
