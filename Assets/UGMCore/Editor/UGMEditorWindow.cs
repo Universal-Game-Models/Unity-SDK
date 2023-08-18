@@ -1,11 +1,13 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using UGM.Core;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-
+#endif
 namespace UGM.Editor.UGMTool
 {
+#if UNITY_EDITOR
     public class UGMEditorWindow : EditorWindow
     {
         private UGMConfig config;
@@ -114,4 +116,5 @@ namespace UGM.Editor.UGMTool
             }
         }
     }
+#endif
 }
