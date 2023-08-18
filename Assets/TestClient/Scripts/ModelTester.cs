@@ -24,7 +24,7 @@ public class ModelTester : MonoBehaviour
     [Button]
     public void Test()
     {
-        Load("13");
+        Load("16");
     }
     // Start is called before the first frame update
     async void Start()
