@@ -273,9 +273,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nftsOwned: {fileID: 4828429974817877802}
+  avatarLoader: {fileID: 0}
   parent: {fileID: 4828429974988660318}
   content: {fileID: 4828429973319127307}
-  defaultItemPrefab: {fileID: 7078145980242911706, guid: 1c729bf57fcbb28448e27e4ce58d4e2f, type: 3}
+  defaultItemPrefab: {fileID: 464005157449392783, guid: b39fb611f5d61244cb708af59aaa6192, type: 3}
   itemPrefabs:
   - name: Avatar
     nameIsTraitType: 0
