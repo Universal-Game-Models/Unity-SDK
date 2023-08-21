@@ -300,7 +300,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hologramPrefab: {fileID: 4129347495204574202, guid: 1332950c2dc1efe4abc78b1d647aa694, type: 3}
-  rotateSpeed: 6
+  rotateSpeed: 4
 --- !u!1 &4828429974988660318
 GameObject:
   m_ObjectHideFlags: 0
