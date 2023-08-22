@@ -220,7 +220,7 @@ namespace UGM.Examples.Inventory.InventoryItems.Controls
                     }
                     int layerMask = ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Ignore Raycast"));
                     //Fudge the collision extents to allow a bit of overlap
-                    Vector3 halfExtents = hologram.transform.localScale / 2f;
+                    Vector3 halfExtents = hologram.transform.localScale / 2.25f;
                     Collider[] colliders = Physics.OverlapBox(hologram.transform.position + new Vector3(0,0.05f,0), halfExtents, hologram.transform.rotation, layerMask);
 
                     if (colliders.Length > 0)
