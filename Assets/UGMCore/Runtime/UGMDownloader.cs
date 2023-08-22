@@ -605,7 +605,11 @@ namespace UGM.Core
             }
             using (var fileStream = new FileStream(path, FileMode.OpenOrCreate))
             {
+#if NET_2_0 || NET_4_6 || NET_LEGACY || NET_2_0_SUBSET
+                fileStream.Write(bytes, 0, bytes.Length);
+#elif NETSTANDARD || NET_STANDARD || NETSTANDARD2_1 || NET_STANDARD_2_1 || NET_STANDARD_2_0
                 fileStream.Write(bytes);
+#endif
                 PlayerPrefs.SetString("forceSave", string.Empty);
                 PlayerPrefs.Save();
             }
