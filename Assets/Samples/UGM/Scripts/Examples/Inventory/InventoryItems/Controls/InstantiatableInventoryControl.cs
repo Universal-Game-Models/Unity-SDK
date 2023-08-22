@@ -199,32 +199,39 @@ namespace UGM.Examples.Inventory.InventoryItems.Controls
                 UpdateRaycast(out hit, out didHit);
                 if (didHit)
                 {
-                    hologram.transform.position = hit.point + new Vector3(0, 0.05f, 0);
                     hologram.transform.rotation = Quaternion.Euler(scrollOffset);
-                    if (tempPlacement)
-                    {
-                        tempPlacement.transform.position = hologram.transform.position - new Vector3(0, 0.05f, 0);
-                        tempPlacement.transform.rotation = hologram.transform.rotation;
-                    }
                     //Set the lossy scale of the box from the metadata
                     hologram.transform.localScale = modelScale;
                     var scale = hologram.transform.localScale;
-                    //Increase the y position by half the height
+                    
+                    //Hack for wall mounting, only works with thiner objects such as picture frames
                     Vector3 hitNormal = hit.normal;
-                    hitNormal.y = (scale.y / 2);
-                    hitNormal.z *= 0.25f;
-                    hitNormal.x *= 0.25f;
-                    hologram.transform.position = (hit.point + hitNormal) + new Vector3(0,0.05f,0);
 
+                    hitNormal.y = (scale.y / 2);
+                    hitNormal.z *= (scale.z / 2) * Mathf.Abs(Mathf.Cos(scrollOffset.x * Mathf.Deg2Rad)) * Mathf.Abs(Mathf.Cos(scrollOffset.y * Mathf.Deg2Rad));
+                    hitNormal.x *= (scale.x / 2) * Mathf.Abs(Mathf.Cos(scrollOffset.x * Mathf.Deg2Rad)) * Mathf.Abs(Mathf.Cos(scrollOffset.y * Mathf.Deg2Rad));
+
+                    //Increase the height of the hologram to prevent unwanted ground collisions
+                    hologram.transform.position = (hit.point + hitNormal);
+                    if (tempPlacement)
+                    {
+                        tempPlacement.transform.position = hologram.transform.position - new Vector3(0, scale.y / 2, 0);
+                        tempPlacement.transform.rotation = hologram.transform.rotation;
+                    }
                     int layerMask = ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Ignore Raycast"));
+                    //Fudge the collision extents to allow a bit of overlap
                     Vector3 halfExtents = hologram.transform.localScale / 2f;
-                    Collider[] colliders = Physics.OverlapBox(hologram.transform.position, halfExtents, Quaternion.identity, layerMask);
+                    Collider[] colliders = Physics.OverlapBox(hologram.transform.position + new Vector3(0,0.05f,0), halfExtents, hologram.transform.rotation, layerMask);
 
                     if (colliders.Length > 0)
                     {
                         // Set the color to red if the boxcast hits something
                         hologramRenderer.material.color = new Color(1, 0, 0, 0.25f);
                         canPlace = false;
+                        foreach (var col in colliders)
+                        {
+                            Debug.Log(col.gameObject);
+                        }
                     }
                     else
                     {
