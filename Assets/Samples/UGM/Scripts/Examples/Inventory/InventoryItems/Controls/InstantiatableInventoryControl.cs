@@ -53,6 +53,11 @@ namespace UGM.Examples.Inventory.InventoryItems.Controls
         private Renderer hologramRenderer;
 
         /// <summary>
+        /// The temporary placement of the object.
+        /// </summary>
+        private UGMDownloader tempPlacement;
+
+        /// <summary>
         /// Flag indicating whether the hologram should be shown.
         /// </summary>
         private bool showHologram;
@@ -129,7 +134,34 @@ namespace UGM.Examples.Inventory.InventoryItems.Controls
         private void EnableHologram()
         {
             GetModelScale();
+            GetTempModel();
             showHologram = true;
+        }
+
+        private void GetTempModel()
+        {
+            if (tempPlacement) Destroy(tempPlacement);
+            tempPlacement = LoadModel(new Vector3(0, 0, 0), null);
+            tempPlacement.onModelSuccess.AddListener(SetRecursiveLayer);
+        }
+
+        private void SetRecursiveLayer(GameObject go)
+        {
+            if (go)
+            {
+                SetLayerRecursivelyForTransform(go.transform, LayerMask.NameToLayer("Ignore Raycast"));
+                tempPlacement.onModelSuccess.RemoveListener(SetRecursiveLayer);
+            }
+        }
+
+        void SetLayerRecursivelyForTransform(Transform currentTransform, int targetLayer)
+        {
+            currentTransform.gameObject.layer = targetLayer;
+
+            foreach (Transform child in currentTransform)
+            {
+                SetLayerRecursivelyForTransform(child, targetLayer);
+            }
         }
 
         /// <summary>
@@ -167,23 +199,39 @@ namespace UGM.Examples.Inventory.InventoryItems.Controls
                 UpdateRaycast(out hit, out didHit);
                 if (didHit)
                 {
-                    hologram.transform.position = hit.point + new Vector3(0, 0.05f, 0);
                     hologram.transform.rotation = Quaternion.Euler(scrollOffset);
                     //Set the lossy scale of the box from the metadata
                     hologram.transform.localScale = modelScale;
-                    //Increase the y position by half the height
-                    var height = hologram.transform.localScale;
-                    hologram.transform.position += new Vector3(0, height.y / 2, 0);
+                    var scale = hologram.transform.localScale;
+                    
+                    //Hack for wall mounting, only works with thiner objects such as picture frames
+                    Vector3 hitNormal = hit.normal;
 
-                    int layerMask = ~LayerMask.GetMask("Player");
+                    hitNormal.y = (scale.y / 2);
+                    hitNormal.z *= (scale.z / 2) * Mathf.Abs(Mathf.Cos(scrollOffset.x * Mathf.Deg2Rad)) * Mathf.Abs(Mathf.Cos(scrollOffset.y * Mathf.Deg2Rad));
+                    hitNormal.x *= (scale.x / 2) * Mathf.Abs(Mathf.Cos(scrollOffset.x * Mathf.Deg2Rad)) * Mathf.Abs(Mathf.Cos(scrollOffset.y * Mathf.Deg2Rad));
+
+                    //Increase the height of the hologram to prevent unwanted ground collisions
+                    hologram.transform.position = (hit.point + hitNormal);
+                    if (tempPlacement)
+                    {
+                        tempPlacement.transform.position = hologram.transform.position - new Vector3(0, scale.y / 2, 0);
+                        tempPlacement.transform.rotation = hologram.transform.rotation;
+                    }
+                    int layerMask = ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Ignore Raycast"));
+                    //Fudge the collision extents to allow a bit of overlap
                     Vector3 halfExtents = hologram.transform.localScale / 2f;
-                    Collider[] colliders = Physics.OverlapBox(hologram.transform.position, halfExtents, Quaternion.identity, layerMask);
+                    Collider[] colliders = Physics.OverlapBox(hologram.transform.position + new Vector3(0,0.05f,0), halfExtents, hologram.transform.rotation, layerMask);
 
                     if (colliders.Length > 0)
                     {
                         // Set the color to red if the boxcast hits something
                         hologramRenderer.material.color = new Color(1, 0, 0, 0.25f);
                         canPlace = false;
+                        foreach (var col in colliders)
+                        {
+                            Debug.Log(col.gameObject);
+                        }
                     }
                     else
                     {
@@ -228,7 +276,7 @@ namespace UGM.Examples.Inventory.InventoryItems.Controls
                 //Change this to mouse position
                 screenCenter = Input.mousePosition;
             }
-            int layerMask = ~LayerMask.GetMask("Player");
+            int layerMask = ~(LayerMask.GetMask("Player") | LayerMask.GetMask("Ignore Raycast"));
             // Raycast from the camera
             Ray ray = mainCamera.ScreenPointToRay(screenCenter);
             didHit = Physics.Raycast(ray, out hit, 100, layerMask);
@@ -245,30 +293,34 @@ namespace UGM.Examples.Inventory.InventoryItems.Controls
             {
                 if (canPlace && !EventSystem.current.IsPointerOverGameObject())
                 {
-                    LoadModel(hit.point - new Vector3(0, 0.05f, 0), hit.transform);
+                    SetLayerRecursivelyForTransform(tempPlacement.transform, LayerMask.NameToLayer("Default"));
+                    tempPlacement = null;
+                    GetTempModel();
                 }
             }
             if (Input.GetMouseButtonUp(1))
             {
                 currentTokenInfo = null;
                 DisableHologram();
+                DisableTemp();
             }
         }
 
         /// <summary>
         /// Asynchronously loads the model at the specified hit point with the current TokenInfo.
         /// </summary>
-        private async Task<GameObject> LoadModel(Vector3 hitPoint, Transform hitParent)
+        private UGMDownloader LoadModel(Vector3 hitPoint, Transform hitParent)
         {
             if (currentTokenInfo == null) return null;
-            hitPoint.y += 0.05f;
+
             var ugmDownloader = new GameObject(currentTokenInfo.metadata.name).AddComponent<UGMDownloader>();
             ugmDownloader.SetLoadOptions(false, true, true, true, true);
             ugmDownloader.transform.position = hitPoint;
             ugmDownloader.transform.rotation = Quaternion.Euler(scrollOffset);
             ugmDownloader.transform.SetParent(hitParent);
-            await ugmDownloader.LoadAsync(currentTokenInfo.token_id);
-            return ugmDownloader.gameObject;
+            ugmDownloader.LoadAsync(currentTokenInfo.token_id);
+
+            return ugmDownloader;
         }
 
         /// <summary>
@@ -280,6 +332,16 @@ namespace UGM.Examples.Inventory.InventoryItems.Controls
             if (hologram.activeInHierarchy)
             {
                 hologram.SetActive(false);
+            }
+        }
+        /// <summary>
+        /// Disables the temp placement and stops its display.
+        /// </summary>
+        private void DisableTemp()
+        {
+            if (tempPlacement)
+            {
+                Destroy(tempPlacement.gameObject);
             }
         }
     }

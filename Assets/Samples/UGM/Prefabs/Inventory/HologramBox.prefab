@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8474883896935432262}
   - component: {fileID: 6312563876360842476}
   - component: {fileID: 7155261260853863915}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HologramBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
