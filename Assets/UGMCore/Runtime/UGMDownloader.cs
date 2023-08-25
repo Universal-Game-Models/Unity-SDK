@@ -543,10 +543,16 @@ namespace UGM.Core
             if (File.Exists(cachePath))
             {
                 bytes = File.ReadAllBytes(cachePath);
-
+                var fileLastWriteTimeUtc = File.GetLastWriteTimeUtc(cachePath);
+                //Optimization: Only HEAD it once per hour to check for changes
+                if (fileLastWriteTimeUtc > DateTime.UtcNow.AddHours(-1))
+                {
+                    File.SetLastWriteTimeUtc(cachePath, DateTime.UtcNow);
+                    return new Download(url.ToString(), bytes);
+                }
                 using (var webRequest = UnityWebRequest.Head(url))
                 {
-                    webRequest.SetRequestHeader("If-Modified-Since", File.GetLastWriteTimeUtc(cachePath).ToString("r"));
+                    webRequest.SetRequestHeader("If-Modified-Since", fileLastWriteTimeUtc.ToString("r"));
 
                     var downloadRequest = webRequest.SendWebRequest();
 
