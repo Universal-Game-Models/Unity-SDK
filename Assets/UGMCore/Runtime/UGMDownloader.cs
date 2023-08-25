@@ -547,7 +547,6 @@ namespace UGM.Core
                 //Optimization: Only HEAD it once per hour to check for changes
                 if (fileLastWriteTimeUtc > DateTime.UtcNow.AddHours(-1))
                 {
-                    File.SetLastWriteTimeUtc(cachePath, DateTime.UtcNow);
                     return new Download(url.ToString(), bytes);
                 }
                 using (var webRequest = UnityWebRequest.Head(url))
@@ -566,6 +565,7 @@ namespace UGM.Core
 
                     if (webRequest.responseCode == (int)HttpStatusCode.NotModified)
                     {
+                        File.SetLastWriteTimeUtc(cachePath, DateTime.UtcNow);
                         return new Download(url.ToString(), bytes);
                     }
                     else if (webRequest.responseCode == (int)HttpStatusCode.OK)
